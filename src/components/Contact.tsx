@@ -21,7 +21,7 @@ export function Contact() {
     soundManager.playSuccess();
     navigator.clipboard.writeText(profileData.links.email);
     setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2500);
+    setTimeout(() => setCopiedEmail(false), 2200);
   };
 
   const containerVariants = {
@@ -30,13 +30,13 @@ export function Contact() {
       opacity: 1,
       transition: {
         staggerChildren: 0.12,
-        delayChildren: 0.1,
+        delayChildren: 0.08,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 16 },
     visible: {
       opacity: 1,
       y: 0,
@@ -45,24 +45,24 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* Section Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.5 }}
-        className="space-y-3 mb-14 text-left"
+        className="space-y-2 mb-10 text-left"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 text-xs font-mono-code shadow-sm">
-          <Mail className="w-3.5 h-3.5 text-indigo-400" />
-          <span>// DIRECT INQUIRIES & COLLABORATION</span>
+        <div className="flex items-center gap-2 text-xs font-mono-code text-indigo-400">
+          <Mail className="w-3.5 h-3.5" />
+          <span className="font-semibold uppercase tracking-wider">// DIRECT INQUIRIES & COLLABORATION</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif-display text-white tracking-tight">
           Let’s Connect & Build
         </h2>
         <p className="text-sm sm:text-base text-zinc-400 max-w-2xl font-normal leading-relaxed">
-          Open to full-time roles, internships, and research collaborations across Data Analytics, Machine Learning, and Systems Engineering.
+          Open to full-time roles, internships, and research collaborations across Data Analytics, Applied Machine Learning, and Intelligent Data Products.
         </p>
       </motion.div>
 
@@ -71,21 +71,21 @@ export function Contact() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-40px" }}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-6 text-left"
       >
         {/* Left Side: Primary Contact Card (7 cols) */}
         <motion.div variants={itemVariants} className="lg:col-span-7">
           <SpotlightCard
             spotlightColor="rgba(99, 102, 241, 0.14)"
             onMouseEnter={() => soundManager.playHover()}
-            className="p-7 sm:p-8 bg-zinc-950/80 border-zinc-800/90 shadow-xl space-y-6 flex flex-col justify-between h-full"
+            className="p-7 sm:p-8 bg-zinc-950/80 border-zinc-850 shadow-xl space-y-6 flex flex-col justify-between h-full"
           >
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono-code text-indigo-400 font-bold uppercase tracking-wider">
+              <div className="flex items-center justify-between text-xs font-mono-code">
+                <span className="text-indigo-400 font-bold uppercase tracking-wider">
                   PRIMARY COMMUNICATION CHANNEL
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-[10px] font-mono-code text-emerald-400">
+                <span className="text-emerald-400">
                   Response within 24h
                 </span>
               </div>
@@ -95,18 +95,18 @@ export function Contact() {
                   Send an email directly
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-normal leading-relaxed">
-                  No automated forms or hidden gateways. Email is delivered directly to my inbox.
+                  No automated forms or hidden gateways. Email is delivered directly to my personal inbox.
                 </p>
               </div>
 
               {/* Email Address Display Box */}
-              <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-indigo-400 shrink-0">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono-code text-zinc-500 uppercase">
+                    <span className="text-xs font-mono-code text-zinc-400 uppercase">
                       Direct Email
                     </span>
                     <p className="text-sm font-mono-code font-bold text-zinc-100">
@@ -170,8 +170,8 @@ export function Contact() {
               className="block"
             >
               <SpotlightCard
-                spotlightColor="rgba(255, 255, 255, 0.1)"
-                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-zinc-700 transition-colors group flex items-center justify-between"
+                spotlightColor="rgba(255, 255, 255, 0.08)"
+                className="p-5 bg-zinc-950/80 border-zinc-850 hover:border-zinc-700 transition-colors group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3.5">
                   <div className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 group-hover:text-white group-hover:scale-105 transition-all">
@@ -201,8 +201,8 @@ export function Contact() {
               className="block"
             >
               <SpotlightCard
-                spotlightColor="rgba(59, 130, 246, 0.12)"
-                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-blue-500/40 transition-colors group flex items-center justify-between"
+                spotlightColor="rgba(59, 130, 246, 0.1)"
+                className="p-5 bg-zinc-950/80 border-zinc-850 hover:border-blue-500/40 transition-colors group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3.5">
                   <div className="p-2.5 rounded-xl bg-blue-950/50 border border-blue-500/30 text-blue-400 group-hover:scale-105 transition-all">
@@ -213,7 +213,7 @@ export function Contact() {
                       LinkedIn Network
                     </h4>
                     <p className="text-xs font-mono-code text-zinc-400">
-                      Vishwadeep Pratap · Professional updates
+                      Vishwadeep Pratap · Professional profile
                     </p>
                   </div>
                 </div>
@@ -232,8 +232,8 @@ export function Contact() {
               className="block"
             >
               <SpotlightCard
-                spotlightColor="rgba(16, 185, 129, 0.12)"
-                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-emerald-500/40 transition-colors group flex items-center justify-between"
+                spotlightColor="rgba(16, 185, 129, 0.1)"
+                className="p-5 bg-zinc-950/80 border-zinc-850 hover:border-emerald-500/40 transition-colors group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3.5">
                   <div className="p-2.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 group-hover:scale-105 transition-all">

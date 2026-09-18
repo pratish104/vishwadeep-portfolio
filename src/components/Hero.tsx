@@ -2,8 +2,11 @@ import { motion } from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
+  BarChart2,
+  Binary,
+  BookOpen,
   Check,
-  Copy,
+  ChevronRight,
   Database,
   FileText,
   Filter,
@@ -13,7 +16,6 @@ import {
   Mail,
   Sparkles,
   Terminal,
-  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { profileData } from "../data/portfolioData";
@@ -26,138 +28,144 @@ interface HeroProps {
 
 export function Hero({ onOpenTerminal }: HeroProps) {
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [activePipelineStage, setActivePipelineStage] = useState(1);
+  const [activeDomain, setActiveDomain] = useState<"digipath" | "retail" | "kosh">("digipath");
 
   const handleCopyEmail = () => {
     soundManager.playSuccess();
     navigator.clipboard.writeText(profileData.links.email);
     setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2500);
+    setTimeout(() => setCopiedEmail(false), 2200);
   };
 
-  const pipelineStages = [
-    {
-      step: "01",
-      name: "Data Ingestion",
-      desc: "Multi-year admission cutoffs, retail transactions, speech audio",
-      status: "Verified Ingestion",
-      icon: Database,
-      badge: "Ingestion Core",
+  // Authorial Data Transformation Matrix Cases
+  const transformationCases = {
+    digipath: {
+      domain: "Admissions Intelligence (DigiPath)",
+      tag: "Flagship Data Product",
+      accent: "emerald",
+      inputData: "MHT-CET: 89.4% · Quota: General · Branch: Computer Engg",
+      rawFormat: "Raw multi-year admission cutoff PDFs & unstandardized tables",
+      transformation: "Category harmonization → Multi-parameter percentile matrix ranking",
+      outputResult: "Predicted Eligible: MGM College of Engg. & Tech (Cutoff: 87.2%)",
+      verdict: "High Probability Match · Scam Filter Verified",
     },
-    {
-      step: "02",
-      name: "Sanitization & Schema",
-      desc: "Missing value imputation, outlier detection, category normalization",
-      status: "100% Schema Match",
-      icon: Filter,
-      badge: "Clean Pipeline",
+    retail: {
+      domain: "Retail Profitability (R + Power BI)",
+      tag: "Exploratory Analytics",
+      accent: "indigo",
+      inputData: "Central Region · Furniture Subcategory · Applied Discount: 35%",
+      rawFormat: "Transactional order logs with seasonal noise and return variances",
+      transformation: "Data cleaning (R) → Profit elasticity equation → Margin variance modeling",
+      outputResult: "Negative Net Margin: -4.2% despite +34% sales volume surge",
+      verdict: "Actionable Insight: Cap promotional discount at 20%",
     },
-    {
-      step: "03",
-      name: "Algorithmic Logic",
-      desc: "Multi-criteria ranking, profit margin modeling, Marathi NLP syntax",
-      status: "Inference Ready",
-      icon: Layers,
-      badge: "Decision Logic",
+    kosh: {
+      domain: "Marathi NLP & Rewriting (Kosh)",
+      tag: "Language Technology",
+      accent: "purple",
+      inputData: 'विद्यार्थ्यांनी वेळेवर परीक्षेची तयारी पूर्ण करावी.',
+      rawFormat: "Raw vernacular Devanagari text input",
+      transformation: "Morphological tokenization → Semantic preservation scoring → Formality shift",
+      outputResult: 'विद्यार्थ्यांनी परीक्षा पूर्वतयारी विहित वेळेत पूर्ण करणे अनिवार्य आहे.',
+      verdict: "0.96 Semantic Retention · Formal Register",
     },
-    {
-      step: "04",
-      name: "Decision Product",
-      desc: "DigiPath predictor, executive BI dashboards, student discovery",
-      status: "Actionable Outputs",
-      icon: Sparkles,
-      badge: "Product Delivery",
-    },
-  ];
+  };
+
+  const currentCase = transformationCases[activeDomain];
 
   return (
     <section
       id="about"
-      className="relative min-h-[92vh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-28 pb-20 max-w-6xl mx-auto overflow-hidden"
+      className="relative pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto overflow-hidden"
     >
-      {/* Subtle ambient light gradient */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[400px] bg-gradient-to-tr from-indigo-600/10 via-emerald-600/5 to-transparent blur-[140px] pointer-events-none -z-10" />
+      {/* Subtle ambient gradient mesh */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[360px] bg-gradient-to-tr from-indigo-500/10 via-emerald-500/5 to-transparent blur-[140px] pointer-events-none -z-10" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        {/* Left Column: Positioning & Narrative (7 cols) */}
-        <div className="lg:col-span-7 space-y-6 text-left">
-          {/* Status & Discipline Pill */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        {/* Left Column: Narrative, Positioning, and Person (7 cols) */}
+        <div className="lg:col-span-7 space-y-5 text-left">
+          {/* Top Status & Discipline Breadcrumb */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-wrap items-center gap-2.5"
+            transition={{ duration: 0.45 }}
+            className="flex flex-wrap items-center gap-3"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs text-zinc-300 shadow-sm">
+            <div className="inline-flex items-center gap-2 text-xs text-zinc-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono-code text-[11px] font-medium tracking-wide text-zinc-300">
+              <span className="font-mono-code text-xs text-zinc-300 font-medium">
                 {profileData.status}
               </span>
             </div>
 
-            <span className="px-3 py-1 rounded-full bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 font-mono-code text-[11px] font-semibold tracking-wider uppercase">
+            <span className="text-zinc-600">•</span>
+
+            <span className="font-mono-code text-xs text-indigo-300 font-semibold tracking-wide">
               {profileData.positioning}
             </span>
           </motion.div>
 
-          {/* Name & Primary Headline */}
+          {/* Name & Headline */}
           <div className="space-y-3">
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-6xl lg:text-7xl font-serif-display font-normal tracking-tight text-white leading-[1.08]"
+              transition={{ duration: 0.5, delay: 0.08 }}
+              className="text-4xl sm:text-6xl lg:text-7xl font-serif-display text-white tracking-tight leading-[1.06]"
             >
               {profileData.name}
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="text-lg sm:text-xl font-medium text-indigo-200/90 font-mono-code"
+              transition={{ duration: 0.5, delay: 0.14 }}
+              className="text-lg sm:text-xl font-medium text-indigo-200/95 font-sans"
             >
-              Data Analyst & Systems Engineer
+              Data Analyst & Applied AI Developer
             </motion.p>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-sm sm:text-base text-zinc-400 max-w-xl leading-relaxed font-normal"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-sm sm:text-base text-zinc-300 max-w-xl leading-relaxed font-normal"
             >
-              Transforming messy, unstandardized datasets into predictable decision pipelines.
-              Creator of <span className="text-zinc-100 font-semibold">DigiPath</span> (admissions decision platform), exploratory retail business analytics, and Marathi NLP systems.
+              Transforming unstandardized records into dependable decision intelligence. Creator of{" "}
+              <a href="#projects" className="text-emerald-400 font-medium hover:underline">
+                DigiPath
+              </a>{" "}
+              (admissions predictor), retail profitability modeling with R & Power BI, and Marathi NLP systems.
             </motion.p>
           </div>
 
-          {/* Academic & Geographic Anchor */}
+          {/* Factual Credential Anchor */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
-            className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-mono-code text-zinc-400 border-l-2 border-indigo-500/40 pl-3.5 py-1"
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono-code text-zinc-400 border-l border-indigo-500/40 pl-3.5 py-0.5"
           >
-            <span>MGM College of Engg. & Tech, Panvel (B.E. 2026)</span>
+            <span className="text-zinc-300">MGM College of Engg. & Tech, Panvel (B.E. 2026)</span>
             <span className="text-zinc-600 hidden sm:inline">•</span>
             <span>Navi Mumbai, India</span>
           </motion.div>
 
-          {/* Primary Action Buttons */}
+          {/* Primary Action Row */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-wrap items-center gap-3 pt-2"
           >
             <a
               href="#projects"
               onMouseEnter={() => soundManager.playHover()}
               onClick={() => soundManager.playClick()}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs sm:text-sm transition-all shadow-lg shadow-white/5 hover:scale-[1.02] active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs sm:text-sm transition-all shadow-md shadow-white/5 hover:scale-[1.02] active:scale-95"
             >
-              <span>Explore Projects</span>
-              <ArrowDown className="w-4 h-4" />
+              <span>Selected Work</span>
+              <ArrowDown className="w-3.5 h-3.5 text-zinc-700" />
             </a>
 
             <a
@@ -166,7 +174,7 @@ export function Hero({ onOpenTerminal }: HeroProps) {
               rel="noopener noreferrer"
               onMouseEnter={() => soundManager.playHover()}
               onClick={() => soundManager.playClick()}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-zinc-900/90 hover:bg-zinc-800/90 border border-zinc-700/70 text-zinc-200 text-xs sm:text-sm font-medium transition-all shadow-md hover:scale-[1.02]"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-750 text-zinc-200 text-xs sm:text-sm font-medium transition-all hover:scale-[1.02]"
             >
               <FileText className="w-4 h-4 text-indigo-400" />
               <span>Resume (PDF)</span>
@@ -180,8 +188,8 @@ export function Hero({ onOpenTerminal }: HeroProps) {
                   onOpenTerminal();
                 }}
                 onMouseEnter={() => soundManager.playHover()}
-                className="flex items-center gap-1.5 px-4 py-3 rounded-xl bg-indigo-950/30 hover:bg-indigo-950/60 border border-indigo-500/30 hover:border-indigo-400/50 text-indigo-300 font-mono-code text-xs transition-all"
-                title="Launch Developer Terminal Easter Egg"
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-indigo-950/40 hover:bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 font-mono-code text-xs transition-all"
+                title="Open Interactive Terminal Sandbox (Ctrl+K)"
               >
                 <Terminal className="w-3.5 h-3.5 text-indigo-400" />
                 <span>CLI</span>
@@ -189,15 +197,15 @@ export function Hero({ onOpenTerminal }: HeroProps) {
             )}
 
             {/* Quick Links */}
-            <div className="flex items-center gap-1.5 pl-2 border-l border-zinc-800">
+            <div className="flex items-center gap-1 pl-2 border-l border-zinc-800">
               <a
                 href={profileData.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 onMouseEnter={() => soundManager.playHover()}
                 onClick={() => soundManager.playClick()}
-                className="p-2.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white transition-all"
-                title="GitHub Profile"
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white transition-all"
+                title="GitHub"
               >
                 <Github className="w-4 h-4" />
               </a>
@@ -208,8 +216,8 @@ export function Hero({ onOpenTerminal }: HeroProps) {
                 rel="noopener noreferrer"
                 onMouseEnter={() => soundManager.playHover()}
                 onClick={() => soundManager.playClick()}
-                className="p-2.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-blue-400 transition-all"
-                title="LinkedIn Profile"
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-blue-400 transition-all"
+                title="LinkedIn"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
@@ -217,8 +225,8 @@ export function Hero({ onOpenTerminal }: HeroProps) {
               <button
                 onClick={handleCopyEmail}
                 onMouseEnter={() => soundManager.playHover()}
-                className="p-2.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-indigo-300 transition-all"
-                title="Copy Email Address"
+                className="p-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-indigo-300 transition-all"
+                title="Copy email address"
               >
                 {copiedEmail ? (
                   <Check className="w-4 h-4 text-emerald-400" />
@@ -230,106 +238,111 @@ export function Hero({ onOpenTerminal }: HeroProps) {
           </motion.div>
         </div>
 
-        {/* Right Column: Architectural Pipeline Card (5 cols) */}
+        {/* Right Column: The Authorial "Data Transformation Engine" (5 cols) */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="lg:col-span-5"
         >
           <SpotlightCard
-            spotlightColor="rgba(99, 102, 241, 0.16)"
-            className="p-6 sm:p-7 border-zinc-800/90 bg-gradient-to-br from-zinc-950/90 via-zinc-900/40 to-zinc-950/90 shadow-2xl space-y-5"
+            spotlightColor="rgba(99, 102, 241, 0.14)"
+            className="p-6 bg-zinc-950/90 border-zinc-800 shadow-2xl space-y-4"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+            {/* Header: Title & Selector */}
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-850">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-                <span className="text-xs font-mono-code text-zinc-300 font-semibold uppercase tracking-wider">
-                  SYSTEM ARCHITECTURE
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs font-mono-code text-zinc-200 font-semibold uppercase tracking-wider">
+                  DATA TRANSFORMATION ENGINE
                 </span>
               </div>
-              <span className="text-[11px] font-mono-code text-indigo-400/90 bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-500/20">
-                End-to-End Pipeline
+              <span className="text-[11px] font-mono-code text-zinc-400">
+                Live Logic Flow
               </span>
             </div>
 
-            <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-              How Vishwadeep designs data systems: connecting messy source records to validated, user-ready decision products.
-            </p>
-
-            {/* Interactive 4-Stage Pipeline */}
-            <div className="space-y-2.5">
-              {pipelineStages.map((stage, idx) => {
-                const Icon = stage.icon;
-                const isSelected = activePipelineStage === idx;
-                return (
-                  <div
-                    key={stage.step}
-                    onClick={() => {
-                      soundManager.playHover();
-                      setActivePipelineStage(idx);
-                    }}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-zinc-800/80 border-indigo-500/50 shadow-md shadow-indigo-500/10"
-                        : "bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/80 hover:bg-zinc-900/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className={`p-1.5 rounded-lg border text-xs ${
-                            isSelected
-                              ? "bg-indigo-950 border-indigo-500/40 text-indigo-300"
-                              : "bg-zinc-900 border-zinc-800 text-zinc-400"
-                          }`}
-                        >
-                          <Icon className="w-3.5 h-3.5" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-mono-code font-bold text-zinc-500">
-                              {stage.step}
-                            </span>
-                            <h4 className="text-xs font-semibold text-zinc-200">
-                              {stage.name}
-                            </h4>
-                          </div>
-                          <p className="text-[11px] text-zinc-400 line-clamp-1 mt-0.5">
-                            {stage.desc}
-                          </p>
-                        </div>
-                      </div>
-
-                      <span
-                        className={`text-[10px] font-mono-code px-2 py-0.5 rounded-md shrink-0 ${
-                          isSelected
-                            ? "bg-indigo-500/20 text-indigo-300 font-semibold"
-                            : "text-zinc-500"
-                        }`}
-                      >
-                        {stage.status}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Interactive Domain Selector Chips */}
+            <div className="grid grid-cols-3 gap-1 p-1 bg-zinc-900/70 rounded-xl text-xs font-mono-code">
+              {(
+                [
+                  { id: "digipath", label: "Admissions" },
+                  { id: "retail", label: "Retail EDA" },
+                  { id: "kosh", label: "Marathi NLP" },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    soundManager.playHover();
+                    setActiveDomain(tab.id);
+                  }}
+                  className={`py-1.5 px-2 rounded-lg text-center transition-all ${
+                    activeDomain === tab.id
+                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            {/* Bottom Status Row */}
-            <div className="pt-2 border-t border-zinc-850 flex items-center justify-between text-[11px] font-mono-code text-zinc-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Deterministic Logic</span>
+            {/* Live 3-Stage Transformation Process */}
+            <div className="space-y-2.5 pt-1 font-mono-code text-xs">
+              {/* Stage 1: Input Data Stream */}
+              <div className="p-3 rounded-xl bg-zinc-900/40 border border-zinc-850/80 space-y-1">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-zinc-400 font-bold uppercase">01 / INPUT DATA STREAM</span>
+                  <span className="text-zinc-400 text-[10px]">Unprocessed Record</span>
+                </div>
+                <p className="text-zinc-200 font-medium pt-0.5">{currentCase.inputData}</p>
+                <p className="text-[11px] text-zinc-400 leading-normal">{currentCase.rawFormat}</p>
+              </div>
+
+              {/* Stage 2: Transformation Logic */}
+              <div className="p-3 rounded-xl bg-indigo-950/25 border border-indigo-500/25 space-y-1">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-indigo-300 font-bold uppercase">02 / ANALYTICAL TRANSFORMATION</span>
+                  <span className="text-indigo-400 text-[10px]">Processing</span>
+                </div>
+                <p className="text-zinc-200 text-[11px] leading-relaxed font-sans">{currentCase.transformation}</p>
+              </div>
+
+              {/* Stage 3: Synthesized Intelligence */}
+              <div className="p-3 rounded-xl bg-emerald-950/25 border border-emerald-500/25 space-y-1">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-emerald-300 font-bold uppercase">03 / DECISION INTELLIGENCE</span>
+                  <span className="text-emerald-400 text-[10px]">Validated Output</span>
+                </div>
+                <p className="text-emerald-200 font-semibold">{currentCase.outputResult}</p>
+                <p className="text-[11px] text-zinc-400">{currentCase.verdict}</p>
+              </div>
+            </div>
+
+            {/* Bottom Telemetry Bar */}
+            <div className="pt-2 border-t border-zinc-850 flex items-center justify-between text-xs font-mono-code text-zinc-400">
+              <span className="text-zinc-400">
+                Domain: <span className="text-zinc-300">{currentCase.tag}</span>
               </span>
-              <span className="text-zinc-500">
-                Stage {activePipelineStage + 1} of 4
+              <span className="text-indigo-400 hover:underline cursor-pointer" onClick={() => soundManager.playClick()}>
+                Explore project ↓
               </span>
             </div>
           </SpotlightCard>
         </motion.div>
       </div>
+
+      {/* Subtle organic connector pointing into Selected Work */}
+      <div className="flex justify-center pt-8">
+        <a
+          href="#projects"
+          className="flex items-center gap-1.5 text-xs font-mono-code text-zinc-400 hover:text-zinc-300 transition-colors"
+        >
+          <span>Selected Work</span>
+          <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+        </a>
+      </div>
     </section>
   );
 }
-

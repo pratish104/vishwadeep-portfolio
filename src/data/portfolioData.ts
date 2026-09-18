@@ -28,12 +28,12 @@ export interface ProjectItem {
 export const profileData = {
   name: "Vishwadeep Pratap",
   preferredName: "Pratish",
-  role: "Data Analyst & Systems Engineer",
+  role: "Data Analyst & Applied AI Developer",
   positioning: "DATA × AI × ENGINEERING",
   location: "Navi Mumbai, India",
   summary:
-    "Computer Engineering undergraduate with hands-on experience in data processing, data validation, exploratory data analytics, and machine learning systems. Experienced in building dependable data products that bridge raw data pipelines with intuitive user interfaces.",
-  status: "Available for Data & Engineering Roles",
+    "Computer Engineering undergraduate specializing in Data Analytics, Exploratory Data Modeling, and Applied AI. Experienced in building dependable data products that transform raw, unstandardized records into reliable decisions.",
+  status: "Available for Data & Applied AI Roles",
   links: {
     email: "pratapvishwadeep@gmail.com",
     github: "https://github.com/pratish104",
@@ -41,10 +41,10 @@ export const profileData = {
     resume: "/Vishwadeep_Pratap_Resume.pdf",
   },
   stats: [
-    { label: "Core Discipline", value: "Data Analytics & ML" },
-    { label: "Flagship Project", value: "DigiPath Predictor" },
-    { label: "Education", value: "MGM College (B.E. 2026)" },
-    { label: "Competition Honors", value: "3 Verified Awards" },
+    { label: "Core Focus", value: "Data Analytics & ML" },
+    { label: "Flagship Work", value: "DigiPath Predictor" },
+    { label: "Academic Degree", value: "MGM College (B.E. 2026)" },
+    { label: "Recognition", value: "3 Competition Awards" },
   ],
 };
 
@@ -77,8 +77,8 @@ export const featuredProjects: ProjectItem[] = [
     accentColor: "#10b981", // Emerald
     image: "/projects/digipath.png",
     metrics: [
-      { label: "Primary Pipeline", value: "Python + SQL" },
-      { label: "Filtering Logic", value: "Branch, City, Category" },
+      { label: "Data Pipeline", value: "Python + SQL Cutoff Engine" },
+      { label: "Filtering Logic", value: "Branch, City, Category Match" },
       { label: "Safety System", value: "Scam Detection Heuristic" },
     ],
     problemStatement:
@@ -112,9 +112,9 @@ export const featuredProjects: ProjectItem[] = [
     statusType: "interactive-preview",
     accentColor: "#6366f1", // Indigo
     metrics: [
-      { label: "Analysis Environment", value: "R & RStudio" },
-      { label: "Visualization", value: "Power BI Dashboards" },
-      { label: "Technique", value: "Exploratory Data Analysis" },
+      { label: "Core Analysis", value: "R & RStudio Environment" },
+      { label: "Executive BI", value: "Power BI Reporting Suite" },
+      { label: "Methodology", value: "Exploratory Margin Modeling" },
     ],
     problemStatement:
       "Raw transactional records obscure critical business dynamics: high-revenue items frequently generate low or negative net margins due to poorly calibrated discounts.",
@@ -148,9 +148,9 @@ export const featuredProjects: ProjectItem[] = [
     statusType: "research-prototype",
     accentColor: "#8b5cf6", // Purple/Violet
     metrics: [
-      { label: "Target Language", value: "Marathi (Devanagari)" },
-      { label: "Core Task", value: "Style Rewrite & Paraphrase" },
-      { label: "Architecture", value: "Python NLP Pipeline" },
+      { label: "Target Language", value: "Marathi (Devanagari Script)" },
+      { label: "Core Task", value: "Contextual Style Transformation" },
+      { label: "Pipeline", value: "Python Devanagari Parser" },
     ],
     problemStatement:
       "Mainstream text transformation platforms like QuillBot cater predominantly to English. Vernacular Indian languages like Marathi suffer from inaccurate translation and lost grammatical nuance.",
@@ -184,9 +184,9 @@ export const featuredProjects: ProjectItem[] = [
     statusType: "verified-repo",
     accentColor: "#0ea5e9", // Sky Blue
     metrics: [
-      { label: "Focus Areas", value: "Digital Forensics & Network Security" },
-      { label: "Tooling", value: "Kali Linux, Python, Memory Parsers" },
-      { label: "Verification", value: "Systematic Artifact Extraction" },
+      { label: "Focus Areas", value: "Memory Forensics & Network Triage" },
+      { label: "Environment", value: "Kali Linux & Volatility Parsers" },
+      { label: "Pipeline", value: "Automated Incident Forensics" },
     ],
     problemStatement:
       "Manual incident triage is sluggish and error-prone during active system investigations. Extracting volatile memory artifacts and monitoring live network flows requires automated, reliable scripting.",
@@ -217,10 +217,10 @@ export const experienceTimeline = [
     featured: false,
   },
   {
-    role: "Voiceover / Speech Data Recording Assistant",
+    role: "Speech Data Recording Assistant",
     organization: "Indika AI Pvt. Ltd",
     period: "10/2022 - 12/2022",
-    type: "AI Dataset Training",
+    type: "AI Audio Dataset",
     summary:
       "Recorded 100+ standardized speech dataset samples for AI training pipelines under strict acoustic and phonetic quality thresholds. Followed project documentation guidelines and completed assigned data collection objectives within target timelines.",
     tags: ["Speech Data Collection", "AI Training Dataset", "Data Documentation"],
@@ -234,20 +234,20 @@ export const educationData = [
     institution: "MGM College of Engineering & Technology, Panvel",
     period: "Graduation 2026",
     details: "Core focus on Data Structures, Database Management Systems (DBMS), Operating Systems, and Applied Machine Learning.",
-    badge: "Current Degree",
+    badge: "B.E. 2026",
   },
   {
     degree: "Higher Secondary Certificate (HSC) — Science",
     institution: "G.N. Khalsa College of Science, Commerce & Arts",
     period: "Completed",
-    details: "Score: 78% · Foundation in Mathematics, Statistics, and Physical Sciences.",
+    details: "Score: 78% · Strong grounding in Mathematics, Statistics, and Analytical Sciences.",
     badge: "78%",
   },
   {
     degree: "Secondary School Certificate (SSC)",
     institution: "Social Service League High School",
     period: "Completed",
-    details: "Score: 72% · Academic fundamentals and analytical problem-solving.",
+    details: "Score: 72% · Fundamental problem solving, logic, and quantitative foundations.",
     badge: "72%",
   },
 ];
@@ -256,72 +256,74 @@ export const awardsData = [
   {
     title: "1st Prize — Nexus AI Quiz Competition",
     category: "AI & Machine Learning",
-    description: "Awarded first place in an inter-college technical quiz on artificial intelligence, machine learning architectures, algorithmic efficiency, and data science concepts.",
-    highlight: "1st Place Winner",
-    date: "Nexus Competition",
+    description: "Awarded first place in an inter-college competition testing deep understanding of artificial intelligence concepts, machine learning algorithms, and data modeling principles.",
+    highlight: "1st Place",
+    date: "Nexus AI Competition",
   },
   {
     title: "1st Prize — IEEE Paper Presentation",
     category: "Technical Research",
-    description: "Secured first prize for presenting technical research evaluating modern engineering architectures, methodology clarity, and practical problem resolution.",
-    highlight: "1st Place Winner",
-    date: "IEEE Event",
+    description: "Secured first prize for presenting technical engineering research evaluating architectural methodology, algorithmic clarity, and applied problem resolution.",
+    highlight: "1st Place",
+    date: "IEEE Technical Event",
   },
   {
     title: "3rd Prize — Pillai HOC TechExpo",
-    category: "Project & Innovation Expo",
-    description: "Recognized with third prize for demonstrating applied technical innovation, system architecture design, and functional implementation at the TechExpo.",
-    highlight: "3rd Place Winner",
-    date: "TechExpo",
+    category: "Technical Innovation",
+    description: "Awarded third prize for demonstrating technical project innovation, system architecture design, and working prototype execution at the annual TechExpo.",
+    highlight: "3rd Place",
+    date: "Pillai TechExpo",
   },
 ];
 
 export const skillCategories = [
   {
     title: "Data Analytics & Validation",
-    description: "Data cleaning, statistical querying, validation pipelines & reporting",
+    subtitle: "Core Production Stack",
+    description: "Data cleaning, statistical querying, validation pipelines & executive reporting",
     skills: [
-      "Python",
-      "SQL",
-      "Pandas",
-      "NumPy",
-      "Microsoft Excel",
-      "Google Sheets",
-      "Data Cleaning",
-      "Data Validation",
-      "Exploratory Data Analysis (EDA)",
-      "Reporting & Documentation",
+      { name: "Python", tier: "primary" },
+      { name: "SQL", tier: "primary" },
+      { name: "Pandas", tier: "primary" },
+      { name: "NumPy", tier: "primary" },
+      { name: "Microsoft Excel", tier: "primary" },
+      { name: "Data Cleaning", tier: "primary" },
+      { name: "Data Validation", tier: "primary" },
+      { name: "Exploratory Data Analysis (EDA)", tier: "primary" },
+      { name: "Google Sheets", tier: "secondary" },
+      { name: "Reporting & Documentation", tier: "secondary" },
     ],
     accent: "emerald",
   },
   {
     title: "AI, Machine Learning & NLP",
-    description: "Predictive algorithms, natural language processing & linguistic modeling",
+    subtitle: "Applied Modeling",
+    description: "Predictive algorithms, natural language processing & Devanagari text modeling",
     skills: [
-      "Machine Learning",
-      "Scikit-learn",
-      "Natural Language Processing (NLP)",
-      "Text Processing",
-      "Marathi Language Processing",
-      "Devanagari Normalization",
-      "PyTorch Fundamentals",
+      { name: "Machine Learning", tier: "primary" },
+      { name: "Scikit-learn", tier: "primary" },
+      { name: "Natural Language Processing (NLP)", tier: "primary" },
+      { name: "Text Processing", tier: "primary" },
+      { name: "Marathi Language Processing", tier: "primary" },
+      { name: "Devanagari Normalization", tier: "primary" },
+      { name: "PyTorch Fundamentals", tier: "secondary" },
     ],
     accent: "indigo",
   },
   {
-    title: "Systems, BI & Engineering",
-    description: "Business intelligence, web engineering & operational tooling",
+    title: "Analytics Tools & Engineering",
+    subtitle: "Tooling & Delivery",
+    description: "Business intelligence, interface engineering & operational environments",
     skills: [
-      "R & RStudio",
-      "Power BI",
-      "FastAPI / Flask",
-      "React",
-      "Git & GitHub",
-      "Linux / Bash",
-      "Kali Linux",
-      "Jupyter Notebook",
+      { name: "R & RStudio", tier: "primary" },
+      { name: "Power BI", tier: "primary" },
+      { name: "FastAPI / Flask", tier: "secondary" },
+      { name: "React & TypeScript", tier: "secondary" },
+      { name: "Git & GitHub", tier: "primary" },
+      { name: "Linux / Bash", tier: "primary" },
+      { name: "Kali Linux", tier: "secondary" },
+      { name: "Jupyter Notebook", tier: "primary" },
     ],
     accent: "sky",
   },
 ];
-
