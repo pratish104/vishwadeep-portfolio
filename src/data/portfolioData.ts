@@ -1,31 +1,39 @@
+export interface ProjectMetric {
+  label: string;
+  value: string;
+}
+
 export interface ProjectItem {
   id: string;
   title: string;
   tagline: string;
-  category: "Cybersecurity" | "AI & Networks" | "NLP & AI" | "Machine Learning";
+  category: "Data Product" | "Data Analytics" | "NLP & AI" | "Systems Engineering";
   description: string;
   architecture: string;
-  dataflow: string[];
-  securitySpecs?: string[];
-  metrics: { label: string; value: string }[];
+  pipeline: string[];
   features: string[];
   technologies: string[];
-  github: string;
+  github?: string;
   liveDemo?: string;
-  badge: string;
-  accent: string;
-  color: string;
+  statusLabel: string;
+  statusType: "verified-repo" | "interactive-preview" | "research-prototype";
+  accentColor: string;
+  image?: string;
+  metrics: ProjectMetric[];
+  problemStatement: string;
+  approach: string;
+  toolsNote?: string;
 }
 
 export const profileData = {
   name: "Vishwadeep Pratap",
   preferredName: "Pratish",
-  title: "Computer Engineering Student",
-  specialization: "Full-Stack Development • Machine Learning • Cybersecurity",
+  role: "Data Analyst & Systems Engineer",
+  positioning: "DATA × AI × ENGINEERING",
+  location: "Navi Mumbai, India",
   summary:
-    "Passionate Computer Engineering undergraduate specializing in building resilient cybersecurity tools, deep learning models, and high-performance full-stack web applications.",
-  location: "India • Open to Global Remote Roles",
-  status: "Available for Internships & Full-Time Roles",
+    "Computer Engineering undergraduate with hands-on experience in data processing, data validation, exploratory data analytics, and machine learning systems. Experienced in building dependable data products that bridge raw data pipelines with intuitive user interfaces.",
+  status: "Available for Data & Engineering Roles",
   links: {
     email: "pratapvishwadeep@gmail.com",
     github: "https://github.com/pratish104",
@@ -33,258 +41,287 @@ export const profileData = {
     resume: "/Vishwadeep_Pratap_Resume.pdf",
   },
   stats: [
-    { label: "Core Pillars", value: "Full-Stack, ML & Cyber" },
-    { label: "Major Systems Built", value: "4 Production Projects" },
-    { label: "Primary Languages", value: "Python, TypeScript, SQL" },
-    { label: "Environment", value: "Linux / Kali / Cloud" },
+    { label: "Core Discipline", value: "Data Analytics & ML" },
+    { label: "Flagship Project", value: "DigiPath Predictor" },
+    { label: "Education", value: "MGM College (B.E. 2026)" },
+    { label: "Competition Honors", value: "3 Verified Awards" },
   ],
 };
 
 export const featuredProjects: ProjectItem[] = [
   {
-    id: "forensiq",
-    title: "ForensiQ",
-    tagline: "Automated Incident Response & Digital Forensics Toolkit",
-    category: "Cybersecurity",
+    id: "digipath",
+    title: "DigiPath — Admission Decision Intelligence Platform",
+    tagline: "End-to-end college prediction engine turning complex cutoff data into clear student decisions.",
+    category: "Data Product",
     description:
-      "A high-performance automated forensics toolkit designed for security analysts to extract volatile system artifacts, identify memory injections, uncover autorun persistence hooks, and reconstruct incident timelines during active breach investigations.",
+      "A data-driven platform engineered for diploma and engineering aspirants to evaluate eligible colleges based on percentage cutoffs, category distributions, branch preferences, and regional quotas. Eliminates confusion caused by unstandardized admission records through an automated validation and filtering pipeline. Also includes scam detection heuristics for job and internship postings.",
     architecture:
-      "Modular Python engine integrated with Volatility memory analysis, real-time YARA signature matching, and automated forensic report generation.",
-    dataflow: [
-      "1. Ingestion: Live memory capture dump + volatile RAM acquisition",
-      "2. Parsing: Kernel struct parsing & VAD tree walking via Volatility core",
-      "3. Detection: YARA signature matching across raw binary streams & hooks",
-      "4. Reconstruction: Event log correlation into chronological timeline JSON",
-    ],
-    securitySpecs: [
-      "Volatile RAM Artifact Extraction",
-      "Process Injection & Hollow DLL Detection",
-      "Registry Autoruns & Hidden Service Scan",
-      "Automated Cryptographic Hash Verification (SHA-256)",
-    ],
-    metrics: [
-      { label: "Triage Speedup", value: "85% vs manual inspection" },
-      { label: "Extraction Coverage", value: "24+ Artifact Types" },
-      { label: "Supported Kernels", value: "Linux & Windows" },
+      "Modular Python and SQL engine connecting multi-criteria cutoff parsing, percentile threshold validation, and student-focused query filters.",
+    pipeline: [
+      "1. Ingestion: Processing multi-year engineering and diploma admission cutoff records.",
+      "2. Sanitization: Normalizing category classifications, branch names, and quota criteria.",
+      "3. Recommendation Logic: Multi-criteria filtering matching student percentile against historical trends.",
+      "4. Safety Heuristics: Rule-based verification flag to warn students about fraudulent internship listings.",
     ],
     features: [
-      "Volatile memory artifact extraction & suspicious process detection",
-      "Registry & autorun persistence mechanism discovery",
-      "Automated system event log timeline reconstruction",
-      "YARA pattern matching for adversary signatures & shellcode",
+      "Multi-factor eligible college prediction based on rank/percentage",
+      "Dynamic filtering by city, engineering branch, and quota category",
+      "Automated cleaning and validation of inconsistent admission records",
+      "Integrated scam and fraud heuristic flags for job/internship listings",
     ],
-    technologies: ["Python", "FastAPI", "Kali Linux", "Volatility", "YARA", "Bash", "Linux Internals"],
-    github: "https://github.com/pratish104",
-    badge: "Active Security Tool",
-    accent: "from-cyan-500/20 to-blue-500/10 border-cyan-500/30",
-    color: "#00e5ff",
+    technologies: ["Python", "SQL", "Data Preprocessing", "Data Validation", "Algorithm Design", "FastAPI / Flask"],
+    github: "https://github.com/pratish104/DigiPath-College-Predictor",
+    statusLabel: "Active Project · Verified GitHub",
+    statusType: "verified-repo",
+    accentColor: "#10b981", // Emerald
+    image: "/projects/digipath.png",
+    metrics: [
+      { label: "Primary Pipeline", value: "Python + SQL" },
+      { label: "Filtering Logic", value: "Branch, City, Category" },
+      { label: "Safety System", value: "Scam Detection Heuristic" },
+    ],
+    problemStatement:
+      "State admission datasets are scattered across disparate PDFs and tables with inconsistent formatting. Students struggle to identify realistic college options matching their percentile, category, and preferred location.",
+    approach:
+      "Built a structured data pipeline that cleans and validates admission records, applying multi-parameter eligibility logic to present straightforward recommendations.",
   },
   {
-    id: "shadownet",
-    title: "ShadowNet",
-    tagline: "AI-Powered Real-Time Network Intrusion & Threat Detection",
-    category: "AI & Networks",
+    id: "retail-sales",
+    title: "Retail Sales Analysis & BI Dashboard",
+    tagline: "Transforming transactional records into executive clarity through exploratory analysis and KPI modeling.",
+    category: "Data Analytics",
     description:
-      "An intelligent network defense system utilizing deep neural networks to inspect live packet streams, detect covert exfiltration channels, classify anomalous traffic, and trigger real-time quarantine protocols with sub-millisecond telemetry.",
+      "A rigorous retail analytics case study that uncovers profitability drivers, sales trends, customer segments, and regional margins. Built with R and RStudio for data cleaning and exploratory data analysis (EDA), paired with an interactive Power BI dashboard for visual reporting.",
     architecture:
-      "Low-overhead packet capture pipeline with Scapy/Wireshark hooks, PyTorch deep learning classifier, and a live WebSocket telemetry dashboard.",
-    dataflow: [
-      "1. Sniffing: Promiscuous packet capture stream via Scapy/libpcap driver",
-      "2. Disassembly: Flow aggregation, TCP flag matrix, payload entropy scoring",
-      "3. Classification: PyTorch multi-layer neural network anomaly evaluation",
-      "4. Mitigation: Automatic iptables quarantine trigger + WebSocket broadcast",
-    ],
-    securitySpecs: [
-      "Microsecond Packet Flow Disassembly",
-      "Deep Learning Adversarial Vector Classifier",
-      "Automated IP & Port Firewall Quarantine",
-      "Covert Exfiltration & Port Scan Alerter",
-    ],
-    metrics: [
-      { label: "Detection Latency", value: "< 1.2ms per flow" },
-      { label: "Anomaly Accuracy", value: "98.4% Benchmark" },
-      { label: "Telemetry Protocol", value: "Real-time WebSockets" },
+      "R/RStudio statistical processing pipeline feeding an interactive Power BI business intelligence reporting model.",
+    pipeline: [
+      "1. Data Cleaning (R): Type transformation, outlier detection, date normalization, and missing record handling.",
+      "2. Exploratory Analysis: Evaluating sales trends, order volumes, and regional margin distribution.",
+      "3. KPI Modeling: Calculating profit margins, discount impact ratios, and customer segment contributions.",
+      "4. Power BI Dashboard: Interactive multi-dimensional visuals for category and time-series drilldowns.",
     ],
     features: [
-      "Real-time packet stream inspection & protocol disassembly",
-      "Adversarial traffic pattern classification using deep learning",
-      "Automated IP/port isolation triggers for identified threats",
-      "Real-time telemetry stream with alert level escalation",
+      "Exploratory Data Analysis (EDA) uncovering regional profit disparities",
+      "Comprehensive profit margin and discount sensitivity analysis in R",
+      "Interactive Power BI executive dashboard with drill-down filters",
+      "Actionable business insights distinguishing revenue drivers from profit leaders",
     ],
-    technologies: ["PyTorch", "Python", "Scapy", "FastAPI", "React", "Tailwind CSS", "WebSockets"],
-    github: "https://github.com/pratish104",
-    badge: "AI Research Platform",
-    accent: "from-indigo-500/20 to-purple-500/10 border-indigo-500/30",
-    color: "#818cf8",
+    technologies: ["R", "RStudio", "Power BI", "Data Cleaning", "Exploratory Data Analysis (EDA)", "KPI Modeling"],
+    statusLabel: "Interactive Case Study · Portfolio Preview",
+    statusType: "interactive-preview",
+    accentColor: "#6366f1", // Indigo
+    metrics: [
+      { label: "Analysis Environment", value: "R & RStudio" },
+      { label: "Visualization", value: "Power BI Dashboards" },
+      { label: "Technique", value: "Exploratory Data Analysis" },
+    ],
+    problemStatement:
+      "Raw transactional records obscure critical business dynamics: high-revenue items frequently generate low or negative net margins due to poorly calibrated discounts.",
+    approach:
+      "Employed R and RStudio to audit transaction integrity and compute margins, then developed a Power BI reporting suite to expose trends and category performance.",
+    toolsNote: "Analyzed strictly using R/RStudio and Power BI.",
   },
   {
-    id: "sangrah",
-    title: "SANGRAH",
-    tagline: "Multilingual NLP Paraphrasing & Language Transformation Engine",
+    id: "kosh",
+    title: "Kosh — Marathi Text Rewriting & Style Transformation",
+    tagline: "Context-aware Devanagari natural language platform for Marathi semantic paraphrasing.",
     category: "NLP & AI",
     description:
-      "An advanced transformer-based natural language processing platform fine-tuned for semantic paraphrasing and context-aware text transformation across regional Indian languages including Marathi and Hindi.",
+      "A natural language processing system developed to perform semantic rewriting and stylistic variation for the Marathi language (internally developed under the project code SANGRAH). Focuses on maintaining semantic intent while reshaping phrasing, syntactic structure, and formality.",
     architecture:
-      "Fine-tuned sequence-to-sequence transformer pipeline with custom tokenization, optimized for low-latency asynchronous API inference.",
-    dataflow: [
-      "1. Input: Regional raw text payload (Marathi / Hindi / English)",
-      "2. Tokenization: Subword Byte-Pair Encoding with multilingual vocab",
-      "3. Generation: Transformer beam search with semantic penalty constraints",
-      "4. Quality Check: Cosine similarity verification against original embedding",
-    ],
-    securitySpecs: [
-      "Custom Subword BPE Multilingual Tokenizer",
-      "Semantic Drift Penalty Constrained Decoding",
-      "High-Throughput Asynchronous FastAPI Inference",
-      "Batch Inference Pipeline Optimization",
-    ],
-    metrics: [
-      { label: "Inference Latency", value: "< 85ms" },
-      { label: "Semantic Retention", value: "0.92 BLEU/Cosine" },
-      { label: "Language Support", value: "Marathi, Hindi, English" },
+      "Python NLP pipeline with Devanagari morphological preprocessing, context preservation scoring, and stylistic rewriting.",
+    pipeline: [
+      "1. Text Ingestion: Raw Devanagari input parsing and grammatical segmenting.",
+      "2. Linguistic Normalization: Context preservation and morphological validation.",
+      "3. Style Modulation: Transforming phrasing across formal, concise, and academic tones.",
+      "4. Semantic Verification: Validating that the intended core message remains uncorrupted.",
     ],
     features: [
-      "Context-aware multilingual paraphrasing & semantic rewriting",
-      "Fine-tuned transformer pipeline for vernacular language NLP",
-      "Custom vocabulary tokenization & syntactic preservation validation",
-      "Sub-100ms inference response with batch processing support",
+      "Context-aware Marathi text rewriting and linguistic paraphrasing",
+      "Tone transformation adapting formal, descriptive, and concise styles",
+      "Preservation of Devanagari grammatical agreement and core meaning",
+      "Interactive evaluation workbench for regional language NLP",
     ],
-    technologies: ["Python", "PyTorch", "HuggingFace Transformers", "FastAPI", "React", "Tailwind CSS"],
-    github: "https://github.com/pratish104",
-    badge: "Production NLP Pipeline",
-    accent: "from-pink-500/20 to-rose-500/10 border-pink-500/30",
-    color: "#f43f5e",
+    technologies: ["Python", "NLP", "Text Processing", "Marathi Linguistic Modeling", "Devanagari Normalization"],
+    statusLabel: "NLP Prototype · Portfolio Preview",
+    statusType: "research-prototype",
+    accentColor: "#8b5cf6", // Purple/Violet
+    metrics: [
+      { label: "Target Language", value: "Marathi (Devanagari)" },
+      { label: "Core Task", value: "Style Rewrite & Paraphrase" },
+      { label: "Architecture", value: "Python NLP Pipeline" },
+    ],
+    problemStatement:
+      "Mainstream text transformation platforms like QuillBot cater predominantly to English. Vernacular Indian languages like Marathi suffer from inaccurate translation and lost grammatical nuance.",
+    approach:
+      "Engineered a language-specific NLP system tuned for Marathi syntactic structures, enabling faithful stylistic rewriting.",
   },
   {
-    id: "digipath",
-    title: "DigiPath",
-    tagline: "Machine Learning Decision Intelligence Platform for Admissions",
-    category: "Machine Learning",
+    id: "forensiq-shadownet",
+    title: "Systems Engineering: ForensiQ & ShadowNet",
+    tagline: "Incident response volatile memory analysis & real-time network anomaly detection.",
+    category: "Systems Engineering",
     description:
-      "An end-to-end data product helping engineering aspirants discover ideal colleges based on admission records, historical rank cutoffs, category distributions, and multi-factor machine learning models.",
+      "A dual demonstration of lower-level systems engineering. ForensiQ automates volatile RAM artifact extraction and forensic timeline reconstruction during incident triage. ShadowNet monitors live packet streams with statistical anomaly detection for network defense.",
     architecture:
-      "Comprehensive data preprocessing & cleaning pipeline, Scikit-Learn predictive model, and a responsive student exploration portal.",
-    dataflow: [
-      "1. Ingestion: Raw multi-year engineering admission PDF & tabular records",
-      "2. Cleansing: Missing value imputation, category harmonization, normalization",
-      "3. Modeling: Gradient Boosted Trees & KNN multi-criteria ranking engine",
-      "4. Delivery: Instant predictive recommendation scoring in interactive UI",
-    ],
-    securitySpecs: [
-      "Automated Inconsistent Dataset Sanitization",
-      "Multi-Variable Cutoff Probability Matrix",
-      "Client-Side Fast Filter Caching Engine",
-      "Responsive Accessible User Workflow",
-    ],
-    metrics: [
-      { label: "Historical Records", value: "50,000+ Admission Rows" },
-      { label: "Pipeline Validation", value: "100% Schema Conformance" },
-      { label: "Recommendation Time", value: "< 20ms" },
+      "Python systems engine integrated with Linux volatile memory parsers, raw packet telemetry, and automated security reports.",
+    pipeline: [
+      "1. Memory Triage: Automated extraction of volatile process trees, autorun hooks, and injected DLLs.",
+      "2. Packet Telemetry: Live network flow inspection and protocol disassembly.",
+      "3. Incident Correlation: Chronological reconstruction of system events and abnormal connection spikes.",
+      "4. Analyst Summary: Structured technical outputs for security verification.",
     ],
     features: [
-      "Multi-factor admission probability prediction engine",
-      "Automated cleaning & validation for inconsistent admission datasets",
-      "Interactive filtering by rank, branch, category, and historical trends",
-      "Modern accessible student portal with instant recommendation feedback",
+      "Automated volatile RAM artifact extraction and process validation",
+      "System event log timeline reconstruction for forensic analysis",
+      "Real-time packet capture and flow classification hooks",
+      "Hardened Linux scripting and diagnostic automation",
     ],
-    technologies: ["Python", "Scikit-Learn", "Pandas", "NumPy", "React", "FastAPI", "Tailwind CSS"],
-    github: "https://github.com/pratish104/DigiPath-College-Predictor",
-    badge: "Deployed Platform",
-    accent: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30",
-    color: "#10b981",
-  },
-];
-
-export const skillCategories = [
-  {
-    title: "Cybersecurity & Operations",
-    description: "Defensive triage, memory forensics & network inspection",
-    iconName: "Shield",
-    color: "cyan",
-    skills: [
-      { name: "Kali Linux", level: "Advanced", featured: true },
-      { name: "Digital Forensics", level: "Advanced", featured: true },
-      { name: "Network Security", level: "Proficient", featured: true },
-      { name: "Volatility & Memory Triage", level: "Proficient" },
-      { name: "Wireshark & Scapy", level: "Advanced" },
-      { name: "YARA Rules & Threat Intel", level: "Proficient" },
+    technologies: ["Python", "Kali Linux", "Digital Forensics", "Network Security", "Linux Internals", "Bash"],
+    github: "https://github.com/pratish104",
+    statusLabel: "Security Systems · Verified GitHub",
+    statusType: "verified-repo",
+    accentColor: "#0ea5e9", // Sky Blue
+    metrics: [
+      { label: "Focus Areas", value: "Digital Forensics & Network Security" },
+      { label: "Tooling", value: "Kali Linux, Python, Memory Parsers" },
+      { label: "Verification", value: "Systematic Artifact Extraction" },
     ],
-  },
-  {
-    title: "AI, Machine Learning & NLP",
-    description: "Deep learning, transformer architectures & predictive modeling",
-    iconName: "Brain",
-    color: "emerald",
-    skills: [
-      { name: "Python", level: "Advanced", featured: true },
-      { name: "PyTorch", level: "Advanced", featured: true },
-      { name: "Machine Learning", level: "Advanced", featured: true },
-      { name: "NLP & Transformers", level: "Proficient", featured: true },
-      { name: "Scikit-Learn", level: "Advanced" },
-      { name: "Pandas & NumPy", level: "Advanced" },
-    ],
-  },
-  {
-    title: "Full-Stack & Systems",
-    description: "Modern web architectures, asynchronous APIs & typed frontends",
-    iconName: "Layers",
-    color: "indigo",
-    skills: [
-      { name: "React", level: "Advanced", featured: true },
-      { name: "FastAPI", level: "Advanced", featured: true },
-      { name: "TypeScript", level: "Proficient", featured: true },
-      { name: "Tailwind CSS", level: "Advanced", featured: true },
-      { name: "SQL & Databases", level: "Advanced" },
-      { name: "Node.js & REST APIs", level: "Proficient" },
-    ],
-  },
-  {
-    title: "DevOps & Infrastructure",
-    description: "Linux systems administration, containerization & CI/CD",
-    iconName: "Terminal",
-    color: "amber",
-    skills: [
-      { name: "Linux / Bash", level: "Advanced", featured: true },
-      { name: "Git & GitHub", level: "Advanced", featured: true },
-      { name: "Docker", level: "Proficient" },
-      { name: "Vite & Vercel CI/CD", level: "Advanced" },
-      { name: "Jupyter Notebooks", level: "Advanced" },
-      { name: "Postman & API Testing", level: "Advanced" },
-    ],
+    problemStatement:
+      "Manual incident triage is sluggish and error-prone during active system investigations. Extracting volatile memory artifacts and monitoring live network flows requires automated, reliable scripting.",
+    approach:
+      "Built automated Python-driven forensic utilities that streamline memory analysis, timeline reconstruction, and network telemetry.",
   },
 ];
 
 export const experienceTimeline = [
   {
-    phase: "01",
-    title: "Computer Engineering Foundations",
-    period: "Academic Foundation",
+    role: "Data Analytics Intern",
+    organization: "InAmigos Foundation",
+    period: "08/2026 - Present",
+    type: "Internship",
     summary:
-      "Deep exploration in Computer Engineering core disciplines: Operating Systems, Computer Architecture, Data Structures, Algorithms, Networking protocols, and Database Systems.",
-    tags: ["Computer Engineering", "OS & Networking", "Data Structures", "Python & SQL"],
+      "Support data collection, organization, exploratory analysis, and reporting activities across structured organizational datasets. Utilize spreadsheet analytics and data verification methods to identify patterns, clean inconsistencies, and prepare accurate executive outputs following project guidelines.",
+    tags: ["Data Collection", "Data Cleaning", "Data Analytics", "Reporting", "Spreadsheets"],
+    featured: true,
   },
   {
-    phase: "02",
-    title: "Cybersecurity & Forensic Tooling",
-    period: "Security Focus",
+    role: "Data Entry Intern",
+    organization: "CollegeAftermath",
+    period: "07/2026 - Present",
+    type: "Internship",
     summary:
-      "Architected ForensiQ for automated volatile memory extraction and ShadowNet for real-time AI packet inspection and intrusion detection.",
-    tags: ["Kali Linux", "Digital Forensics", "Network Security", "Threat Detection"],
+      "Perform high-precision data entry and maintain organized structured records. Review dataset entries for completeness, internal consistency, and schema accuracy prior to submission while adhering strictly to documentation standards.",
+    tags: ["Data Entry", "Data Verification", "Record Management", "Quality Assurance"],
+    featured: false,
   },
   {
-    phase: "03",
-    title: "AI, NLP & Predictive Intelligence",
-    period: "Machine Learning Focus",
+    role: "Voiceover / Speech Data Recording Assistant",
+    organization: "Indika AI Pvt. Ltd",
+    period: "10/2022 - 12/2022",
+    type: "AI Dataset Training",
     summary:
-      "Engineered transformer-based multilingual paraphrasing platform SANGRAH and developed data-driven admission prediction platform DigiPath.",
-    tags: ["PyTorch", "HuggingFace", "NLP", "Machine Learning", "FastAPI"],
-  },
-  {
-    phase: "04",
-    title: "Full-Stack Systems & Production Architecture",
-    period: "Present & Future",
-    summary:
-      "Building high-performance modern web platforms combining typed React frontends, scalable FastAPI microservices, and production deployment on Vercel.",
-    tags: ["React 19", "FastAPI", "TypeScript", "Tailwind CSS", "Vercel"],
+      "Recorded 100+ standardized speech dataset samples for AI training pipelines under strict acoustic and phonetic quality thresholds. Followed project documentation guidelines and completed assigned data collection objectives within target timelines.",
+    tags: ["Speech Data Collection", "AI Training Dataset", "Data Documentation"],
+    featured: false,
   },
 ];
+
+export const educationData = [
+  {
+    degree: "Bachelor of Engineering (B.E.) in Computer Engineering",
+    institution: "MGM College of Engineering & Technology, Panvel",
+    period: "Graduation 2026",
+    details: "Core focus on Data Structures, Database Management Systems (DBMS), Operating Systems, and Applied Machine Learning.",
+    badge: "Current Degree",
+  },
+  {
+    degree: "Higher Secondary Certificate (HSC) — Science",
+    institution: "G.N. Khalsa College of Science, Commerce & Arts",
+    period: "Completed",
+    details: "Score: 78% · Foundation in Mathematics, Statistics, and Physical Sciences.",
+    badge: "78%",
+  },
+  {
+    degree: "Secondary School Certificate (SSC)",
+    institution: "Social Service League High School",
+    period: "Completed",
+    details: "Score: 72% · Academic fundamentals and analytical problem-solving.",
+    badge: "72%",
+  },
+];
+
+export const awardsData = [
+  {
+    title: "1st Prize — Nexus AI Quiz Competition",
+    category: "AI & Machine Learning",
+    description: "Awarded first place in an inter-college technical quiz on artificial intelligence, machine learning architectures, algorithmic efficiency, and data science concepts.",
+    highlight: "1st Place Winner",
+    date: "Nexus Competition",
+  },
+  {
+    title: "1st Prize — IEEE Paper Presentation",
+    category: "Technical Research",
+    description: "Secured first prize for presenting technical research evaluating modern engineering architectures, methodology clarity, and practical problem resolution.",
+    highlight: "1st Place Winner",
+    date: "IEEE Event",
+  },
+  {
+    title: "3rd Prize — Pillai HOC TechExpo",
+    category: "Project & Innovation Expo",
+    description: "Recognized with third prize for demonstrating applied technical innovation, system architecture design, and functional implementation at the TechExpo.",
+    highlight: "3rd Place Winner",
+    date: "TechExpo",
+  },
+];
+
+export const skillCategories = [
+  {
+    title: "Data Analytics & Validation",
+    description: "Data cleaning, statistical querying, validation pipelines & reporting",
+    skills: [
+      "Python",
+      "SQL",
+      "Pandas",
+      "NumPy",
+      "Microsoft Excel",
+      "Google Sheets",
+      "Data Cleaning",
+      "Data Validation",
+      "Exploratory Data Analysis (EDA)",
+      "Reporting & Documentation",
+    ],
+    accent: "emerald",
+  },
+  {
+    title: "AI, Machine Learning & NLP",
+    description: "Predictive algorithms, natural language processing & linguistic modeling",
+    skills: [
+      "Machine Learning",
+      "Scikit-learn",
+      "Natural Language Processing (NLP)",
+      "Text Processing",
+      "Marathi Language Processing",
+      "Devanagari Normalization",
+      "PyTorch Fundamentals",
+    ],
+    accent: "indigo",
+  },
+  {
+    title: "Systems, BI & Engineering",
+    description: "Business intelligence, web engineering & operational tooling",
+    skills: [
+      "R & RStudio",
+      "Power BI",
+      "FastAPI / Flask",
+      "React",
+      "Git & GitHub",
+      "Linux / Bash",
+      "Kali Linux",
+      "Jupyter Notebook",
+    ],
+    accent: "sky",
+  },
+];
+

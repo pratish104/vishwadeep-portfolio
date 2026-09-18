@@ -1,3 +1,5 @@
+﻿import { useState } from "react";
+import { Achievements } from "./components/Achievements";
 import { Contact } from "./components/Contact";
 import { CyberCanvasBackground } from "./components/CyberCanvasBackground";
 import { DeveloperTerminal } from "./components/DeveloperTerminal";
@@ -13,29 +15,38 @@ export default function App() {
   // Initialize Lenis Kinetic Smooth Scroll
   useSmoothScroll();
 
+  // Developer Terminal Easter Egg State
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 selection:bg-cyan-500/20 selection:text-cyan-200 antialiased relative overflow-x-hidden">
-      {/* 60fps Interactive Particle Constellation Canvas */}
+    <div className="min-h-screen bg-[#090a0f] text-zinc-100 selection:bg-indigo-500/25 selection:text-indigo-200 antialiased relative overflow-x-hidden">
+      {/* Calm Ambient Node Canvas */}
       <CyberCanvasBackground />
 
-      {/* Subtle Background Cyber Grid */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#27272a0a_1px,transparent_1px),linear-gradient(to_bottom,#27272a0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none -z-10" />
+      {/* Subtle Engineering Grid Backdrop */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#1e22300d_1px,transparent_1px),linear-gradient(to_bottom,#1e22300d_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none -z-10" />
 
-      {/* Floating Modern Navbar with Audio FX Equalizer */}
-      <Navbar />
+      {/* Floating Modern Pill Navbar */}
+      <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} />
 
       {/* Main Experience Flow */}
       <main className="relative z-10">
-        <Hero />
+        <Hero onOpenTerminal={() => setIsTerminalOpen(true)} />
         <ProjectsBento />
-        <SkillsBento />
-        <DeveloperTerminal />
         <Experience />
+        <Achievements />
+        <SkillsBento />
         <Contact />
       </main>
 
-      {/* Minimalist Footer */}
+      {/* Minimalist Editorial Footer */}
       <Footer />
+
+      {/* Developer Terminal Easter Egg Sandbox */}
+      <DeveloperTerminal
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+      />
     </div>
   );
 }

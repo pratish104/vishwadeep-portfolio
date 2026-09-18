@@ -3,13 +3,11 @@ import {
   ArrowUpRight,
   Check,
   Copy,
-  ExternalLink,
   FileText,
   Github,
   Linkedin,
   Mail,
-  Send,
-  Sparkles,
+  MapPin,
 } from "lucide-react";
 import { useState } from "react";
 import { profileData } from "../data/portfolioData";
@@ -18,25 +16,12 @@ import { SpotlightCard } from "./SpotlightCard";
 
 export function Contact() {
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [message, setMessage] = useState("");
-  const [sent, setSent] = useState(false);
 
   const handleCopyEmail = () => {
     soundManager.playSuccess();
     navigator.clipboard.writeText(profileData.links.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2500);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
-    soundManager.playSuccess();
-    setSent(true);
-    setTimeout(() => {
-      setMessage("");
-      setSent(false);
-    }, 3000);
   };
 
   const containerVariants = {
@@ -60,24 +45,24 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 max-w-6xl mx-auto">
+    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
       {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.5 }}
-        className="space-y-3 mb-14 text-center sm:text-left"
+        className="space-y-3 mb-14 text-left"
       >
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 text-xs font-mono shadow-[0_0_15px_rgba(0,229,255,0.15)]">
-          <Mail className="w-3.5 h-3.5 text-cyan-400" />
-          <span>// GET IN TOUCH</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 text-xs font-mono-code shadow-sm">
+          <Mail className="w-3.5 h-3.5 text-indigo-400" />
+          <span>// DIRECT INQUIRIES & COLLABORATION</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
-          Let’s Build Something Impactful
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif-display text-white tracking-tight">
+          Let’s Connect & Build
         </h2>
-        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl">
-          I am always open to discussing new engineering opportunities, research collaborations, or technical challenges.
+        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl font-normal leading-relaxed">
+          Open to full-time roles, internships, and research collaborations across Data Analytics, Machine Learning, and Systems Engineering.
         </p>
       </motion.div>
 
@@ -86,195 +71,188 @@ export function Contact() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-40px" }}
-        className="grid grid-cols-1 lg:grid-cols-5 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-6"
       >
-        {/* Left Side: Contact Channels (3 columns) */}
-        <div className="lg:col-span-3 space-y-3.5">
-          {/* Email Card */}
-          <motion.div variants={itemVariants}>
-            <SpotlightCard
-              spotlightColor="rgba(0, 229, 255, 0.15)"
-              onMouseEnter={() => soundManager.playHover()}
-              className="p-5 sm:p-6 flex items-center justify-between gap-4 group hover:border-zinc-700"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="p-3 rounded-2xl bg-zinc-800/80 border border-zinc-700/50 text-cyan-400 group-hover:scale-105 transition-transform">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
-                    Direct Email
-                  </span>
-                  <p className="text-sm sm:text-base font-semibold text-zinc-100 font-mono">
-                    {profileData.links.email}
-                  </p>
-                </div>
+        {/* Left Side: Primary Contact Card (7 cols) */}
+        <motion.div variants={itemVariants} className="lg:col-span-7">
+          <SpotlightCard
+            spotlightColor="rgba(99, 102, 241, 0.14)"
+            onMouseEnter={() => soundManager.playHover()}
+            className="p-7 sm:p-8 bg-zinc-950/80 border-zinc-800/90 shadow-xl space-y-6 flex flex-col justify-between h-full"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono-code text-indigo-400 font-bold uppercase tracking-wider">
+                  PRIMARY COMMUNICATION CHANNEL
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-[10px] font-mono-code text-emerald-400">
+                  Response within 24h
+                </span>
               </div>
 
-              <button
-                onClick={handleCopyEmail}
-                className="p-2.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700 transition-all flex items-center gap-1.5 text-xs font-mono shadow-sm"
-                title="Copy Email Address"
+              <div>
+                <h3 className="text-xl sm:text-2xl font-serif-display text-white">
+                  Send an email directly
+                </h3>
+                <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-normal leading-relaxed">
+                  No automated forms or hidden gateways. Email is delivered directly to my inbox.
+                </p>
+              </div>
+
+              {/* Email Address Display Box */}
+              <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-indigo-400 shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono-code text-zinc-500 uppercase">
+                      Direct Email
+                    </span>
+                    <p className="text-sm font-mono-code font-bold text-zinc-100">
+                      {profileData.links.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={handleCopyEmail}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-750 text-zinc-200 text-xs font-mono-code transition-all"
+                  >
+                    {copiedEmail ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+
+                  <a
+                    href={`mailto:${profileData.links.email}`}
+                    onClick={() => soundManager.playClick()}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs transition-all shadow-sm font-sans"
+                  >
+                    <span>Compose</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Geographical & Availability Footer */}
+            <div className="pt-4 border-t border-zinc-850 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-code text-zinc-400">
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Navi Mumbai, Maharashtra, India</span>
+              </div>
+              <span className="text-emerald-400">
+                Available: Full-time / Internships
+              </span>
+            </div>
+          </SpotlightCard>
+        </motion.div>
+
+        {/* Right Side: Professional Profiles & Resume (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          {/* GitHub Card */}
+          <motion.div variants={itemVariants}>
+            <a
+              href={profileData.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => soundManager.playClick()}
+              className="block"
+            >
+              <SpotlightCard
+                spotlightColor="rgba(255, 255, 255, 0.1)"
+                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-zinc-700 transition-colors group flex items-center justify-between"
               >
-                {copiedEmail ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="hidden sm:inline text-emerald-400">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Copy</span>
-                  </>
-                )}
-              </button>
-            </SpotlightCard>
+                <div className="flex items-center gap-3.5">
+                  <div className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 group-hover:text-white group-hover:scale-105 transition-all">
+                    <Github className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-zinc-100 group-hover:text-indigo-300 transition-colors font-sans">
+                      GitHub Profile
+                    </h4>
+                    <p className="text-xs font-mono-code text-zinc-400">
+                      @pratish104 · Repositories & source code
+                    </p>
+                  </div>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" />
+              </SpotlightCard>
+            </a>
           </motion.div>
 
-          {/* Social Links Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {/* LinkedIn */}
-            <motion.div variants={itemVariants}>
-              <a
-                href={profileData.links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={() => soundManager.playHover()}
-                onClick={() => soundManager.playClick()}
-                className="block h-full"
+          {/* LinkedIn Card */}
+          <motion.div variants={itemVariants}>
+            <a
+              href={profileData.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => soundManager.playClick()}
+              className="block"
+            >
+              <SpotlightCard
+                spotlightColor="rgba(59, 130, 246, 0.12)"
+                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-blue-500/40 transition-colors group flex items-center justify-between"
               >
-                <SpotlightCard
-                  spotlightColor="rgba(59, 130, 246, 0.16)"
-                  className="p-5 h-full flex items-center justify-between group hover:border-blue-500/40"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-500/30 text-blue-400 group-hover:scale-105 transition-transform">
-                      <Linkedin className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase">
-                        Network
-                      </span>
-                      <p className="text-xs font-semibold text-zinc-200">
-                        LinkedIn Profile
-                      </p>
-                    </div>
+                <div className="flex items-center gap-3.5">
+                  <div className="p-2.5 rounded-xl bg-blue-950/50 border border-blue-500/30 text-blue-400 group-hover:scale-105 transition-all">
+                    <Linkedin className="w-5 h-5" />
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </SpotlightCard>
-              </a>
-            </motion.div>
-
-            {/* GitHub */}
-            <motion.div variants={itemVariants}>
-              <a
-                href={profileData.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={() => soundManager.playHover()}
-                onClick={() => soundManager.playClick()}
-                className="block h-full"
-              >
-                <SpotlightCard
-                  spotlightColor="rgba(255, 255, 255, 0.12)"
-                  className="p-5 h-full flex items-center justify-between group hover:border-zinc-600"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-zinc-800/60 border border-zinc-700/50 text-zinc-200 group-hover:scale-105 transition-transform">
-                      <Github className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase">
-                        Code Vault
-                      </span>
-                      <p className="text-xs font-semibold text-zinc-200">
-                        GitHub Repositories
-                      </p>
-                    </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-zinc-100 group-hover:text-blue-300 transition-colors font-sans">
+                      LinkedIn Network
+                    </h4>
+                    <p className="text-xs font-mono-code text-zinc-400">
+                      Vishwadeep Pratap · Professional updates
+                    </p>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </SpotlightCard>
-              </a>
-            </motion.div>
-          </div>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 transition-colors" />
+              </SpotlightCard>
+            </a>
+          </motion.div>
 
-          {/* Resume Download Tile */}
+          {/* Resume PDF Card */}
           <motion.div variants={itemVariants}>
             <a
               href={profileData.links.resume}
               target="_blank"
               rel="noopener noreferrer"
-              onMouseEnter={() => soundManager.playHover()}
               onClick={() => soundManager.playClick()}
               className="block"
             >
               <SpotlightCard
-                spotlightColor="rgba(245, 158, 11, 0.16)"
-                className="p-5 bg-gradient-to-r from-zinc-900/60 to-zinc-950 flex items-center justify-between group hover:border-amber-500/40"
+                spotlightColor="rgba(16, 185, 129, 0.12)"
+                className="p-5 bg-zinc-950/80 border-zinc-800/90 hover:border-emerald-500/40 transition-colors group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-400 group-hover:scale-105 transition-transform">
-                    <FileText className="w-4 h-4" />
+                  <div className="p-2.5 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 group-hover:scale-105 transition-all">
+                    <FileText className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">
-                      Official Verified PDF
-                    </span>
-                    <p className="text-xs font-semibold text-zinc-200">
-                      Download Official Resume
+                    <h4 className="text-sm font-bold text-zinc-100 group-hover:text-emerald-300 transition-colors font-sans">
+                      Curriculum Vitae (PDF)
+                    </h4>
+                    <p className="text-xs font-mono-code text-zinc-400">
+                      Verified resume document
                     </p>
                   </div>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
               </SpotlightCard>
             </a>
           </motion.div>
         </div>
-
-        {/* Right Side: Message Form (2 columns) */}
-        <motion.div variants={itemVariants} className="lg:col-span-2">
-          <SpotlightCard
-            spotlightColor="rgba(0, 229, 255, 0.12)"
-            className="p-6 h-full flex flex-col justify-between space-y-4"
-          >
-            <form onSubmit={handleSubmit} className="space-y-4 flex flex-col h-full justify-between">
-              <div className="space-y-2">
-                <span className="text-xs font-mono text-zinc-400 font-semibold uppercase">
-                  Direct Dispatch
-                </span>
-                <p className="text-xs text-zinc-500">
-                  Send a message, collaboration inquiry, or opportunity:
-                </p>
-              </div>
-
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Write your message here..."
-                rows={4}
-                className="w-full p-3.5 rounded-2xl bg-zinc-950/90 border border-zinc-800 focus:border-cyan-400 focus:outline-none text-xs font-mono text-zinc-200 resize-none transition-colors"
-              />
-
-              <button
-                type="submit"
-                onMouseEnter={() => soundManager.playHover()}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-medium transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                {sent ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="font-semibold text-emerald-800">Transmitted Successfully!</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5 text-zinc-700" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </button>
-            </form>
-          </SpotlightCard>
-        </motion.div>
       </motion.div>
     </section>
   );
