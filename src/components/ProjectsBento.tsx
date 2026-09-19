@@ -1,15 +1,12 @@
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
-  BarChart3,
-  BookOpen,
-  CheckCircle2,
   Database,
-  Filter,
-  Github,
   Layers,
   Sparkles,
-  TrendingUp,
+  Shield,
+  BarChart2,
+  Cpu,
 } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
@@ -17,15 +14,14 @@ import { featuredProjects, ProjectItem } from "../data/portfolioData";
 import { soundManager } from "../utils/audio";
 import { ProjectModal } from "./ProjectModal";
 import { SpotlightCard } from "./SpotlightCard";
+import { DigiPathLiveVisual } from "./project-previews/DigiPathLiveVisual";
+import { RetailSalesLiveVisual } from "./project-previews/RetailSalesLiveVisual";
+import { KoshLiveVisual } from "./project-previews/KoshLiveVisual";
 
 export function ProjectsBento() {
   const { theme } = useTheme();
   const isDark = theme !== "light";
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-
-  // Interactive tab states
-  const [retailTab, setRetailTab] = useState<"margins" | "discounts" | "segments">("margins");
-  const [koshTone, setKoshTone] = useState<"formal" | "concise" | "conversational">("formal");
 
   const digipath = featuredProjects.find((p) => p.id === "digipath") ?? featuredProjects[0];
   const retailSales = featuredProjects.find((p) => p.id === "retail-sales") ?? featuredProjects[1];
@@ -54,24 +50,6 @@ export function ProjectsBento() {
       opacity: 1,
       y: 0,
       transition: { duration: 0.5, ease: "easeOut" as const },
-    },
-  };
-
-  const koshVariations = {
-    formal: {
-      style: "औपचारिक (Formal)",
-      text: "विद्यार्थ्यांनी परीक्षा पूर्वतयारी वेळेत पूर्ण करणे आवश्यक आहे.",
-      fidelity: "Semantic Match",
-    },
-    concise: {
-      style: "संक्षिप्त (Concise)",
-      text: "विद्यार्थ्यांनी परीक्षेची तयारी वेळेत करावी.",
-      fidelity: "Concise Form",
-    },
-    conversational: {
-      style: "संभाषण (Conversational)",
-      text: "परीक्षेची तयारी मुलांनी वेळेवरच करून घ्यायला हवी.",
-      fidelity: "Spoken Dialect",
     },
   };
 
@@ -137,9 +115,7 @@ export function ProjectsBento() {
         <motion.div variants={itemVariants}>
           <SpotlightCard
             spotlightColor={isDark ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.08)"}
-            onClick={() => handleOpenModal(digipath)}
-            onMouseEnter={() => soundManager.playHover()}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
           >
             <div className="space-y-4">
               {/* Badge */}
@@ -156,7 +132,9 @@ export function ProjectsBento() {
               <div>
                 <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-emerald-400 transition-colors flex items-center justify-between ${headingColor}`}>
                   <span>DigiPath</span>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  <button onClick={() => handleOpenModal(digipath)}>
+                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-emerald-400 transition-colors" />
+                  </button>
                 </h3>
                 <p className="text-xs font-mono-code text-emerald-400 font-medium mt-0.5">
                   Admission Decision Intelligence
@@ -179,44 +157,33 @@ export function ProjectsBento() {
                 ))}
               </div>
 
-              {/* Interface Mockup */}
-              <div className={`rounded-xl border p-2 overflow-hidden shadow-inner space-y-2 ${innerBoxBg}`}>
-                <div className="flex items-center justify-between px-1 text-[10px] font-mono-code text-zinc-400">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full bg-red-400/70" />
-                    <span className="w-2 h-2 rounded-full bg-amber-400/70" />
-                    <span className="w-2 h-2 rounded-full bg-emerald-400/70" />
-                  </div>
-                  <span>digipath.engine</span>
-                </div>
-                <img
-                  src={digipath.image}
-                  alt="DigiPath Screenshot"
-                  className="w-full h-28 object-cover rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
-                />
-              </div>
+              {/* Large Live Interactive Visual Component (Centerpiece) */}
+              <DigiPathLiveVisual isDark={isDark} />
 
-              {/* Metrics Grid */}
+              {/* Verified Key Metrics Grid */}
               <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-emerald-400 text-sm">State</div>
-                  <div className={`text-[10px] ${textMuted}`}>Cutoffs Ingested</div>
+                  <div className="font-bold text-emerald-400 text-sm">State Cutoffs</div>
+                  <div className={`text-[10px] ${textMuted}`}>Ingested &amp; Cleaned</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
                   <div className="font-bold text-emerald-400 text-sm">Multi-Param</div>
-                  <div className={`text-[10px] ${textMuted}`}>Prediction Match</div>
+                  <div className={`text-[10px] ${textMuted}`}>Eligibility Logic</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
                   <div className="font-bold text-emerald-400 text-sm">Scam Filter</div>
-                  <div className={`text-[10px] ${textMuted}`}>Listing Rules</div>
+                  <div className={`text-[10px] ${textMuted}`}>Rule Verification</div>
                 </div>
               </div>
             </div>
 
             {/* Bottom Button */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-emerald-400 font-semibold group-hover:underline">
-              <span>Explore Project →</span>
-            </div>
+            <button
+              onClick={() => handleOpenModal(digipath)}
+              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-emerald-400 font-semibold hover:underline"
+            >
+              <span>View Project →</span>
+            </button>
           </SpotlightCard>
         </motion.div>
 
@@ -224,9 +191,7 @@ export function ProjectsBento() {
         <motion.div variants={itemVariants}>
           <SpotlightCard
             spotlightColor={isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.08)"}
-            onClick={() => handleOpenModal(retailSales)}
-            onMouseEnter={() => soundManager.playHover()}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
           >
             <div className="space-y-4">
               {/* Badge */}
@@ -243,7 +208,9 @@ export function ProjectsBento() {
               <div>
                 <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-blue-400 transition-colors flex items-center justify-between ${headingColor}`}>
                   <span>Retail Sales Analysis</span>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  <button onClick={() => handleOpenModal(retailSales)}>
+                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-blue-400 transition-colors" />
+                  </button>
                 </h3>
                 <p className="text-xs font-mono-code text-blue-400 font-medium mt-0.5">
                   R + Power BI Dashboard
@@ -266,128 +233,33 @@ export function ProjectsBento() {
                 ))}
               </div>
 
-              {/* Interactive Dashboard Chart Preview */}
-              <div
-                className={`rounded-xl border p-3 space-y-2.5 ${innerBoxBg}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between text-xs font-mono-code">
-                  <span className={`font-semibold text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                    Interactive Margin Triage
-                  </span>
-                  <span className="text-[10px] text-blue-400">Live Tabs</span>
-                </div>
+              {/* Large Live Interactive Visual Component (Centerpiece) */}
+              <RetailSalesLiveVisual isDark={isDark} />
 
-                {/* Sub tabs */}
-                <div className="grid grid-cols-3 gap-1 p-1 bg-black/30 dark:bg-black/40 rounded-lg text-xs font-mono-code text-center">
-                  <button
-                    onClick={() => {
-                      soundManager.playHover();
-                      setRetailTab("margins");
-                    }}
-                    className={`py-1 rounded-md transition-all ${
-                      retailTab === "margins"
-                        ? "bg-blue-600 text-white font-bold"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
-                  >
-                    Margins
-                  </button>
-                  <button
-                    onClick={() => {
-                      soundManager.playHover();
-                      setRetailTab("discounts");
-                    }}
-                    className={`py-1 rounded-md transition-all ${
-                      retailTab === "discounts"
-                        ? "bg-blue-600 text-white font-bold"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
-                  >
-                    Discounts
-                  </button>
-                  <button
-                    onClick={() => {
-                      soundManager.playHover();
-                      setRetailTab("segments");
-                    }}
-                    className={`py-1 rounded-md transition-all ${
-                      retailTab === "segments"
-                        ? "bg-blue-600 text-white font-bold"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
-                  >
-                    Segments
-                  </button>
-                </div>
-
-                {/* Tab content */}
-                <div className="text-xs font-mono-code min-h-[64px] flex flex-col justify-center">
-                  {retailTab === "margins" && (
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-[11px]">
-                        <span className={bodyColor}>West Region</span>
-                        <span className="text-emerald-400 font-bold">+28.4% Net Margin</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-400 w-[78%]" />
-                      </div>
-                      <div className="flex justify-between text-[11px] pt-0.5">
-                        <span className={bodyColor}>Central Region</span>
-                        <span className="text-amber-400 font-bold">-3.2% (Over-Discounting)</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
-                        <div className="h-full bg-amber-400 w-[25%]" />
-                      </div>
-                    </div>
-                  )}
-
-                  {retailTab === "discounts" && (
-                    <p className={`text-[11px] leading-relaxed font-sans ${bodyColor}`}>
-                      Discounts &gt; 20% boosted sales volume by 34% but degraded overall margin by 42%.
-                    </p>
-                  )}
-
-                  {retailTab === "segments" && (
-                    <div className="grid grid-cols-3 gap-1.5 text-center">
-                      <div className="p-1 rounded bg-black/20">
-                        <span className="text-[9px] block text-zinc-400">Consumer</span>
-                        <span className="text-xs font-bold text-blue-400">51.9%</span>
-                      </div>
-                      <div className="p-1 rounded bg-black/20">
-                        <span className="text-[9px] block text-zinc-400">Corporate</span>
-                        <span className="text-xs font-bold text-blue-400">30.2%</span>
-                      </div>
-                      <div className="p-1 rounded bg-black/20">
-                        <span className="text-[9px] block text-zinc-400">Home Office</span>
-                        <span className="text-xs font-bold text-blue-400">17.9%</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Metrics Grid */}
+              {/* Verified Key Metrics Grid */}
               <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-blue-400 text-sm">EDA</div>
-                  <div className={`text-[10px] ${textMuted}`}>R / RStudio</div>
+                  <div className="font-bold text-blue-400 text-sm">11.6%</div>
+                  <div className={`text-[10px] ${textMuted}`}>Profit Margin</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-blue-400 text-sm">KPIs</div>
-                  <div className={`text-[10px] ${textMuted}`}>Margin Modeling</div>
+                  <div className="font-bold text-blue-400 text-sm">51,290</div>
+                  <div className={`text-[10px] ${textMuted}`}>Rows Analyzed</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
                   <div className="font-bold text-blue-400 text-sm">4 Regions</div>
-                  <div className={`text-[10px] ${textMuted}`}>Power BI Dash</div>
+                  <div className={`text-[10px] ${textMuted}`}>KPI Modeling</div>
                 </div>
               </div>
             </div>
 
             {/* Bottom Button */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-blue-400 font-semibold group-hover:underline">
-              <span>Explore Project →</span>
-            </div>
+            <button
+              onClick={() => handleOpenModal(retailSales)}
+              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-blue-400 font-semibold hover:underline"
+            >
+              <span>View Project →</span>
+            </button>
           </SpotlightCard>
         </motion.div>
 
@@ -395,9 +267,7 @@ export function ProjectsBento() {
         <motion.div variants={itemVariants}>
           <SpotlightCard
             spotlightColor={isDark ? "rgba(168, 85, 247, 0.16)" : "rgba(147, 51, 234, 0.08)"}
-            onClick={() => handleOpenModal(kosh)}
-            onMouseEnter={() => soundManager.playHover()}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
           >
             <div className="space-y-4">
               {/* Badge */}
@@ -414,7 +284,9 @@ export function ProjectsBento() {
               <div>
                 <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-purple-400 transition-colors flex items-center justify-between ${headingColor}`}>
                   <span>Kosh</span>
-                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  <button onClick={() => handleOpenModal(kosh)}>
+                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-purple-400 transition-colors" />
+                  </button>
                 </h3>
                 <p className="text-xs font-mono-code text-purple-400 font-medium mt-0.5">
                   Marathi Text Rewriting System
@@ -437,64 +309,18 @@ export function ProjectsBento() {
                 ))}
               </div>
 
-              {/* Interactive Devanagari Demonstration Box */}
-              <div
-                className={`rounded-xl border p-3 space-y-2.5 ${innerBoxBg}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between text-xs font-mono-code">
-                  <span className={`font-semibold text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                    Marathi Transformation
-                  </span>
-                  <span className="text-[10px] text-purple-400">Style Engine</span>
-                </div>
+              {/* Large Live Interactive Visual Component (Centerpiece) */}
+              <KoshLiveVisual isDark={isDark} />
 
-                {/* Tone chips */}
-                <div className="flex items-center gap-1.5">
-                  {(["formal", "concise", "conversational"] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => {
-                        soundManager.playHover();
-                        setKoshTone(t);
-                      }}
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-mono-code transition-all ${
-                        koshTone === t
-                          ? "bg-purple-600 text-white font-bold"
-                          : "bg-black/30 text-zinc-400 hover:text-white"
-                      }`}
-                    >
-                      {t.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Input / Output view */}
-                <div className="space-y-1 text-xs">
-                  <div className="p-1.5 rounded bg-black/30 text-[11px]">
-                    <span className="text-[9px] font-mono-code text-zinc-400 block">Input (मराठी):</span>
-                    <p className={`font-medium ${isDark ? "text-zinc-200" : "text-gray-800"}`}>
-                      "विद्यार्थ्यांनी परीक्षेची तयारी वेळेवर पूर्ण केली पाहिजे."
-                    </p>
-                  </div>
-                  <div className="p-1.5 rounded bg-purple-950/40 border border-purple-500/30 text-[11px]">
-                    <span className="text-[9px] font-mono-code text-purple-300 block">Output ({koshTone}):</span>
-                    <p className="text-zinc-100 font-medium">
-                      "{koshVariations[koshTone].text}"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Metrics Grid */}
+              {/* Verified Key Metrics Grid */}
               <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
                   <div className="font-bold text-purple-400 text-sm">Devanagari</div>
                   <div className={`text-[10px] ${textMuted}`}>Preprocessing</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-purple-400 text-sm">Paraphrase</div>
-                  <div className={`text-[10px] ${textMuted}`}>Style Transfer</div>
+                  <div className="font-bold text-purple-400 text-sm">Style Paraphrase</div>
+                  <div className={`text-[10px] ${textMuted}`}>Multi-Register</div>
                 </div>
                 <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
                   <div className="font-bold text-purple-400 text-sm">SANGRAH</div>
@@ -504,9 +330,12 @@ export function ProjectsBento() {
             </div>
 
             {/* Bottom Button */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-purple-400 font-semibold group-hover:underline">
-              <span>Explore Project →</span>
-            </div>
+            <button
+              onClick={() => handleOpenModal(kosh)}
+              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-purple-400 font-semibold hover:underline"
+            >
+              <span>View Project →</span>
+            </button>
           </SpotlightCard>
         </motion.div>
       </motion.div>
