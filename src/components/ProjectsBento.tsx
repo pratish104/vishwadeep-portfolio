@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { featuredProjects, ProjectItem } from "../data/portfolioData";
 import { soundManager } from "../utils/audio";
+import { AllProjectsModal } from "./AllProjectsModal";
 import { ProjectModal } from "./ProjectModal";
 
 export function ProjectsBento() {
@@ -11,6 +12,7 @@ export function ProjectsBento() {
   const isDark = theme === "dark";
   const isAnime = theme === "anime";
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
+  const [isAllProjectsOpen, setIsAllProjectsOpen] = useState(false);
 
   const digipath = featuredProjects.find((p) => p.id === "digipath") ?? featuredProjects[0];
   const retailSales = featuredProjects.find((p) => p.id === "retail-sales") ?? featuredProjects[1];
@@ -142,7 +144,10 @@ export function ProjectsBento() {
         </div>
 
         <button
-          onClick={() => handleOpenModal(digipath)}
+          onClick={() => {
+            soundManager.playClick();
+            setIsAllProjectsOpen(true);
+          }}
           onMouseEnter={() => soundManager.playHover()}
           className={`self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono-code transition-all hover:scale-105 ${
             isDark
@@ -455,6 +460,16 @@ export function ProjectsBento() {
       <ProjectModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
+      />
+
+      {/* ── Complete Portfolio Inventory Explorer Modal ────────────────────────── */}
+      <AllProjectsModal
+        isOpen={isAllProjectsOpen}
+        onClose={() => setIsAllProjectsOpen(false)}
+        onSelectProject={(proj) => {
+          setIsAllProjectsOpen(false);
+          setSelectedProject(proj);
+        }}
       />
     </section>
   );

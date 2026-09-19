@@ -8,8 +8,8 @@ const EarthScene3D = lazy(() =>
 const AnimeWorldScene = lazy(() =>
   import("./AnimeWorldScene").then((m) => ({ default: m.AnimeWorldScene }))
 );
-const MinimalWorldScene = lazy(() =>
-  import("./MinimalWorldScene").then((m) => ({ default: m.MinimalWorldScene }))
+const Hero3DWorld = lazy(() =>
+  import("./Hero3DWorld").then((m) => ({ default: m.Hero3DWorld }))
 );
 
 interface MarkerInfo {
@@ -63,10 +63,10 @@ export function WorldEnvironment({ className = "" }: WorldEnvironmentProps) {
           <EarthScene3D onMarkerClick={(m) => setMarkerInfo(m)} />
         )}
         {theme === "anime" && (
-          <AnimeWorldScene scrollProgress={scrollProgress} />
+          <AnimeWorldScene scrollProgress={scrollProgress} onMarkerClick={(m) => setMarkerInfo(m)} />
         )}
         {theme === "light" && (
-          <MinimalWorldScene />
+          <Hero3DWorld onMarkerClick={(m) => setMarkerInfo(m)} />
         )}
       </Suspense>
 

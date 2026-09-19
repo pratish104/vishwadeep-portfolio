@@ -158,40 +158,76 @@ export const featuredProjects: ProjectItem[] = [
       "Engineered a language-specific NLP system tuned for Marathi syntactic structures, enabling faithful stylistic rewriting.",
   },
   {
-    id: "forensiq-shadownet",
-    title: "Systems Engineering: ForensiQ & ShadowNet",
-    tagline: "Incident response volatile memory analysis & real-time network anomaly detection.",
+    id: "forensiq",
+    title: "ForensiQ — Volatile Memory Forensics & Triage Pipeline",
+    tagline: "Automated volatile RAM artifact extraction and forensic timeline reconstruction.",
     category: "Systems Engineering",
     description:
-      "A dual demonstration of lower-level systems engineering. ForensiQ automates volatile RAM artifact extraction and forensic timeline reconstruction during incident triage. ShadowNet monitors live packet streams with statistical anomaly detection for network defense.",
+      "A digital forensics utility built to accelerate incident response investigations. Automates the extraction of volatile process trees, autorun hooks, network sockets, and injected DLLs from live RAM dumps, generating structured chronological timelines for security analysts.",
     architecture:
-      "Python systems engine integrated with Linux volatile memory parsers, raw packet telemetry, and automated security reports.",
+      "Python-driven automation pipeline interfacing with Linux volatile memory parsers and structured triage report generators.",
     pipeline: [
-      "1. Memory Triage: Automated extraction of volatile process trees, autorun hooks, and injected DLLs.",
-      "2. Packet Telemetry: Live network flow inspection and protocol disassembly.",
-      "3. Incident Correlation: Chronological reconstruction of system events and abnormal connection spikes.",
-      "4. Analyst Summary: Structured technical outputs for security verification.",
+      "1. Memory Ingestion: Automated validation and parsing of volatile raw RAM captures.",
+      "2. Artifact Extraction: Extracting active process hierarchies, hidden threads, and memory-injected payloads.",
+      "3. Timeline Reconstruction: Chronological correlation of volatile system events and process executions.",
+      "4. Triage Reporting: Structured Markdown and JSON outputs for forensic triage verification.",
     ],
     features: [
-      "Automated volatile RAM artifact extraction and process validation",
-      "System event log timeline reconstruction for forensic analysis",
-      "Real-time packet capture and flow classification hooks",
+      "Automated volatile RAM artifact extraction and validation",
+      "Process hierarchy visualization and rogue thread detection",
+      "System execution log timeline reconstruction",
       "Hardened Linux scripting and diagnostic automation",
     ],
-    technologies: ["Python", "Kali Linux", "Digital Forensics", "Network Security", "Linux Internals", "Bash"],
+    technologies: ["Python", "Linux Internals", "Digital Forensics", "Volatility Framework", "Bash"],
     github: "https://github.com/pratish104",
     statusLabel: "Security Systems · Verified GitHub",
     statusType: "verified-repo",
     accentColor: "#0ea5e9", // Sky Blue
     metrics: [
-      { label: "Focus Areas", value: "Memory Forensics & Network Triage" },
-      { label: "Environment", value: "Kali Linux & Volatility Parsers" },
-      { label: "Pipeline", value: "Automated Incident Forensics" },
+      { label: "Core Domain", value: "RAM Incident Triage" },
+      { label: "Parsing Engine", value: "Volatile Artifact Scanner" },
+      { label: "Environment", value: "Linux Security Tooling" },
     ],
     problemStatement:
-      "Manual incident triage is sluggish and error-prone during active system investigations. Extracting volatile memory artifacts and monitoring live network flows requires automated, reliable scripting.",
+      "Manual volatile memory extraction during incident response is time-consuming and prone to analyst oversight under active threat conditions.",
     approach:
-      "Built automated Python-driven forensic utilities that streamline memory analysis, timeline reconstruction, and network telemetry.",
+      "Engineered automated triage scripts that parse volatile memory dumps, extracting key indicators of compromise and chronological process execution sequences.",
+  },
+  {
+    id: "shadownet",
+    title: "ShadowNet — Real-Time Network Anomaly Detection Engine",
+    tagline: "High-throughput live packet stream monitoring and statistical flow anomaly detection.",
+    category: "Systems Engineering",
+    description:
+      "A network monitoring platform designed to capture and analyze live traffic packets in real time. Applies statistical baseline scoring to flag irregular connection bursts, unauthorized port sweeps, and anomalous data exfiltration patterns.",
+    architecture:
+      "Asynchronous Python packet capture pipeline paired with statistical protocol classification algorithms.",
+    pipeline: [
+      "1. Packet Capture: Promiscuous network interface packet telemetry ingestion.",
+      "2. Protocol Disassembly: Parsing Ethernet, IP, TCP, and UDP header layers.",
+      "3. Anomaly Scoring: Statistical baseline comparison against normal traffic patterns.",
+      "4. Alert Dispatch: Real-time console and syslog alerts on suspicious flow spikes.",
+    ],
+    features: [
+      "Real-time packet capture and flow classification hooks",
+      "Statistical baseline scoring for volumetric anomaly detection",
+      "Automated port sweep and beaconing traffic heuristics",
+      "Low-overhead packet inspection engine",
+    ],
+    technologies: ["Python", "Kali Linux", "Network Security", "Socket Programming", "Packet Analysis"],
+    github: "https://github.com/pratish104",
+    statusLabel: "Network Defense · Verified GitHub",
+    statusType: "verified-repo",
+    accentColor: "#06b6d4", // Cyan
+    metrics: [
+      { label: "Inspection Mode", value: "Live Stream Telemetry" },
+      { label: "Detection Logic", value: "Statistical Flow Scorer" },
+      { label: "Architecture", value: "Low-Overhead Packet Hooks" },
+    ],
+    problemStatement:
+      "Detecting stealthy network reconnaissance and data exfiltration requires continuous telemetry inspection without introducing prohibitive network latency.",
+    approach:
+      "Built a Python network monitoring daemon that dissects protocol headers and flags volumetric flow anomalies in real time.",
   },
 ];
 
