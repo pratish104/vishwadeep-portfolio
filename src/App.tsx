@@ -22,7 +22,7 @@ function AppContent() {
     <div
       className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900 transition-colors duration-400"
       style={{
-        backgroundColor: "var(--bg-base)",
+        backgroundColor: "transparent",
         color: "var(--text-primary)",
       }}
     >
