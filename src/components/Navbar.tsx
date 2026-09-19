@@ -1,19 +1,25 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  Check,
+  ChevronDown,
   FileText,
   Menu,
+  Moon,
+  Mountain,
   Music,
   Pause,
   Play,
   Search,
   SkipBack,
   SkipForward,
+  Sun,
   Terminal,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTheme, type Theme } from "../context/ThemeContext";
 import { profileData } from "../data/portfolioData";
 import { soundManager, TRACKS, type Track } from "../utils/audio";
 
@@ -30,6 +36,12 @@ const NAV_LINKS = [
   { label: "Contact", href: "#contact" },
 ];
 
+const THEME_OPTIONS: { id: Theme; label: string; Icon: React.ElementType }[] = [
+  { id: "light", label: "Light (Default)", Icon: Sun },
+  { id: "dark", label: "Dark (Space)", Icon: Moon },
+  { id: "anime", label: "Anime (Nature)", Icon: Mountain },
+];
+
 function smoothScrollTo(href: string) {
   const id = href.replace("#", "");
   const el = id === "" ? document.body : document.getElementById(id);
@@ -40,13 +52,17 @@ function smoothScrollTo(href: string) {
 }
 
 export function Navbar({ onOpenTerminal }: NavbarProps) {
+  const { theme, setTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [themeDropdown, setThemeDropdown] = useState(false);
   const [musicDropdown, setMusicDropdown] = useState(false);
   const [isPlaying, setIsPlaying] = useState(soundManager.getIsPlaying());
   const [isMuted, setIsMuted] = useState(soundManager.getIsMuted());
   const [currentTrack, setCurrentTrack] = useState<Track>(soundManager.getCurrentTrack());
   const [activeSection, setActiveSection] = useState("about");
+
+  const themeDropdownRef = useRef<HTMLDivElement>(null);
   const musicDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,6 +90,12 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     });
   }, []);
 
+  // Update audio track to match theme preference
+  useEffect(() => {
+    soundManager.setTheme(theme);
+    setCurrentTrack(soundManager.getCurrentTrack());
+  }, [theme]);
+
   // Global Ctrl+K / Cmd+K listener for Command Palette
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -87,9 +109,12 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onOpenTerminal]);
 
-  // Close dropdowns on click outside
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
+      if (themeDropdownRef.current && !themeDropdownRef.current.contains(e.target as Node)) {
+        setThemeDropdown(false);
+      }
       if (musicDropdownRef.current && !musicDropdownRef.current.contains(e.target as Node)) {
         setMusicDropdown(false);
       }
@@ -132,19 +157,50 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     setIsMuted(muted);
   };
 
+  const handleThemeChange = (newTheme: Theme) => {
+    soundManager.playClick();
+    setTheme(newTheme);
+    setThemeDropdown(false);
+  };
+
+  const currentThemeOption = THEME_OPTIONS.find((o) => o.id === theme) ?? THEME_OPTIONS[0];
+  const ThemeIcon = currentThemeOption.Icon;
+
+  // Theme-specific UI token classes matching reference screenshots
+  const navPillBg =
+    theme === "dark"
+      ? "bg-[#0b1224]/90 border-white/10 text-white shadow-xl shadow-black/40"
+      : theme === "anime"
+      ? "bg-[#fff2f6]/92 border-pink-200/80 text-[#2d1822] shadow-sm"
+      : "bg-white/92 border-gray-200/90 text-gray-900 shadow-sm";
+
+  const activeTabClass =
+    theme === "dark"
+      ? "bg-cyan-500/20 text-cyan-400 font-bold border border-cyan-500/30"
+      : theme === "anime"
+      ? "bg-pink-100 text-pink-600 font-bold border border-pink-200"
+      : "bg-blue-50 text-blue-700 font-bold border border-blue-200/60";
+
+  const hoverTabClass =
+    theme === "dark"
+      ? "text-zinc-300 hover:text-white hover:bg-white/5"
+      : theme === "anime"
+      ? "text-gray-700 hover:text-pink-600 hover:bg-pink-50/60"
+      : "text-gray-600 hover:text-gray-950 hover:bg-gray-100/60";
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-3 sm:px-6 lg:px-8 py-3 ${
         scrolled ? "py-2" : "py-3.5"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2.5">
         {/* ── Left: Brand Avatar & Name ────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 shadow-sm"
+          className={`flex items-center gap-2.5 px-3 py-1.5 rounded-full backdrop-blur-xl border ${navPillBg}`}
         >
           <a
             href="#about"
@@ -155,10 +211,18 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
             }}
             className="flex items-center gap-2.5 group"
           >
-            <div className="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center font-mono-code font-bold text-[11px] shadow-sm">
+            <div
+              className={`w-7 h-7 rounded-full flex items-center justify-center font-mono-code font-bold text-[11px] shadow-sm ${
+                theme === "dark"
+                  ? "bg-gradient-to-tr from-cyan-600 to-blue-600 text-white"
+                  : theme === "anime"
+                  ? "bg-gradient-to-tr from-pink-500 to-rose-400 text-white"
+                  : "bg-gray-900 text-white"
+              }`}
+            >
               VP
             </div>
-            <span className="font-serif-display font-bold text-gray-900 text-sm tracking-tight hidden sm:inline-block">
+            <span className="font-serif-display font-bold text-sm tracking-tight hidden sm:inline-block">
               {profileData.name}
             </span>
           </a>
@@ -169,7 +233,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.1 }}
-          className="hidden lg:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 shadow-sm"
+          className={`hidden lg:flex items-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-xl border ${navPillBg}`}
         >
           {NAV_LINKS.map((link) => {
             const id = link.href.replace("#", "");
@@ -184,10 +248,8 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                   smoothScrollTo(link.href);
                 }}
                 onMouseEnter={() => soundManager.playHover()}
-                className={`relative px-3.5 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
-                  isActive
-                    ? "text-blue-700 font-semibold bg-blue-50/80 shadow-sm"
-                    : "text-gray-600 hover:text-gray-950 hover:bg-gray-100/60"
+                className={`relative px-3.5 py-1 rounded-full text-xs transition-all duration-200 ${
+                  isActive ? activeTabClass : hoverTabClass
                 }`}
               >
                 {link.label}
@@ -196,7 +258,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
           })}
         </motion.nav>
 
-        {/* ── Right Controls: Search, Music Player & Tools ──────────────────── */}
+        {/* ── Right Controls: Search, Music Player & Theme Switcher ─────────── */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -210,26 +272,40 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
               onOpenTerminal?.();
             }}
             onMouseEnter={() => soundManager.playHover()}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 text-xs text-gray-500 hover:text-gray-900 shadow-sm transition-all hover:scale-105"
+            className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-xl border text-xs shadow-sm transition-all hover:scale-105 ${navPillBg}`}
             title="Search & Commands (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-gray-400" />
-            <span className="text-gray-500 hidden md:inline">Explore my universe...</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-[10px] font-mono-code text-gray-500 border border-gray-200">
+            <Search className="w-3.5 h-3.5 opacity-60" />
+            <span className="opacity-75 hidden md:inline">Explore my universe...</span>
+            <kbd
+              className={`px-1.5 py-0.5 rounded text-[10px] font-mono-code border ${
+                theme === "dark"
+                  ? "bg-white/10 border-white/10 text-zinc-300"
+                  : "bg-gray-100 border-gray-200 text-gray-600"
+              }`}
+            >
               Ctrl K
             </kbd>
           </button>
 
           {/* LoFi Audio Player Pill (Matching Reference) */}
           <div ref={musicDropdownRef} className="relative">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 shadow-sm">
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-xl border shadow-sm ${navPillBg}`}>
               <button
                 onClick={handlePlayToggle}
                 onMouseEnter={() => soundManager.playHover()}
                 className="flex items-center gap-2 text-left group"
                 title={isPlaying ? "Pause Music" : "Play LoFi Focus"}
               >
-                <div className="w-5 h-5 rounded-full flex items-center justify-center bg-blue-600 text-white shadow-sm">
+                <div
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-white shadow-sm ${
+                    theme === "dark"
+                      ? "bg-cyan-500"
+                      : theme === "anime"
+                      ? "bg-pink-500"
+                      : "bg-blue-600"
+                  }`}
+                >
                   {isPlaying ? (
                     <Pause className="w-2.5 h-2.5" />
                   ) : (
@@ -237,33 +313,33 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                   )}
                 </div>
                 <div className="hidden md:block">
-                  <div className="text-[11px] font-bold text-gray-900 leading-none">
+                  <div className="text-[11px] font-bold leading-none">
                     {currentTrack.name}
                   </div>
-                  <div className="text-[9px] font-mono-code text-gray-500 leading-none mt-0.5">
+                  <div className="text-[9px] font-mono-code opacity-60 leading-none mt-0.5">
                     {currentTrack.artist}
                   </div>
                 </div>
               </button>
 
-              <div className="flex items-center gap-0.5 pl-1 border-l border-gray-200">
+              <div className="flex items-center gap-0.5 pl-1 border-l border-black/10 dark:border-white/10">
                 <button
                   onClick={handlePrevTrack}
-                  className="p-1 rounded-full text-gray-500 hover:text-gray-900 transition-colors"
+                  className="p-1 rounded-full opacity-60 hover:opacity-100 transition-opacity"
                   title="Previous Track"
                 >
                   <SkipBack className="w-3 h-3" />
                 </button>
                 <button
                   onClick={handleNextTrack}
-                  className="p-1 rounded-full text-gray-500 hover:text-gray-900 transition-colors"
+                  className="p-1 rounded-full opacity-60 hover:opacity-100 transition-opacity"
                   title="Next Track"
                 >
                   <SkipForward className="w-3 h-3" />
                 </button>
                 <button
                   onClick={() => setMusicDropdown(!musicDropdown)}
-                  className="p-1 rounded-full text-gray-500 hover:text-gray-900 transition-colors"
+                  className="p-1 rounded-full opacity-60 hover:opacity-100 transition-opacity"
                   title="Track List"
                 >
                   <Music className="w-3 h-3" />
@@ -279,14 +355,15 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-64 p-2 rounded-2xl bg-white/95 backdrop-blur-2xl border border-gray-200 shadow-xl z-50"
+                  className={`absolute right-0 mt-2 w-64 p-2 rounded-2xl backdrop-blur-2xl border shadow-xl z-50 ${
+                    theme === "dark"
+                      ? "bg-[#0b1224]/98 border-white/10 text-white"
+                      : "bg-white/98 border-gray-200 text-gray-900"
+                  }`}
                 >
-                  <div className="px-2.5 py-1.5 text-xs font-mono-code text-gray-500 border-b border-gray-100 flex items-center justify-between">
+                  <div className="px-2.5 py-1.5 text-xs font-mono-code opacity-60 border-b border-black/5 dark:border-white/10 flex items-center justify-between">
                     <span>FOCUS PLAYLIST</span>
-                    <button
-                      onClick={handleToggleMute}
-                      className="text-gray-400 hover:text-gray-700"
-                    >
+                    <button onClick={handleToggleMute} className="opacity-70 hover:opacity-100">
                       {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                     </button>
                   </div>
@@ -297,16 +374,24 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                         onClick={() => handleSelectTrack(idx)}
                         className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left text-xs transition-colors ${
                           currentTrack.name === t.name
-                            ? "bg-blue-50 text-blue-700 font-semibold"
-                            : "text-gray-700 hover:bg-gray-100"
+                            ? theme === "dark"
+                              ? "bg-cyan-500/20 text-cyan-400 font-bold"
+                              : theme === "anime"
+                              ? "bg-pink-100 text-pink-700 font-bold"
+                              : "bg-blue-50 text-blue-700 font-bold"
+                            : "opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
                         }`}
                       >
                         <div>
                           <div className="font-medium leading-tight">{t.name}</div>
-                          <div className="text-[10px] text-gray-500 leading-none">{t.artist}</div>
+                          <div className="text-[10px] opacity-60 leading-none">{t.artist}</div>
                         </div>
                         {currentTrack.name === t.name && isPlaying && (
-                          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                          <span
+                            className={`w-2 h-2 rounded-full animate-pulse ${
+                              theme === "dark" ? "bg-cyan-400" : theme === "anime" ? "bg-pink-500" : "bg-blue-500"
+                            }`}
+                          />
                         )}
                       </button>
                     ))}
@@ -316,15 +401,77 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
             </AnimatePresence>
           </div>
 
-          {/* Terminal / Command Launcher */}
+          {/* ── Theme Selector Dropdown (Light / Dark / Anime matching Reference) ─ */}
+          <div ref={themeDropdownRef} className="relative">
+            <button
+              onClick={() => {
+                soundManager.playClick();
+                setThemeDropdown(!themeDropdown);
+              }}
+              onMouseEnter={() => soundManager.playHover()}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-xl border text-xs shadow-sm transition-all hover:scale-105 ${navPillBg}`}
+              title="Switch Theme (Light, Dark, Anime)"
+            >
+              <ThemeIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline font-mono-code font-medium">{currentThemeOption.label}</span>
+              <ChevronDown className="w-3 h-3 opacity-60" />
+            </button>
+
+            <AnimatePresence>
+              {themeDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className={`absolute right-0 mt-2 w-48 p-1.5 rounded-2xl backdrop-blur-2xl border shadow-xl z-50 ${
+                    theme === "dark"
+                      ? "bg-[#0b1224]/98 border-white/10 text-white"
+                      : "bg-white/98 border-gray-200 text-gray-900"
+                  }`}
+                >
+                  <div className="px-2.5 py-1 text-[10px] font-mono-code opacity-50 uppercase tracking-wider">
+                    Select Theme
+                  </div>
+                  {THEME_OPTIONS.map((opt) => {
+                    const OptIcon = opt.Icon;
+                    const isCurrent = theme === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={() => handleThemeChange(opt.id)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono-code transition-colors ${
+                          isCurrent
+                            ? theme === "dark"
+                              ? "bg-cyan-500/20 text-cyan-400 font-bold"
+                              : theme === "anime"
+                              ? "bg-pink-100 text-pink-700 font-bold"
+                              : "bg-blue-50 text-blue-700 font-bold"
+                            : "opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <OptIcon className="w-3.5 h-3.5" />
+                          <span>{opt.label}</span>
+                        </div>
+                        {isCurrent && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Terminal Launcher Trigger */}
           <button
             onClick={() => {
               soundManager.playClick();
               onOpenTerminal?.();
             }}
             onMouseEnter={() => soundManager.playHover()}
-            className="p-2 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 text-gray-700 hover:text-gray-900 shadow-sm transition-all hover:scale-105"
-            title="Open Developer Terminal"
+            className={`p-2 rounded-full backdrop-blur-xl border shadow-sm transition-all hover:scale-105 ${navPillBg}`}
+            title="Open Developer Terminal (Ctrl+K)"
           >
             <Terminal className="w-4 h-4" />
           </button>
@@ -335,7 +482,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
               soundManager.playClick();
               setMobileMenuOpen(!mobileMenuOpen);
             }}
-            className="lg:hidden p-2 rounded-full bg-white/90 backdrop-blur-xl border border-gray-200/80 text-gray-700 shadow-sm"
+            className={`lg:hidden p-2 rounded-full backdrop-blur-xl border shadow-sm ${navPillBg}`}
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -351,7 +498,11 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden mt-2 p-4 rounded-3xl bg-white/95 backdrop-blur-2xl border border-gray-200 shadow-xl overflow-hidden"
+            className={`lg:hidden mt-2 p-4 rounded-3xl backdrop-blur-2xl border shadow-xl overflow-hidden ${
+              theme === "dark"
+                ? "bg-[#0b1224]/98 border-white/10 text-white"
+                : "bg-white/98 border-gray-200 text-gray-900"
+            }`}
           >
             <div className="space-y-1">
               {NAV_LINKS.map((link) => (
@@ -364,17 +515,17 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                     setMobileMenuOpen(false);
                     smoothScrollTo(link.href);
                   }}
-                  className="block px-4 py-2.5 rounded-2xl text-sm font-medium text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                  className="block px-4 py-2.5 rounded-2xl text-sm font-medium hover:bg-blue-50 dark:hover:bg-white/10 transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+              <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center gap-2">
                 <a
                   href={profileData.links.resume}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-900 text-white text-xs font-semibold shadow-sm"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-900 text-white dark:bg-white dark:text-gray-900 text-xs font-semibold shadow-sm"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>Resume (PDF)</span>

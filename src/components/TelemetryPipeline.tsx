@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 const PIPELINE_NODES = [
   { num: "01", label: "Data", sub: "Collect & Clean", icon: "📊" },
@@ -9,6 +10,9 @@ const PIPELINE_NODES = [
 ];
 
 export function TelemetryPipeline() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const isAnime = theme === "anime";
   const [timeStr, setTimeStr] = useState("");
 
   useEffect(() => {
@@ -27,19 +31,35 @@ export function TelemetryPipeline() {
     return () => clearInterval(timer);
   }, []);
 
+  const barBg =
+    isDark
+      ? "bg-[#070b16]/95 border-white/10 text-white"
+      : isAnime
+      ? "bg-[#fff2f6]/95 border-pink-200/80 text-[#2d1822]"
+      : "bg-white/95 border-gray-200/80 text-gray-800";
+
+  const activeColor =
+    isDark
+      ? "text-cyan-400 font-extrabold"
+      : isAnime
+      ? "text-pink-600 font-extrabold"
+      : "text-blue-600 font-extrabold";
+
   return (
-    <div className="w-full border-t border-gray-200/80 bg-white/95 backdrop-blur-2xl py-3 px-4 sm:px-8 text-gray-800 shadow-xs">
+    <div className={`w-full border-t backdrop-blur-2xl py-3 px-4 sm:px-8 shadow-xs ${barBg}`}>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 font-mono-code text-xs">
         {/* Left: Quote & Mumbai Location/Time */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <span className="italic font-serif-display text-sm text-gray-800">
+          <span className="italic font-serif-display text-sm">
             "Turning Data into Opportunities"
           </span>
           <span className="opacity-20 hidden sm:inline">|</span>
-          <div className="flex items-center gap-1.5 text-[11px] text-gray-500">
-            <span className="text-blue-600">📍</span>
+          <div className="flex items-center gap-1.5 text-[11px] opacity-70">
+            <span className={isDark ? "text-cyan-400" : isAnime ? "text-pink-500" : "text-blue-600"}>
+              📍
+            </span>
             <span>Mumbai, India</span>
-            <span className="font-semibold text-gray-700">{timeStr || "10:24 AM"}</span>
+            <span className="font-semibold">{timeStr || "10:24 AM"}</span>
           </div>
         </div>
 
@@ -52,25 +72,25 @@ export function TelemetryPipeline() {
                 <div className="flex flex-col leading-none">
                   <span
                     className={`text-[11px] font-bold ${
-                      node.active ? "text-blue-600 font-extrabold" : "text-gray-900"
+                      node.active ? activeColor : ""
                     }`}
                   >
-                    <span className="text-[9px] font-mono-code text-gray-400 mr-1">{node.num}</span>
+                    <span className="text-[9px] font-mono-code opacity-40 mr-1">{node.num}</span>
                     {node.label}
                   </span>
-                  <span className="text-[9px] text-gray-500">{node.sub}</span>
+                  <span className="text-[9px] opacity-60">{node.sub}</span>
                 </div>
               </div>
 
               {i < PIPELINE_NODES.length - 1 && (
-                <div className="w-4 sm:w-6 h-px bg-gray-300" />
+                <div className="w-4 sm:w-6 h-px bg-black/10 dark:bg-white/15" />
               )}
             </div>
           ))}
         </div>
 
         {/* Right: Closing Stamp */}
-        <div className="text-[11px] shrink-0 text-gray-500 font-serif-display italic">
+        <div className="text-[11px] shrink-0 opacity-70 font-serif-display italic">
           "A curious mind builds a better tomorrow."
         </div>
       </div>

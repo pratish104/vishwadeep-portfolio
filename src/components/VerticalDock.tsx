@@ -8,6 +8,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 import { soundManager } from "../utils/audio";
 
 interface DockItem {
@@ -36,6 +37,9 @@ function smoothScrollTo(href: string) {
 }
 
 export function VerticalDock() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const isAnime = theme === "anime";
   const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
@@ -54,12 +58,26 @@ export function VerticalDock() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const dockBg =
+    isDark
+      ? "bg-[#0b1224]/90 border-white/10 text-white shadow-2xl shadow-black/60"
+      : isAnime
+      ? "bg-[#fff2f6]/92 border-pink-200/90 text-[#2d1822] shadow-xl"
+      : "bg-white/95 border-gray-200/90 text-gray-900 shadow-xl";
+
+  const activeItemBg =
+    isDark
+      ? "bg-gradient-to-tr from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-500/30"
+      : isAnime
+      ? "bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-500/30"
+      : "bg-blue-600 text-white shadow-md shadow-blue-500/30";
+
   return (
     <motion.aside
       initial={{ x: -40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className="fixed left-3 lg:left-4 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-center gap-1.5 p-2 rounded-3xl bg-white/95 backdrop-blur-2xl border border-gray-200/90 shadow-xl"
+      className={`fixed left-3 lg:left-4 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-center gap-1.5 p-2 rounded-3xl backdrop-blur-2xl border ${dockBg}`}
       aria-label="Quick navigation dock"
     >
       {DOCK_ITEMS.map((item) => {
@@ -77,7 +95,11 @@ export function VerticalDock() {
             onMouseEnter={() => soundManager.playHover()}
             className={`group relative p-2.5 rounded-2xl transition-all duration-200 flex flex-col items-center justify-center gap-1 ${
               isActive
-                ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
+                ? activeItemBg
+                : isDark
+                ? "text-zinc-400 hover:text-white hover:bg-white/5"
+                : isAnime
+                ? "text-gray-600 hover:text-pink-600 hover:bg-pink-50/80"
                 : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/80"
             }`}
             title={item.label}
@@ -89,7 +111,13 @@ export function VerticalDock() {
             </span>
 
             {/* Hover tooltip */}
-            <span className="absolute left-full ml-3 px-2.5 py-1 rounded-xl text-[11px] font-mono-code font-medium whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-150 shadow-lg border border-gray-200 bg-white text-gray-900 z-50">
+            <span
+              className={`absolute left-full ml-3 px-2.5 py-1 rounded-xl text-[11px] font-mono-code font-medium whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-150 shadow-lg border z-50 ${
+                isDark
+                  ? "bg-[#0b1224] text-white border-white/10"
+                  : "bg-white text-gray-900 border-gray-200"
+              }`}
+            >
               {item.label}
             </span>
           </a>

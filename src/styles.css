@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   EDITORIAL LIGHT THEME — SINGLE UNIFIED VISUAL IDENTITY
+   THEME COLOR SYSTEMS (Light, Dark, Anime)
    ========================================================================= */
 
-:root {
+:root,
+[data-theme="light"] {
   --bg-base: #f8f7f4;
   --bg-surface: #ffffff;
   --bg-elevated: #f0efe9;
@@ -12,20 +13,56 @@
   --border-mid: #d4d0c8;
   --text-primary: #1a1917;
   --text-secondary: #4a4744;
-  --text-muted: #9e9b95;
+  --text-muted: #8c8983;
   --accent-primary: #2563eb;   /* blue */
   --accent-secondary: #16a34a; /* emerald */
   --accent-tertiary: #7c3aed;  /* violet */
-  --glow-color: rgba(37, 99, 235, 0.08);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(229, 231, 235, 0.9);
   --scrollbar-bg: #f8f7f4;
   --scrollbar-thumb: #d4d0c8;
-  --scrollbar-thumb-hover: #b8b4ac;
+}
+
+[data-theme="dark"] {
+  --bg-base: #060913;
+  --bg-surface: #0b1122;
+  --bg-elevated: #111a33;
+  --border-subtle: #1e2a4a;
+  --border-mid: #2c3e6b;
+  --text-primary: #f4f6fc;
+  --text-secondary: #a3b1d1;
+  --text-muted: #627299;
+  --accent-primary: #38bdf8;   /* cyan/sky */
+  --accent-secondary: #10b981; /* emerald */
+  --accent-tertiary: #a855f7;  /* purple */
+  --card-bg: rgba(11, 17, 34, 0.92);
+  --card-border: rgba(30, 42, 74, 0.9);
+  --scrollbar-bg: #060913;
+  --scrollbar-thumb: #1e2a4a;
+}
+
+[data-theme="anime"] {
+  --bg-base: #fdf5f8;
+  --bg-surface: #ffffff;
+  --bg-elevated: #fae8f0;
+  --border-subtle: #f3d2e0;
+  --border-mid: #e8b0c8;
+  --text-primary: #2d1822;
+  --text-secondary: #5e3b4d;
+  --text-muted: #9c6e83;
+  --accent-primary: #ec4899;   /* sakura pink */
+  --accent-secondary: #10b981; /* green */
+  --accent-tertiary: #8b5cf6;  /* purple */
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --card-border: rgba(243, 210, 224, 0.9);
+  --scrollbar-bg: #fdf5f8;
+  --scrollbar-thumb: #e8b0c8;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    color-scheme: light;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   body {
@@ -74,10 +111,6 @@ section[id] {
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
 }
 
 /* =========================================================================

@@ -11,34 +11,60 @@ import { ProjectsBento } from "./components/ProjectsBento";
 import { SkillsBento } from "./components/SkillsBento";
 import { TelemetryPipeline } from "./components/TelemetryPipeline";
 import { VerticalDock } from "./components/VerticalDock";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
-export default function App() {
+function AppContent() {
   useSmoothScroll();
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <div
-      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900"
+      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900 transition-colors duration-400"
       style={{
-        backgroundColor: "#f8f7f4",
-        color: "#1a1917",
+        backgroundColor: "var(--bg-base)",
+        color: "var(--text-primary)",
       }}
     >
-      {/* ── Background Subtle Grid Line Layer ────────────────────────────────── */}
-      <div
-        className="fixed inset-0 pointer-events-none -z-10 opacity-30"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #e5e3db 1px, transparent 1px), linear-gradient(to bottom, #e5e3db 1px, transparent 1px)",
-          backgroundSize: "6rem 6rem",
-        }}
-      />
+      {/* ── Background Grid Pattern ────────────────────────────────────────── */}
+      {theme === "light" && (
+        <div
+          className="fixed inset-0 pointer-events-none -z-10 opacity-25"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #e5e3db 1px, transparent 1px), linear-gradient(to bottom, #e5e3db 1px, transparent 1px)",
+            backgroundSize: "6rem 6rem",
+          }}
+        />
+      )}
+
+      {theme === "dark" && (
+        <div
+          className="fixed inset-0 pointer-events-none -z-10 opacity-30"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #1e2a4a 1px, transparent 1px), linear-gradient(to bottom, #1e2a4a 1px, transparent 1px)",
+            backgroundSize: "4rem 4rem",
+          }}
+        />
+      )}
+
+      {theme === "anime" && (
+        <div
+          className="fixed inset-0 pointer-events-none -z-10 opacity-20"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #f3d2e0 1px, transparent 1px), linear-gradient(to bottom, #f3d2e0 1px, transparent 1px)",
+            backgroundSize: "5rem 5rem",
+          }}
+        />
+      )}
 
       {/* ── Left Quick-Navigation Vertical Dock (Matching Reference) ─────────── */}
       <VerticalDock />
 
-      {/* ── Top Floating Navigation Bar with Search & Music Player ───────────── */}
+      {/* ── Top Floating Navigation Bar with Theme Switcher & LoFi Music ─────── */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} />
 
       {/* ── Main Content Flow ─────────────────────────────────────────────────── */}
@@ -66,5 +92,13 @@ export default function App() {
         onClose={() => setIsTerminalOpen(false)}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
