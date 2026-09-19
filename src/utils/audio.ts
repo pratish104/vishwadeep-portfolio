@@ -1,9 +1,9 @@
-// Procedural Web Audio engine — UI SFX + ambient LoFi synthesizer
-// All audio is synthesized — no external files required
+// Procedural Web Audio synthesizer engine — UI SFX + LoFi ambient music
+// Synthesizes chill Rhodes chords, kalimba arpeggios, crystal ambient pads, and rain/vinyl texture.
 
-type Theme = "dark" | "light" | "anime";
+export type Theme = "dark" | "light" | "anime";
 
-interface Track {
+export interface Track {
   id: string;
   name: string;
   artist: string;
@@ -14,6 +14,7 @@ export const TRACKS: Track[] = [
   { id: "lofi-space", name: "Soft Dreams", artist: "LoFi Study", theme: "dark" },
   { id: "lofi-nature", name: "A New Day", artist: "LoFi Morning", theme: "anime" },
   { id: "lofi-minimal", name: "Ambient Waves", artist: "Deep Focus", theme: "light" },
+  { id: "lofi-midnight", name: "Tokyo Rain", artist: "Midnight Code", theme: "dark" },
 ];
 
 class AudioEngine {
@@ -26,87 +27,103 @@ class AudioEngine {
   private ambientNodes: AudioNode[] = [];
   private schedulerTimeout: ReturnType<typeof setTimeout> | null = null;
   private onProgressCallback: ((t: number, dur: number) => void) | null = null;
+  private onTrackChangeCallback: ((track: Track) => void) | null = null;
   private progressInterval: ReturnType<typeof setInterval> | null = null;
   private trackStartTime: number = 0;
-  private trackDuration: number = 120; // 2 min per track
+  private trackDuration: number = 180; // 3 min loop
 
   constructor() {
     try {
       const savedMuted = localStorage.getItem("portfolio_audio_muted");
-      this.isMuted = savedMuted !== "false"; // default: muted
+      this.isMuted = savedMuted !== "false"; // default muted
       const savedTheme = localStorage.getItem("portfolio_theme") as Theme | null;
-      this.currentTheme = savedTheme || "dark";
-      const savedTrack = localStorage.getItem("portfolio_audio_track");
-      if (savedTrack) this.currentTrackIndex = parseInt(savedTrack, 10) || 0;
+      if (savedTheme && ["dark", "light", "anime"].includes(savedTheme)) {
+        this.currentTheme = savedTheme;
+        const initialTrackIdx = TRACKS.findIndex((t) => t.theme === savedTheme);
+        if (initialTrackIdx !== -1) this.currentTrackIndex = initialTrackIdx;
+      }
     } catch {}
   }
 
   private initCtx() {
     if (!this.ctx && typeof window !== "undefined") {
-      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AC) return;
       this.ctx = new AC();
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.5, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
     }
-    if (this.ctx?.state === "suspended") this.ctx.resume();
+    if (this.ctx?.state === "suspended") {
+      this.ctx.resume();
+    }
   }
 
   private stopAmbient() {
     for (const node of this.ambientNodes) {
-      try { (node as OscillatorNode).stop?.(); } catch {}
-      try { node.disconnect?.(); } catch {}
+      try {
+        (node as OscillatorNode).stop?.();
+      } catch {}
+      try {
+        node.disconnect?.();
+      } catch {}
     }
     this.ambientNodes = [];
-    if (this.schedulerTimeout) { clearTimeout(this.schedulerTimeout); this.schedulerTimeout = null; }
-    if (this.progressInterval) { clearInterval(this.progressInterval); this.progressInterval = null; }
+    if (this.schedulerTimeout) {
+      clearTimeout(this.schedulerTimeout);
+      this.schedulerTimeout = null;
+    }
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
+    }
   }
 
-  /** Schedule a reverb-like multi-tap delay on a node */
   private createReverb(ctx: AudioContext): ConvolverNode {
     const conv = ctx.createConvolver();
     const rate = ctx.sampleRate;
-    const dur = 1.2;
+    const dur = 1.4;
     const len = rate * dur;
     const buf = ctx.createBuffer(2, len, rate);
     for (let ch = 0; ch < 2; ch++) {
       const data = buf.getChannelData(ch);
       for (let i = 0; i < len; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3) * 0.6;
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5) * 0.5;
       }
     }
     conv.buffer = buf;
     return conv;
   }
 
-  /** Synth a warm LoFi chord pad */
   private synthChord(
     ctx: AudioContext,
     dest: AudioNode,
     freqs: number[],
     startAt: number,
     duration: number,
-    gainVal: number = 0.06
+    gainVal: number = 0.05
   ) {
     for (const f of freqs) {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = "sine";
       osc.frequency.setValueAtTime(f, startAt);
-      // Slight vibrato
+
+      // Subtle warm pitch drift
       const lfo = ctx.createOscillator();
       const lfoGain = ctx.createGain();
-      lfo.frequency.value = 5;
-      lfoGain.gain.value = f * 0.003;
+      lfo.frequency.value = 4.5;
+      lfoGain.gain.value = f * 0.0025;
       lfo.connect(lfoGain);
       lfoGain.connect(osc.frequency);
       lfo.start(startAt);
       lfo.stop(startAt + duration);
 
       g.gain.setValueAtTime(0, startAt);
-      g.gain.linearRampToValueAtTime(gainVal, startAt + 0.15);
-      g.gain.setValueAtTime(gainVal, startAt + duration - 0.2);
+      g.gain.linearRampToValueAtTime(gainVal, startAt + 0.2);
+      g.gain.setValueAtTime(gainVal, startAt + duration - 0.25);
       g.gain.linearRampToValueAtTime(0, startAt + duration);
       osc.connect(g);
       g.connect(dest);
@@ -121,22 +138,21 @@ class AudioEngine {
     reverb.connect(this.masterGain!);
     this.ambientNodes.push(reverb);
 
-    // Deep space chord progression: Dm7 - Gmaj7 - Cmaj7 - Am7
     const progression = [
-      [146.83, 220, 261.63, 311.13],  // Dm7
-      [196, 246.94, 293.66, 369.99],  // Gmaj7
-      [261.63, 329.63, 392, 493.88],  // Cmaj7
-      [220, 261.63, 329.63, 440],     // Am7
+      [146.83, 220, 261.63, 311.13], // Dm7
+      [196, 246.94, 293.66, 369.99], // Gmaj7
+      [261.63, 329.63, 392, 493.88], // Cmaj7
+      [220, 261.63, 329.63, 440], // Am7
     ];
 
-    const chordDur = 3.5;
+    const chordDur = 3.8;
     const now = ctx.currentTime;
     this.trackStartTime = now;
 
     const scheduleChords = (startTime: number, loop: number) => {
-      if (loop > 200) return; // safety
+      if (loop > 200) return;
       progression.forEach((chord, i) => {
-        this.synthChord(ctx, reverb, chord, startTime + i * chordDur, chordDur + 0.3, 0.055);
+        this.synthChord(ctx, reverb, chord, startTime + i * chordDur, chordDur + 0.4, 0.05);
       });
       const nextStart = startTime + progression.length * chordDur;
       this.schedulerTimeout = setTimeout(
@@ -146,12 +162,12 @@ class AudioEngine {
     };
     scheduleChords(now, 0);
 
-    // Sub bass
+    // Warm sub bass
     const bass = ctx.createOscillator();
     const bassGain = ctx.createGain();
     const bassFilter = ctx.createBiquadFilter();
     bassFilter.type = "lowpass";
-    bassFilter.frequency.value = 120;
+    bassFilter.frequency.value = 110;
     bass.type = "sine";
     bass.frequency.value = 55;
     bassGain.gain.value = 0.12;
@@ -161,19 +177,19 @@ class AudioEngine {
     bass.start();
     this.ambientNodes.push(bass, bassGain, bassFilter);
 
-    // Subtle vinyl crackle (filtered noise)
+    // Subtle vinyl warmth
     const bufLen = ctx.sampleRate * 2;
     const noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
     const data = noiseBuf.getChannelData(0);
-    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * 0.015;
+    for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * 0.012;
     const noise = ctx.createBufferSource();
     noise.buffer = noiseBuf;
     noise.loop = true;
     const crackleFilter = ctx.createBiquadFilter();
-    crackleFilter.type = "highpass";
-    crackleFilter.frequency.value = 3000;
+    crackleFilter.type = "bandpass";
+    crackleFilter.frequency.value = 2800;
     const crackleGain = ctx.createGain();
-    crackleGain.gain.value = 0.02;
+    crackleGain.gain.value = 0.015;
     noise.connect(crackleFilter);
     crackleFilter.connect(crackleGain);
     crackleGain.connect(this.masterGain!);
@@ -182,7 +198,6 @@ class AudioEngine {
   }
 
   private playAnimeTrack(ctx: AudioContext) {
-    // Kalimba-inspired arpeggios — warm pentatonic
     const reverb = this.createReverb(ctx);
     reverb.connect(this.masterGain!);
     this.ambientNodes.push(reverb);
@@ -200,7 +215,7 @@ class AudioEngine {
         osc.frequency.value = freq;
         const t = startTime + step * 0.28;
         g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(0.045, t + 0.02);
+        g.gain.linearRampToValueAtTime(0.04, t + 0.02);
         g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
         osc.connect(g);
         g.connect(reverb);
@@ -216,16 +231,11 @@ class AudioEngine {
     };
     scheduleArp(ctx.currentTime, 0);
 
-    // Warm pad chord (Am pentatonic)
-    this.synthChord(
-      ctx, reverb,
-      [220, 261.63, 329.63],
-      ctx.currentTime, 9999, 0.04
-    );
+    // Warm pad
+    this.synthChord(ctx, reverb, [220, 261.63, 329.63], ctx.currentTime, 9999, 0.035);
   }
 
   private playLightTrack(ctx: AudioContext) {
-    // Crystal ambient pads
     const reverb = this.createReverb(ctx);
     reverb.connect(this.masterGain!);
     this.ambientNodes.push(reverb);
@@ -236,14 +246,13 @@ class AudioEngine {
       const g = ctx.createGain();
       osc.type = "sine";
       osc.frequency.value = f;
-      // Slow AM modulation for shimmer
       const am = ctx.createOscillator();
       const amGain = ctx.createGain();
       am.frequency.value = 0.15 + Math.random() * 0.2;
       amGain.gain.value = 0.02;
       am.connect(amGain);
       amGain.connect(g.gain);
-      g.gain.value = 0.025;
+      g.gain.value = 0.02;
       am.start();
       osc.connect(g);
       g.connect(reverb);
@@ -263,22 +272,33 @@ class AudioEngine {
     }, 500);
   }
 
-  // ── Public API ─────────────────────────────────────────────────────────────
+  // ── Public Control Methods ───────────────────────────────────────────────────
 
-  public play(theme?: Theme) {
+  public play(trackIndex?: number) {
     this.initCtx();
     if (!this.ctx || !this.masterGain) return;
-    if (theme) this.currentTheme = theme;
+
+    if (trackIndex !== undefined && trackIndex >= 0 && trackIndex < TRACKS.length) {
+      this.currentTrackIndex = trackIndex;
+    }
+
+    const currentTrack = TRACKS[this.currentTrackIndex] || TRACKS[0];
+    this.currentTheme = currentTrack.theme;
 
     this.stopAmbient();
     this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.5, this.ctx.currentTime);
 
-    if (this.currentTheme === "dark") this.playDarkTrack(this.ctx);
-    else if (this.currentTheme === "anime") this.playAnimeTrack(this.ctx);
-    else this.playLightTrack(this.ctx);
+    if (currentTrack.id === "lofi-nature") {
+      this.playAnimeTrack(this.ctx);
+    } else if (currentTrack.id === "lofi-minimal") {
+      this.playLightTrack(this.ctx);
+    } else {
+      this.playDarkTrack(this.ctx);
+    }
 
     this.isPlaying = true;
     this.startProgressTracking();
+    this.onTrackChangeCallback?.(currentTrack);
   }
 
   public pause() {
@@ -295,28 +315,71 @@ class AudioEngine {
     return this.isPlaying;
   }
 
+  public nextTrack(): Track {
+    const nextIdx = (this.currentTrackIndex + 1) % TRACKS.length;
+    this.currentTrackIndex = nextIdx;
+    if (this.isPlaying) {
+      this.play(nextIdx);
+    } else {
+      this.onTrackChangeCallback?.(TRACKS[nextIdx]);
+    }
+    return TRACKS[nextIdx];
+  }
+
+  public prevTrack(): Track {
+    const prevIdx = (this.currentTrackIndex - 1 + TRACKS.length) % TRACKS.length;
+    this.currentTrackIndex = prevIdx;
+    if (this.isPlaying) {
+      this.play(prevIdx);
+    } else {
+      this.onTrackChangeCallback?.(TRACKS[prevIdx]);
+    }
+    return TRACKS[prevIdx];
+  }
+
+  public selectTrack(index: number): Track {
+    if (index >= 0 && index < TRACKS.length) {
+      this.currentTrackIndex = index;
+      if (this.isPlaying) {
+        this.play(index);
+      } else {
+        this.onTrackChangeCallback?.(TRACKS[index]);
+      }
+    }
+    return TRACKS[this.currentTrackIndex];
+  }
+
   public setTheme(theme: Theme) {
     this.currentTheme = theme;
-    // Switch track if playing
-    if (this.isPlaying) {
-      this.play(theme);
+    const matchIdx = TRACKS.findIndex((t) => t.theme === theme);
+    if (matchIdx !== -1 && matchIdx !== this.currentTrackIndex) {
+      this.currentTrackIndex = matchIdx;
+      if (this.isPlaying) {
+        this.play(matchIdx);
+      } else {
+        this.onTrackChangeCallback?.(TRACKS[matchIdx]);
+      }
     }
   }
 
   public mute() {
     this.isMuted = true;
     if (this.masterGain && this.ctx) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.3);
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
     }
-    try { localStorage.setItem("portfolio_audio_muted", "true"); } catch {}
+    try {
+      localStorage.setItem("portfolio_audio_muted", "true");
+    } catch {}
   }
 
   public unmute() {
     this.isMuted = false;
     if (this.masterGain && this.ctx) {
-      this.masterGain.gain.linearRampToValueAtTime(0.5, this.ctx.currentTime + 0.3);
+      this.masterGain.gain.linearRampToValueAtTime(0.5, this.ctx.currentTime + 0.2);
     }
-    try { localStorage.setItem("portfolio_audio_muted", "false"); } catch {}
+    try {
+      localStorage.setItem("portfolio_audio_muted", "false");
+    } catch {}
   }
 
   public toggleMute(): boolean {
@@ -340,14 +403,27 @@ class AudioEngine {
     this.onProgressCallback = cb;
   }
 
-  public getIsPlaying() { return this.isPlaying; }
-  public getIsMuted() { return this.isMuted; }
-  public getCurrentTrack(): Track {
-    return TRACKS.find((t) => t.theme === this.currentTheme) ?? TRACKS[0];
+  public setTrackChangeCallback(cb: (track: Track) => void) {
+    this.onTrackChangeCallback = cb;
   }
-  public getCurrentTheme() { return this.currentTheme; }
 
-  // ── Legacy UI SFX (retained for existing components) ─────────────────────
+  public getIsPlaying() {
+    return this.isPlaying;
+  }
+  public getIsMuted() {
+    return this.isMuted;
+  }
+  public getCurrentTrack(): Track {
+    return TRACKS[this.currentTrackIndex] || TRACKS[0];
+  }
+  public getCurrentTrackIndex() {
+    return this.currentTrackIndex;
+  }
+  public getCurrentTheme() {
+    return this.currentTheme;
+  }
+
+  // ── UI SFX ──────────────────────────────────────────────────────────────────
   public playHover() {
     if (this.isMuted) return;
     this.initCtx();
@@ -356,14 +432,14 @@ class AudioEngine {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(700, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(850, this.ctx.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.018, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
+      osc.frequency.setValueAtTime(750, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(900, this.ctx.currentTime + 0.035);
+      gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.035);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.04);
+      osc.stop(this.ctx.currentTime + 0.035);
     } catch {}
   }
 
@@ -375,14 +451,14 @@ class AudioEngine {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(900, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.05);
+      osc.frequency.setValueAtTime(950, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(450, this.ctx.currentTime + 0.045);
+      gain.gain.setValueAtTime(0.035, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.045);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.05);
+      osc.stop(this.ctx.currentTime + 0.045);
     } catch {}
   }
 
@@ -394,8 +470,8 @@ class AudioEngine {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(1200 + Math.random() * 200, this.ctx.currentTime);
-      gain.gain.setValueAtTime(0.022, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(1100 + Math.random() * 250, this.ctx.currentTime);
+      gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.025);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
@@ -416,13 +492,13 @@ class AudioEngine {
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + i * 0.06);
-        g.gain.setValueAtTime(0.03, now + i * 0.06);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.12);
+        osc.frequency.setValueAtTime(freq, now + i * 0.05);
+        g.gain.setValueAtTime(0.025, now + i * 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.1);
         osc.connect(g);
         g.connect(this.ctx.destination);
-        osc.start(now + i * 0.06);
-        osc.stop(now + i * 0.06 + 0.12);
+        osc.start(now + i * 0.05);
+        osc.stop(now + i * 0.05 + 0.1);
       });
     } catch {}
   }
@@ -435,14 +511,14 @@ class AudioEngine {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(180, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(140, this.ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.15);
+      osc.frequency.setValueAtTime(170, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(130, this.ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.025, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.12);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.15);
+      osc.stop(this.ctx.currentTime + 0.12);
     } catch {}
   }
 }

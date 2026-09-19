@@ -5,51 +5,51 @@ interface EarthScene3DProps {
   onMarkerClick?: (marker: { id: string; label: string; description: string }) => void;
 }
 
-const MARKERS = [
+export const DATA_MARKERS = [
   {
     id: "ideas",
     label: "Ideas",
     sublabel: "Start here",
-    description: "Every data product begins with a clear problem statement.",
-    phi: Math.PI * 0.28,
-    theta: Math.PI * 0.15,
-    color: 0xfbbf24,
+    description: "Every data product begins with identifying high-value problems and unstandardized domain records.",
+    color: "#f59e0b", // amber
+    icon: "💡",
+    pos: [0.95, 0.72, 0.45],
   },
   {
     id: "data",
     label: "Data",
     sublabel: "Raw to structured",
-    description: "DigiPath ingests raw admission cutoff PDFs and normalizes them into structured records.",
-    phi: Math.PI * 0.45,
-    theta: Math.PI * 0.55,
-    color: 0x6366f1,
+    description: "Ingesting, normalizing, and cleaning complex tabular data and multi-year cutoff PDFs.",
+    color: "#6366f1", // indigo
+    icon: "📊",
+    pos: [-0.95, 0.48, 0.65],
   },
   {
     id: "aiml",
     label: "AI/ML",
     sublabel: "Models & insights",
-    description: "Machine learning and NLP pipelines power DigiPath predictions and Kosh's Marathi text transformation.",
-    phi: Math.PI * 0.65,
-    theta: Math.PI * 1.2,
-    color: 0xa78bfa,
+    description: "Machine learning prediction algorithms, Marathi NLP transformation, and statistical modeling.",
+    color: "#a855f7", // purple
+    icon: "🧠",
+    pos: [0.75, 0.05, 0.85],
   },
   {
     id: "engineering",
     label: "Engineering",
     sublabel: "Build & deploy",
-    description: "From ForensiQ forensic pipelines to Python API layers — building reliable systems that work under pressure.",
-    phi: Math.PI * 0.35,
-    theta: Math.PI * 0.9,
-    color: 0x34d399,
+    description: "Full-stack APIs, forensic pipeline tooling, and robust production-ready systems.",
+    color: "#3b82f6", // blue
+    icon: "⚙️",
+    pos: [-0.35, -0.65, 0.85],
   },
   {
     id: "impact",
     label: "Impact",
     sublabel: "Real world value",
-    description: "Turning unstandardized data into dependable decisions. DATA → TRANSFORMATION → INTELLIGENCE.",
-    phi: Math.PI * 0.72,
-    theta: Math.PI * 0.4,
-    color: 0xf97316,
+    description: "Empowering students with admission intelligence and businesses with profitability insights.",
+    color: "#10b981", // emerald
+    icon: "🌱",
+    pos: [0.65, -0.55, 0.6],
   },
 ];
 
@@ -65,308 +65,393 @@ function isWebGLAvailable(): boolean {
   }
 }
 
+/** Generates a high-resolution 2048x1024 realistic Earth texture */
+function generateEarthTexture(): THREE.CanvasTexture {
+  const W = 2048;
+  const H = 1024;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+
+  // 1. Deep Ocean Gradient
+  const oceanGrad = ctx.createLinearGradient(0, 0, 0, H);
+  oceanGrad.addColorStop(0, "#061022");
+  oceanGrad.addColorStop(0.2, "#0b2044");
+  oceanGrad.addColorStop(0.5, "#0e2954");
+  oceanGrad.addColorStop(0.8, "#0b2044");
+  oceanGrad.addColorStop(1, "#050e1f");
+  ctx.fillStyle = oceanGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Continental Landmasses (Detailed Geographic Approximations)
+  ctx.save();
+
+  const drawLand = (
+    cx: number,
+    cy: number,
+    rx: number,
+    ry: number,
+    rot: number,
+    color1 = "#1e4e2a",
+    color2 = "#14361c"
+  ) => {
+    ctx.save();
+    ctx.translate(cx * W, cy * H);
+    ctx.rotate(rot);
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rx * W);
+    grad.addColorStop(0, color1);
+    grad.addColorStop(0.7, color2);
+    grad.addColorStop(1, "rgba(8, 25, 45, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * W, ry * H, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  // North America
+  drawLand(0.22, 0.32, 0.14, 0.16, -0.2, "#2b5e36", "#1c4024");
+  drawLand(0.18, 0.22, 0.1, 0.08, 0.1, "#386b44", "#204629"); // Canada/Alaska
+  drawLand(0.26, 0.42, 0.06, 0.09, 0.3, "#426e38", "#244220"); // Mexico/Central
+
+  // South America
+  drawLand(0.32, 0.65, 0.09, 0.18, 0.15, "#1f562b", "#143b1c");
+  drawLand(0.35, 0.58, 0.08, 0.1, -0.2, "#286b36", "#164421"); // Amazon basin
+
+  // Eurasia (Europe & Asia)
+  drawLand(0.52, 0.28, 0.12, 0.11, 0, "#32623a", "#1d3d23"); // Europe
+  drawLand(0.68, 0.3, 0.22, 0.16, 0.1, "#36683e", "#204526"); // Russia/Siberia
+  drawLand(0.72, 0.42, 0.14, 0.12, -0.1, "#3d7345", "#244d2b"); // East Asia/China
+  drawLand(0.64, 0.48, 0.08, 0.1, 0.15, "#487a42", "#284d26"); // India / South Asia
+  drawLand(0.56, 0.42, 0.09, 0.08, -0.1, "#665836", "#44381e"); // Middle East (Desert)
+
+  // Africa
+  drawLand(0.52, 0.48, 0.09, 0.07, 0, "#6e603c", "#473c22"); // Sahara Desert
+  drawLand(0.54, 0.62, 0.1, 0.15, 0.05, "#275c32", "#183e20"); // Central & South Africa
+
+  // Australia
+  drawLand(0.84, 0.7, 0.09, 0.09, -0.1, "#5e5238", "#38301c");
+
+  // Polar Ice Caps
+  const iceGradNorth = ctx.createLinearGradient(0, 0, 0, H * 0.12);
+  iceGradNorth.addColorStop(0, "rgba(220, 240, 255, 0.95)");
+  iceGradNorth.addColorStop(1, "rgba(220, 240, 255, 0)");
+  ctx.fillStyle = iceGradNorth;
+  ctx.fillRect(0, 0, W, H * 0.12);
+
+  const iceGradSouth = ctx.createLinearGradient(0, H * 0.88, 0, H);
+  iceGradSouth.addColorStop(0, "rgba(220, 240, 255, 0)");
+  iceGradSouth.addColorStop(1, "rgba(220, 240, 255, 0.95)");
+  ctx.fillStyle = iceGradSouth;
+  ctx.fillRect(0, H * 0.88, W, H * 0.12);
+
+  // 3. City Lights Shimmer on Land
+  ctx.fillStyle = "rgba(255, 235, 170, 0.85)";
+  const cityDots = [
+    [0.2, 0.32], [0.24, 0.3], [0.26, 0.34], [0.5, 0.26], [0.53, 0.29],
+    [0.72, 0.4], [0.75, 0.45], [0.64, 0.46], [0.63, 0.5], [0.83, 0.68],
+  ];
+  for (const [cx, cy] of cityDots) {
+    for (let i = 0; i < 15; i++) {
+      const rx = (cx + (Math.random() - 0.5) * 0.06) * W;
+      const ry = (cy + (Math.random() - 0.5) * 0.06) * H;
+      ctx.beginPath();
+      ctx.arc(rx, ry, Math.random() * 1.5 + 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  return texture;
+}
+
+/** Generates realistic procedural cloud texture */
+function generateCloudTexture(): THREE.CanvasTexture {
+  const W = 1024;
+  const H = 512;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+  ctx.clearRect(0, 0, W, H);
+
+  // Swirling cloud bands
+  for (let i = 0; i < 80; i++) {
+    const cx = Math.random() * W;
+    const cy = Math.random() * H;
+    const rw = 40 + Math.random() * 120;
+    const rh = 15 + Math.random() * 40;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rw);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0.6)");
+    grad.addColorStop(0.5, "rgba(255, 255, 255, 0.25)");
+    grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rw, rh, (Math.random() - 0.5) * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  return texture;
+}
+
 export function EarthScene3D({ onMarkerClick }: EarthScene3DProps) {
   const mountRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<{
-    renderer: THREE.WebGLRenderer;
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
-    earth: THREE.Mesh;
-    moon: THREE.Mesh;
-    moonPivot: THREE.Object3D;
-    markerMeshes: THREE.Mesh[];
-    markerLabels: HTMLDivElement[];
-    animId: number;
-    isDragging: boolean;
-    prevMouse: { x: number; y: number };
-    rotationVelocity: { x: number; y: number };
-    targetZoom: number;
-    earthGroup: THREE.Group;
-  } | null>(null);
+  const activeMarkerRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!mountRef.current) return;
-    if (!isWebGLAvailable()) return;
+    if (!mountRef.current || !isWebGLAvailable()) return;
 
-    const prefersReduced =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mount = mountRef.current;
-    const W = mount.clientWidth;
-    const H = mount.clientHeight;
+    let W = mount.clientWidth;
+    let H = mount.clientHeight;
 
-    // ── Renderer ──────────────────────────────────────────────────────────────
+    // ── Renderer ─────────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
       powerPreference: "high-performance",
     });
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    renderer.setPixelRatio(dpr);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(W, H);
     renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     mount.appendChild(renderer.domElement);
 
-    // ── Scene & Camera ─────────────────────────────────────────────────────────
+    // ── Scene & Camera ────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 1000);
-    camera.position.set(0, 0, 3.2);
-    let targetZoom = 3.2;
+    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 1000);
+    camera.position.set(0, 0.1, 3.4);
+    let targetZoom = 3.4;
 
-    // ── Lighting ──────────────────────────────────────────────────────────────
-    const ambientLight = new THREE.AmbientLight(0x112244, 0.6);
-    scene.add(ambientLight);
-    const sunLight = new THREE.DirectionalLight(0xfff8e0, 1.6);
-    sunLight.position.set(5, 3, 5);
-    scene.add(sunLight);
-    const rimLight = new THREE.DirectionalLight(0x4488cc, 0.25);
-    rimLight.position.set(-4, -2, -3);
-    scene.add(rimLight);
-
-    // ── Starfield ─────────────────────────────────────────────────────────────
-    const starsCount = 2000;
+    // ── Starfield & Cosmic Dust ───────────────────────────────────────────────
+    const starsCount = 1800;
     const starPositions = new Float32Array(starsCount * 3);
-    for (let i = 0; i < starsCount * 3; i++) {
-      starPositions[i] = (Math.random() - 0.5) * 160;
+    const starColors = new Float32Array(starsCount * 3);
+    for (let i = 0; i < starsCount; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 140;
+      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 140;
+      starPositions[i * 3 + 2] = (Math.random() - 0.5) * 140;
+      const isCyan = Math.random() > 0.7;
+      const isWarm = Math.random() > 0.85;
+      starColors[i * 3] = isWarm ? 1.0 : isCyan ? 0.7 : 0.9;
+      starColors[i * 3 + 1] = isWarm ? 0.85 : isCyan ? 0.9 : 0.95;
+      starColors[i * 3 + 2] = isWarm ? 0.7 : isCyan ? 1.0 : 1.0;
     }
     const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+    starGeo.setAttribute("color", new THREE.BufferAttribute(starColors, 3));
     const starMat = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.12,
+      size: 0.14,
       sizeAttenuation: true,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.8,
     });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
+    const starfield = new THREE.Points(starGeo, starMat);
+    scene.add(starfield);
 
-    // ── Earth Group (for rotation) ─────────────────────────────────────────────
+    // ── Lighting ─────────────────────────────────────────────────────────────
+    const ambientLight = new THREE.AmbientLight(0x0c152a, 0.8);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xfff8ea, 2.0);
+    sunLight.position.set(6, 3, 5);
+    scene.add(sunLight);
+
+    const blueBackLight = new THREE.DirectionalLight(0x3877ff, 0.6);
+    blueBackLight.position.set(-5, -2, -4);
+    scene.add(blueBackLight);
+
+    // ── Earth System ──────────────────────────────────────────────────────────
     const earthGroup = new THREE.Group();
     scene.add(earthGroup);
 
-    // Earth sphere — procedural landmass shading via canvas texture
-    const texSize = 512;
-    const earthCanvas = document.createElement("canvas");
-    earthCanvas.width = texSize;
-    earthCanvas.height = texSize / 2;
-    const ctx2d = earthCanvas.getContext("2d")!;
-
-    // Deep ocean base
-    const oceanGrad = ctx2d.createLinearGradient(0, 0, 0, texSize / 2);
-    oceanGrad.addColorStop(0, "#0a1628");
-    oceanGrad.addColorStop(0.5, "#0d2040");
-    oceanGrad.addColorStop(1, "#091525");
-    ctx2d.fillStyle = oceanGrad;
-    ctx2d.fillRect(0, 0, texSize, texSize / 2);
-
-    // Procedural continent blobs
-    const continentSeeds = [
-      { x: 0.18, y: 0.35, rx: 0.12, ry: 0.18, rotation: -0.3 },
-      { x: 0.38, y: 0.3, rx: 0.08, ry: 0.14, rotation: 0.2 },
-      { x: 0.55, y: 0.4, rx: 0.18, ry: 0.22, rotation: 0.1 },
-      { x: 0.73, y: 0.35, rx: 0.07, ry: 0.12, rotation: -0.1 },
-      { x: 0.85, y: 0.45, rx: 0.06, ry: 0.08, rotation: 0.4 },
-      { x: 0.62, y: 0.62, rx: 0.07, ry: 0.12, rotation: -0.2 },
-      { x: 0.45, y: 0.65, rx: 0.09, ry: 0.06, rotation: 0.3 },
-      { x: 0.25, y: 0.55, rx: 0.06, ry: 0.09, rotation: -0.4 },
-    ];
-    for (const s of continentSeeds) {
-      ctx2d.save();
-      ctx2d.translate(s.x * texSize, s.y * (texSize / 2));
-      ctx2d.rotate(s.rotation);
-      const g = ctx2d.createRadialGradient(0, 0, 0, 0, 0, s.rx * texSize);
-      g.addColorStop(0, "rgba(34, 85, 40, 0.95)");
-      g.addColorStop(0.5, "rgba(28, 68, 34, 0.85)");
-      g.addColorStop(1, "rgba(18, 50, 24, 0)");
-      ctx2d.fillStyle = g;
-      ctx2d.beginPath();
-      ctx2d.ellipse(0, 0, s.rx * texSize, s.ry * (texSize / 2), 0, 0, Math.PI * 2);
-      ctx2d.fill();
-      ctx2d.restore();
-    }
-    // Polar ice caps
-    ctx2d.fillStyle = "rgba(200, 225, 255, 0.5)";
-    ctx2d.beginPath();
-    ctx2d.ellipse(texSize / 2, 5, texSize * 0.4, 12, 0, 0, Math.PI * 2);
-    ctx2d.fill();
-    ctx2d.beginPath();
-    ctx2d.ellipse(texSize / 2, texSize / 2 - 5, texSize * 0.35, 10, 0, 0, Math.PI * 2);
-    ctx2d.fill();
-
-    const earthTex = new THREE.CanvasTexture(earthCanvas);
-    const earthGeo = new THREE.SphereGeometry(1, 64, 64);
+    // 1. Solid Earth Sphere
+    const earthTexture = generateEarthTexture();
+    const earthGeo = new THREE.SphereGeometry(1.0, 64, 64);
     const earthMat = new THREE.MeshPhongMaterial({
-      map: earthTex,
-      specular: new THREE.Color(0x112244),
-      shininess: 12,
+      map: earthTexture,
+      shininess: 18,
+      specular: new THREE.Color(0x193b70),
     });
-    const earth = new THREE.Mesh(earthGeo, earthMat);
-    earthGroup.add(earth);
+    const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+    earthGroup.add(earthMesh);
 
-    // Atmosphere halo
-    const atmoGeo = new THREE.SphereGeometry(1.06, 64, 64);
-    const atmoMat = new THREE.MeshPhongMaterial({
-      color: 0x4488ff,
+    // 2. Cloud Layer
+    const cloudTexture = generateCloudTexture();
+    const cloudGeo = new THREE.SphereGeometry(1.018, 48, 48);
+    const cloudMat = new THREE.MeshPhongMaterial({
+      map: cloudTexture,
       transparent: true,
-      opacity: 0.09,
+      opacity: 0.45,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+    earthGroup.add(cloudMesh);
+
+    // 3. Atmosphere Halo
+    const atmoGeo = new THREE.SphereGeometry(1.07, 48, 48);
+    const atmoMat = new THREE.MeshBasicMaterial({
+      color: 0x4da3ff,
+      transparent: true,
+      opacity: 0.12,
       side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
     });
     earthGroup.add(new THREE.Mesh(atmoGeo, atmoMat));
 
-    // Outer glow ring
-    const glowGeo = new THREE.SphereGeometry(1.12, 32, 32);
+    // 4. Outer Soft Glow
+    const glowGeo = new THREE.SphereGeometry(1.16, 32, 32);
     const glowMat = new THREE.MeshBasicMaterial({
-      color: 0x223366,
+      color: 0x1d4ed8,
       transparent: true,
-      opacity: 0.04,
+      opacity: 0.05,
       side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
     });
     earthGroup.add(new THREE.Mesh(glowGeo, glowMat));
 
-    // ── Moon ──────────────────────────────────────────────────────────────────
-    const moonPivot = new THREE.Object3D();
-    scene.add(moonPivot);
-    moonPivot.rotation.x = 0.15;
+    // ── Moon & Orbital Path ───────────────────────────────────────────────────
+    const moonOrbitGroup = new THREE.Group();
+    scene.add(moonOrbitGroup);
+    moonOrbitGroup.rotation.x = 0.28;
+    moonOrbitGroup.rotation.z = -0.15;
 
-    // Moon orbit ring (dashed-look via torus)
-    const orbitGeo = new THREE.TorusGeometry(2.1, 0.004, 6, 120);
-    const orbitMat = new THREE.MeshBasicMaterial({
-      color: 0x334466,
-      transparent: true,
-      opacity: 0.35,
-    });
-    const orbitRing = new THREE.Mesh(orbitGeo, orbitMat);
-    orbitRing.rotation.x = Math.PI / 2;
-    moonPivot.add(orbitRing);
-
-    // Moon sphere (grey, cratered via bump-like texture)
-    const moonCanv = document.createElement("canvas");
-    moonCanv.width = 256;
-    moonCanv.height = 256;
-    const mc = moonCanv.getContext("2d")!;
-    const moonGrad = mc.createRadialGradient(128, 128, 0, 128, 128, 128);
-    moonGrad.addColorStop(0, "#c8c8d4");
-    moonGrad.addColorStop(0.6, "#a8a8b8");
-    moonGrad.addColorStop(1, "#606070");
-    mc.fillStyle = moonGrad;
-    mc.fillRect(0, 0, 256, 256);
-    // Craters
-    for (let i = 0; i < 18; i++) {
-      const cx = Math.random() * 256;
-      const cy = Math.random() * 256;
-      const cr = 2 + Math.random() * 10;
-      mc.beginPath();
-      mc.arc(cx, cy, cr, 0, Math.PI * 2);
-      mc.fillStyle = `rgba(80,80,90,${0.2 + Math.random() * 0.3})`;
-      mc.fill();
+    // Elliptical Orbit Ring
+    const orbitRadius = 2.2;
+    const orbitPoints: THREE.Vector3[] = [];
+    for (let i = 0; i <= 100; i++) {
+      const theta = (i / 100) * Math.PI * 2;
+      orbitPoints.push(
+        new THREE.Vector3(Math.cos(theta) * orbitRadius, 0, Math.sin(theta) * (orbitRadius * 0.95))
+      );
     }
-    const moonTex = new THREE.CanvasTexture(moonCanv);
+    const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+    const orbitMat = new THREE.LineBasicMaterial({
+      color: 0x3b82f6,
+      transparent: true,
+      opacity: 0.25,
+    });
+    const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+    moonOrbitGroup.add(orbitLine);
+
+    // Moon Mesh
     const moonGeo = new THREE.SphereGeometry(0.22, 32, 32);
     const moonMat = new THREE.MeshPhongMaterial({
-      map: moonTex,
-      shininess: 5,
+      color: 0xd4d4dc,
+      shininess: 4,
     });
-    const moon = new THREE.Mesh(moonGeo, moonMat);
-    moon.position.set(2.1, 0, 0);
-    moonPivot.add(moon);
+    const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+    moonMesh.position.set(orbitRadius, 0, 0);
+    moonOrbitGroup.add(moonMesh);
 
-    // ── Orbit path dots (data connections) ───────────────────────────────────
-    const dotCount = 60;
-    const dotPositions = new Float32Array(dotCount * 3);
-    for (let i = 0; i < dotCount; i++) {
-      const angle = (i / dotCount) * Math.PI * 2;
-      dotPositions[i * 3] = Math.cos(angle) * 2.1;
-      dotPositions[i * 3 + 1] = 0;
-      dotPositions[i * 3 + 2] = Math.sin(angle) * 2.1;
-    }
-    const dotGeo = new THREE.BufferGeometry();
-    dotGeo.setAttribute("position", new THREE.BufferAttribute(dotPositions, 3));
-    const dotMat = new THREE.PointsMaterial({
-      color: 0x334488,
-      size: 0.03,
-      sizeAttenuation: true,
-    });
-    moonPivot.add(new THREE.Points(dotGeo, dotMat));
-
-    // ── 3D Markers on Earth surface ──────────────────────────────────────────
+    // ── Interactive 3D HUD Markers ───────────────────────────────────────────
     const markerMeshes: THREE.Mesh[] = [];
-    const markerLabelEls: HTMLDivElement[] = [];
+    const markerDomLabels: HTMLDivElement[] = [];
 
-    for (const m of MARKERS) {
-      const sph = new THREE.SphereGeometry(0.035, 12, 12);
-      const mat = new THREE.MeshBasicMaterial({ color: m.color });
-      const mesh = new THREE.Mesh(sph, mat);
+    DATA_MARKERS.forEach((m) => {
+      // Pin Sphere
+      const pinGeo = new THREE.SphereGeometry(0.045, 16, 16);
+      const pinMat = new THREE.MeshBasicMaterial({ color: m.color });
+      const pinMesh = new THREE.Mesh(pinGeo, pinMat);
+      pinMesh.position.set(m.pos[0], m.pos[1], m.pos[2]);
+      pinMesh.userData = m;
+      earthGroup.add(pinMesh);
+      markerMeshes.push(pinMesh);
 
-      // Convert spherical to cartesian on unit sphere
-      const x = Math.sin(m.phi) * Math.cos(m.theta);
-      const y = Math.cos(m.phi);
-      const z = Math.sin(m.phi) * Math.sin(m.theta);
-      mesh.position.set(x, y, z);
-      mesh.userData = m;
-      earthGroup.add(mesh);
-      markerMeshes.push(mesh);
-
-      // Pulsing ring around marker
-      const ringGeo = new THREE.TorusGeometry(0.06, 0.008, 8, 24);
+      // Glowing Aura Ring
+      const ringGeo = new THREE.RingGeometry(0.06, 0.08, 24);
       const ringMat = new THREE.MeshBasicMaterial({
         color: m.color,
+        side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.6,
       });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.copy(mesh.position);
-      ring.lookAt(0, 0, 0);
-      ring.rotateX(Math.PI / 2);
-      ring.userData = { ...m, isRing: true, baseOpacity: 0.5 };
-      earthGroup.add(ring);
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.position.copy(pinMesh.position);
+      ringMesh.lookAt(0, 0, 0);
+      earthGroup.add(ringMesh);
 
-      // HTML label overlay
-      const label = document.createElement("div");
-      label.className = "marker-label";
-      label.innerHTML = `<span class="marker-label-text">${m.label}</span><span class="marker-label-sub">${m.sublabel}</span>`;
-      label.style.cssText = `
+      // Interactive HTML Glass HUD Card Overlay
+      const hudEl = document.createElement("div");
+      hudEl.className = "marker-hud-card";
+      hudEl.innerHTML = `
+        <div class="hud-inner">
+          <div class="hud-header">
+            <span class="hud-dot" style="background:${m.color}"></span>
+            <span class="hud-label" style="color:${m.color}">${m.label}</span>
+          </div>
+          <span class="hud-sub">${m.sublabel}</span>
+        </div>
+      `;
+      hudEl.style.cssText = `
         position: absolute;
         pointer-events: auto;
         cursor: pointer;
-        background: rgba(10,12,25,0.82);
-        border: 1px solid ${`#${m.color.toString(16).padStart(6, "0")}`};
-        border-radius: 8px;
-        padding: 4px 9px;
-        font-size: 11px;
+        background: rgba(13, 17, 30, 0.85);
+        border: 1px solid ${m.color}66;
+        border-radius: 12px;
+        padding: 6px 12px;
         font-family: 'JetBrains Mono', monospace;
-        color: #e8e8f0;
+        color: #f1f5f9;
         display: flex;
         flex-direction: column;
-        gap: 1px;
+        gap: 2px;
         white-space: nowrap;
-        transform: translate(-50%, -120%);
-        transition: opacity 0.2s ease, transform 0.2s ease;
-        z-index: 20;
-        backdrop-filter: blur(6px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        transform: translate(-50%, -130%);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 24px -4px rgba(0,0,0,0.6), 0 0 16px -2px ${m.color}44;
+        transition: transform 0.15s ease, opacity 0.2s ease, border-color 0.2s ease;
+        z-index: 25;
+        user-select: none;
       `;
-      (label.querySelector(".marker-label-text") as HTMLElement).style.cssText =
-        `font-weight: 600; color: #${m.color.toString(16).padStart(6, "0")}; font-size: 11px;`;
-      (label.querySelector(".marker-label-sub") as HTMLElement).style.cssText =
-        `color: #a1a1aa; font-size: 9px;`;
-      label.addEventListener("click", () => {
+
+      const hudHeader = hudEl.querySelector(".hud-header") as HTMLElement;
+      hudHeader.style.cssText = `display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 11px;`;
+
+      const hudDot = hudEl.querySelector(".hud-dot") as HTMLElement;
+      hudDot.style.cssText = `width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 8px ${m.color};`;
+
+      const hudSub = hudEl.querySelector(".hud-sub") as HTMLElement;
+      hudSub.style.cssText = `font-size: 9px; color: #94a3b8;`;
+
+      hudEl.addEventListener("mouseenter", () => {
+        hudEl.style.transform = "translate(-50%, -135%) scale(1.05)";
+        hudEl.style.borderColor = m.color;
+      });
+      hudEl.addEventListener("mouseleave", () => {
+        hudEl.style.transform = "translate(-50%, -130%) scale(1)";
+        hudEl.style.borderColor = `${m.color}66`;
+      });
+      hudEl.addEventListener("click", () => {
+        activeMarkerRef.current = m.id;
         onMarkerClick?.({
           id: m.id,
           label: m.label,
           description: m.description,
         });
       });
-      mount.appendChild(label);
-      markerLabelEls.push(label);
-    }
 
-    // ── Interaction State ─────────────────────────────────────────────────────
+      mount.appendChild(hudEl);
+      markerDomLabels.push(hudEl);
+    });
+
+    // ── Mouse Drag & Momentum Interaction ─────────────────────────────────────
     let isDragging = false;
     let prevMouse = { x: 0, y: 0 };
     let rotVel = { x: 0, y: 0 };
     const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
+    const mouseNorm = new THREE.Vector2();
 
     const onMouseDown = (e: MouseEvent) => {
       isDragging = true;
@@ -384,8 +469,8 @@ export function EarthScene3D({ onMarkerClick }: EarthScene3DProps) {
       if (isDragging) {
         const dx = e.clientX - prevMouse.x;
         const dy = e.clientY - prevMouse.y;
-        rotVel.y = dx * 0.008;
-        rotVel.x = dy * 0.008;
+        rotVel.y = dx * 0.006;
+        rotVel.x = dy * 0.006;
         prevMouse = { x: e.clientX, y: e.clientY };
       }
     };
@@ -393,30 +478,31 @@ export function EarthScene3D({ onMarkerClick }: EarthScene3DProps) {
       if (isDragging && e.touches.length === 1) {
         const dx = e.touches[0].clientX - prevMouse.x;
         const dy = e.touches[0].clientY - prevMouse.y;
-        rotVel.y = dx * 0.008;
-        rotVel.x = dy * 0.008;
+        rotVel.y = dx * 0.006;
+        rotVel.x = dy * 0.006;
         prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       }
     };
-    const onMouseUp = () => { isDragging = false; };
-
+    const onMouseUp = () => {
+      isDragging = false;
+    };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      targetZoom = Math.max(2.2, Math.min(4.5, targetZoom + e.deltaY * 0.004));
+      targetZoom = Math.max(2.4, Math.min(4.8, targetZoom + e.deltaY * 0.003));
     };
 
     const onClick = (e: MouseEvent) => {
       const rect = mount.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(markerMeshes, false);
-      if (intersects.length > 0) {
-        const hit = intersects[0].object;
+      mouseNorm.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouseNorm.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouseNorm, camera);
+      const hits = raycaster.intersectObjects(markerMeshes, false);
+      if (hits.length > 0) {
+        const data = hits[0].object.userData;
         onMarkerClick?.({
-          id: hit.userData.id,
-          label: hit.userData.label,
-          description: hit.userData.description,
+          id: data.id,
+          label: data.label,
+          description: data.description,
         });
       }
     };
@@ -431,97 +517,81 @@ export function EarthScene3D({ onMarkerClick }: EarthScene3DProps) {
     renderer.domElement.addEventListener("touchmove", onTouchMove, { passive: true });
     renderer.domElement.addEventListener("touchend", onMouseUp);
 
-    // ── Resize handler ────────────────────────────────────────────────────────
+    // ── Window Resize ─────────────────────────────────────────────────────────
     const onResize = () => {
       if (!mount) return;
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
-      camera.aspect = w / h;
+      W = mount.clientWidth;
+      H = mount.clientHeight;
+      camera.aspect = W / H;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(W, H);
     };
     window.addEventListener("resize", onResize);
 
-    // ── IntersectionObserver — pause when not visible ─────────────────────────
-    let visible = true;
+    // ── Visibility Auto-Pause ─────────────────────────────────────────────────
+    let isVisible = true;
     const observer = new IntersectionObserver(
-      ([entry]) => { visible = entry.isIntersecting; },
-      { threshold: 0.1 }
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
     );
     observer.observe(mount);
 
     // ── Animation Loop ────────────────────────────────────────────────────────
-    let t = 0;
     let animId = 0;
+    let moonAngle = 0;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      if (!visible) return;
-
-      t += 0.005;
+      if (!isVisible) return;
 
       if (!prefersReduced) {
-        // Auto-rotate earth slowly when not dragging
+        // Earth Rotation
         if (!isDragging) {
-          earthGroup.rotation.y += 0.0015;
-          rotVel.x *= 0.92;
-          rotVel.y *= 0.92;
+          earthGroup.rotation.y += 0.0018;
+          rotVel.x *= 0.93;
+          rotVel.y *= 0.93;
         } else {
           earthGroup.rotation.x += rotVel.x;
           earthGroup.rotation.y += rotVel.y;
         }
 
-        // Moon orbit
-        moonPivot.rotation.y += 0.003;
+        // Differential Cloud Drift
+        cloudMesh.rotation.y += 0.0006;
 
-        // Stars slow drift
-        stars.rotation.y -= 0.0001;
+        // Moon Orbiting
+        moonAngle += 0.0035;
+        moonMesh.position.x = Math.cos(moonAngle) * orbitRadius;
+        moonMesh.position.z = Math.sin(moonAngle) * (orbitRadius * 0.95);
 
-        // Smooth zoom
-        camera.position.z += (targetZoom - camera.position.z) * 0.06;
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, 2.2, 4.5);
+        // Smooth Zooming
+        camera.position.z += (targetZoom - camera.position.z) * 0.08;
       }
 
-      // Project marker positions to screen for HTML labels
-      const w2 = mount.clientWidth / 2;
-      const h2 = mount.clientHeight / 2;
-      markerMeshes.forEach((mesh, i) => {
+      // Sync 3D Marker coordinates with DOM Labels
+      const halfW = mount.clientWidth / 2;
+      const halfH = mount.clientHeight / 2;
+
+      markerMeshes.forEach((mesh, idx) => {
         const worldPos = mesh.getWorldPosition(new THREE.Vector3());
         const projected = worldPos.clone().project(camera);
-        const screenX = (projected.x + 1) * w2;
-        const screenY = (-projected.y + 1) * h2;
+        const screenX = (projected.x + 1) * halfW;
+        const screenY = (-projected.y + 1) * halfH;
 
-        // Check if marker is on the visible side (positive z after projection)
-        const isFront = projected.z < 1 && worldPos.dot(camera.position.clone().normalize()) > 0;
+        // Only show label when facing camera
+        const isFacing = worldPos.dot(camera.position.clone().normalize()) > -0.1 && projected.z < 1;
+        const domLabel = markerDomLabels[idx];
 
-        const label = markerLabelEls[i];
-        label.style.left = `${screenX}px`;
-        label.style.top = `${screenY}px`;
-        label.style.opacity = isFront ? "1" : "0";
-        label.style.pointerEvents = isFront ? "auto" : "none";
+        domLabel.style.left = `${screenX}px`;
+        domLabel.style.top = `${screenY}px`;
+        domLabel.style.opacity = isFacing ? "1" : "0";
+        domLabel.style.pointerEvents = isFacing ? "auto" : "none";
       });
 
       renderer.render(scene, camera);
     };
     animate();
-
-    // ── Store refs for cleanup ─────────────────────────────────────────────────
-    sceneRef.current = {
-      renderer,
-      scene,
-      camera,
-      earth,
-      moon,
-      moonPivot,
-      markerMeshes,
-      markerLabels: markerLabelEls,
-      animId,
-      isDragging: false,
-      prevMouse,
-      rotationVelocity: rotVel,
-      targetZoom,
-      earthGroup,
-    };
 
     return () => {
       cancelAnimationFrame(animId);
@@ -537,48 +607,50 @@ export function EarthScene3D({ onMarkerClick }: EarthScene3DProps) {
       renderer.domElement.removeEventListener("touchend", onMouseUp);
       window.removeEventListener("resize", onResize);
 
-      // Remove HTML labels
-      markerLabelEls.forEach((el) => {
+      markerDomLabels.forEach((el) => {
         if (el.parentNode) el.parentNode.removeChild(el);
       });
 
-      // Dispose Three.js resources
       renderer.dispose();
       earthGeo.dispose();
       earthMat.dispose();
-      earthTex.dispose();
-      moonGeo.dispose();
-      moonMat.dispose();
-      moonTex.dispose();
+      earthTexture.dispose();
+      cloudGeo.dispose();
+      cloudMat.dispose();
+      cloudTexture.dispose();
       starGeo.dispose();
       starMat.dispose();
+      moonGeo.dispose();
+      moonMat.dispose();
+      orbitGeo.dispose();
+      orbitMat.dispose();
 
       if (mount.contains(renderer.domElement)) {
         mount.removeChild(renderer.domElement);
       }
     };
-  }, []);
-
-  const webglAvailable = isWebGLAvailable();
+  }, [onMarkerClick]);
 
   return (
-    <div ref={mountRef} className="relative w-full h-full" style={{ minHeight: 400 }}>
-      {!webglAvailable && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-zinc-950 rounded-2xl border border-zinc-800">
-          <div className="text-4xl">🌍</div>
-          <p className="text-sm text-zinc-400 font-mono-code text-center px-4">
-            WebGL is not available in this environment.
-            <br />
-            Enable hardware acceleration to see the 3D Earth.
-          </p>
-        </div>
-      )}
-      {/* Interaction hint overlay */}
+    <div ref={mountRef} className="relative w-full h-full" style={{ minHeight: 480 }}>
+      {/* Interaction Help Badge matching reference */}
       <div
-        className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 px-3 py-1.5 rounded-full text-[10px] font-mono-code text-zinc-400 select-none pointer-events-none"
-        style={{ background: "rgba(9,10,15,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
+        className="absolute bottom-4 right-4 z-20 hidden sm:flex flex-col gap-1 p-3 rounded-2xl border text-xs font-mono-code text-zinc-300 max-w-xs backdrop-blur-xl pointer-events-none"
+        style={{
+          background: "rgba(13, 17, 30, 0.8)",
+          borderColor: "rgba(59, 130, 246, 0.3)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+        }}
       >
-        Drag to rotate · Scroll to zoom · Click markers
+        <div className="flex items-center gap-2 text-indigo-300 font-bold">
+          <span>🎮</span>
+          <span>Interactive Celestial World</span>
+        </div>
+        <ul className="text-[10px] text-zinc-400 space-y-0.5 mt-0.5 list-disc list-inside">
+          <li>Drag Earth to rotate freely</li>
+          <li>Scroll to zoom in / out</li>
+          <li>Click glowing markers to inspect pipelines</li>
+        </ul>
       </div>
     </div>
   );

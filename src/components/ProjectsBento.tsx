@@ -23,7 +23,7 @@ export function ProjectsBento() {
   const isDark = theme !== "light";
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
-  // Active tabs for interactive case study previews
+  // Interactive tab states
   const [retailTab, setRetailTab] = useState<"margins" | "discounts" | "segments">("margins");
   const [koshTone, setKoshTone] = useState<"formal" | "concise" | "conversational">("formal");
 
@@ -42,8 +42,8 @@ export function ProjectsBento() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.14,
-        delayChildren: 0.08,
+        staggerChildren: 0.12,
+        delayChildren: 0.05,
       },
     },
   };
@@ -57,603 +57,518 @@ export function ProjectsBento() {
     },
   };
 
-  // Marathi rewrite interactive demonstrator samples
   const koshVariations = {
     formal: {
       style: "औपचारिक (Formal)",
-      text: "विद्यार्थ्यांनी निर्धारित वेळेत परीक्षेची पूर्वतयारी पूर्ण करणे अत्यावश्यक आहे.",
-      fidelity: "98% Semantic Match",
-      note: "Standard academic phrasing with precise Sanskritized Marathi lexicon.",
+      text: "विद्यार्थ्यांनी परीक्षा पूर्वतयारी वेळेत पूर्ण करणे आवश्यक आहे.",
+      fidelity: "Semantic Match",
     },
     concise: {
       style: "संक्षिप्त (Concise)",
       text: "विद्यार्थ्यांनी परीक्षेची तयारी वेळेत करावी.",
-      fidelity: "99% Semantic Match",
-      note: "Reduces token count by 36% while preserving core directive intent.",
+      fidelity: "Concise Form",
     },
     conversational: {
       style: "संभाषण (Conversational)",
       text: "परीक्षेची तयारी मुलांनी वेळेवरच करून घ्यायला हवी.",
-      fidelity: "96% Semantic Match",
-      note: "Colloquial Marathi construction suitable for spoken-language dialogues.",
+      fidelity: "Spoken Dialect",
     },
   };
 
-  // Theme-adaptive classes
+  // Card theme styling matching the reference images
+  const cardBorder =
+    theme === "light"
+      ? "border-gray-200 hover:border-gray-300 bg-white/95 shadow-xl shadow-black/[0.04]"
+      : theme === "anime"
+      ? "border-[#1e3050] hover:border-[#2a4060] bg-[#121f35]/90 shadow-2xl shadow-black/40"
+      : "border-[#1c2236] hover:border-[#283250] bg-[#0c0f1d]/90 shadow-2xl shadow-black/60";
+
   const headingColor = isDark ? "text-white" : "text-gray-900";
   const bodyColor = isDark ? "text-zinc-300" : "text-gray-600";
   const textMuted = isDark ? "text-zinc-400" : "text-gray-500";
-  const chipBg = isDark ? "bg-zinc-900 border-zinc-800 text-zinc-300" : "bg-gray-100 border-gray-200 text-gray-700";
-  const innerCardBg = isDark ? "bg-zinc-900/40 border-zinc-850" : "bg-gray-50 border-gray-200";
-  const subBoxBg = isDark ? "bg-zinc-950/80 border-zinc-850" : "bg-white border-gray-200 shadow-sm";
-  const footerBorder = isDark ? "border-zinc-850" : "border-gray-200";
+  const innerBoxBg = isDark ? "bg-[#080a14]/80 border-white/10" : "bg-gray-50 border-gray-200";
+  const chipBg = isDark ? "bg-[#14192b] border-white/10 text-zinc-300" : "bg-gray-100 border-gray-200 text-gray-700";
 
   return (
-    <section id="projects" className="pt-4 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-      {/* Section Header */}
+    <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
+      {/* ── Section Header matching Reference ─────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.5 }}
-        className="space-y-2.5 mb-10 text-left"
+        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
       >
-        <div className={`flex items-center gap-2 text-xs font-mono-code ${isDark ? "text-indigo-400" : "text-blue-600"}`}>
-          <Database className="w-3.5 h-3.5" />
-          <span className="font-semibold uppercase tracking-wider">// SELECTED WORK · DATA × AI SYSTEMS</span>
+        <div className="space-y-1.5">
+          <div className="text-xs font-mono-code font-bold uppercase tracking-wider text-emerald-400">
+            // FEATURED PROJECTS
+          </div>
+          <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-serif-display tracking-tight ${headingColor}`}>
+            Selected Data &amp; AI Systems
+          </h2>
+          <p className={`text-xs sm:text-sm font-normal ${textMuted}`}>
+            Real projects. Real problems. Real impact.
+          </p>
         </div>
-        <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-serif-display tracking-tight ${headingColor}`}>
-          Featured Data &amp; AI Systems
-        </h2>
-        <p className={`text-sm sm:text-base max-w-2xl font-normal leading-relaxed ${textMuted}`}>
-          Applied decision intelligence products, exploratory statistical analytics, and Devanagari natural language modeling.
-        </p>
+
+        <button
+          onClick={() => handleOpenModal(digipath)}
+          onMouseEnter={() => soundManager.playHover()}
+          className={`self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-mono-code transition-all hover:scale-105 ${
+            isDark
+              ? "bg-[#14192b] border-white/10 text-zinc-200 hover:text-white"
+              : "bg-gray-100 border-gray-200 text-gray-800 hover:bg-gray-200"
+          }`}
+        >
+          <span>View All Projects</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </button>
       </motion.div>
 
+      {/* ── 3-Column Project Bento Grid ────────────────────────────────────────── */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-40px" }}
-        className="space-y-8"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
       >
-        {/* ========================================================================= */}
-        {/* 1. PRIMARY FLAGSHIP PROJECT: DIGIPATH (FULL-WIDTH HERO)                  */}
-        {/* ========================================================================= */}
+        {/* ── CARD 1: DigiPath (Flagship) ────────────────────────────────────── */}
         <motion.div variants={itemVariants}>
           <SpotlightCard
-            spotlightColor={isDark ? "rgba(16, 185, 129, 0.14)" : "rgba(16, 185, 129, 0.08)"}
+            spotlightColor={isDark ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.08)"}
             onClick={() => handleOpenModal(digipath)}
             onMouseEnter={() => soundManager.playHover()}
-            className={`p-7 sm:p-9 shadow-xl cursor-pointer group relative overflow-hidden ${
-              isDark
-                ? "border-zinc-800 hover:border-emerald-500/50 bg-gradient-to-br from-zinc-950 via-[#0d1413] to-zinc-950"
-                : "border-gray-200 hover:border-emerald-500/60 bg-white"
-            }`}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
           >
-            {/* Subtle top indicator line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500" />
+            <div className="space-y-4">
+              {/* Badge */}
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                  ★ FLAGSHIP
+                </span>
+                <span className={`text-[11px] font-mono-code ${textMuted}`}>
+                  Verified GitHub
+                </span>
+              </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Side: Editorial Storytelling (7 cols) */}
-              <div className="lg:col-span-7 space-y-4 text-left">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono-code">
-                  <span className="text-emerald-500 font-bold uppercase tracking-wider">
-                    ★ FLAGSHIP DATA PRODUCT
-                  </span>
-                  <span className={textMuted}>•</span>
-                  <span className={textMuted}>
-                    Verified Public GitHub
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className={`text-2xl sm:text-3xl font-serif-display tracking-tight group-hover:text-emerald-500 transition-colors flex items-center gap-2.5 ${headingColor}`}>
-                    <span>{digipath.title}</span>
-                    <ArrowUpRight className="w-5 h-5 text-zinc-400 group-hover:text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </h3>
-                  <p className="text-xs sm:text-sm font-mono-code text-emerald-500 font-medium mt-1">
-                    {digipath.tagline}
-                  </p>
-                </div>
-
-                <p className={`text-sm leading-relaxed font-normal ${bodyColor}`}>
-                  {digipath.description}
+              {/* Title & Tagline */}
+              <div>
+                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-emerald-400 transition-colors flex items-center justify-between ${headingColor}`}>
+                  <span>DigiPath</span>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </h3>
+                <p className="text-xs font-mono-code text-emerald-400 font-medium mt-0.5">
+                  Admission Decision Intelligence
                 </p>
-
-                {/* Problem -> Data -> Decision Pipeline Box */}
-                <div className={`p-3.5 rounded-xl border text-xs space-y-1.5 font-mono-code ${innerCardBg} ${bodyColor}`}>
-                  <div className={`flex items-center justify-between text-[11px] font-semibold ${textMuted}`}>
-                    <span>DATA FLOW: INGESTION → MATRIX MATCH → DECISION</span>
-                  </div>
-                  <p className={`leading-relaxed font-sans text-xs ${bodyColor}`}>
-                    Harmonizes disparate state admission tables and evaluates applicant percentage cutoffs across engineering branches, city preferences, and category quotas.
-                  </p>
-                </div>
-
-                {/* Capabilities Checklist */}
-                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs ${bodyColor}`}>
-                  {digipath.features.map((feature, fIdx) => (
-                    <div key={fIdx} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Verified Tech Chips */}
-                <div className="flex flex-wrap gap-1.5 pt-2">
-                  {digipath.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className={`px-2.5 py-1 rounded-lg border text-xs font-mono-code ${chipBg}`}
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
               </div>
 
-              {/* Right Side: Visual Evidence & Screenshot (5 cols) */}
-              <div className="lg:col-span-5 space-y-4">
-                {/* Browser Mockup Frame with Real Screenshot */}
-                <div className={`rounded-xl border overflow-hidden shadow-xl ${
-                  isDark ? "border-zinc-800 bg-zinc-950" : "border-gray-200 bg-gray-100"
-                }`}>
-                  <div className={`px-3 py-2 border-b flex items-center justify-between ${
-                    isDark ? "border-zinc-850 bg-zinc-900/80 text-zinc-400" : "border-gray-200 bg-gray-200/80 text-gray-500"
-                  }`}>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
-                    </div>
-                    <span className="text-[11px] font-mono-code">
-                      digipath-college-predictor
-                    </span>
-                    <div className="w-4" />
-                  </div>
+              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
+                End-to-end college prediction platform for diploma and engineering aspirants.
+              </p>
 
-                  <div className={`p-1.5 ${isDark ? "bg-zinc-950" : "bg-white"}`}>
-                    <img
-                      src={digipath.image}
-                      alt="DigiPath Product Interface"
-                      className="w-full h-auto rounded-lg object-cover group-hover:scale-[1.01] transition-transform"
-                    />
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {["Python", "ML", "Data Processing"].map((tag) => (
+                  <span
+                    key={tag}
+                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Interface Mockup */}
+              <div className={`rounded-xl border p-2 overflow-hidden shadow-inner space-y-2 ${innerBoxBg}`}>
+                <div className="flex items-center justify-between px-1 text-[10px] font-mono-code text-zinc-400">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 rounded-full bg-red-400/70" />
+                    <span className="w-2 h-2 rounded-full bg-amber-400/70" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-400/70" />
                   </div>
+                  <span>digipath.engine</span>
                 </div>
+                <img
+                  src={digipath.image}
+                  alt="DigiPath Screenshot"
+                  className="w-full h-28 object-cover rounded-lg group-hover:scale-[1.02] transition-transform duration-300"
+                />
+              </div>
 
-                {/* Metrics & Action Footer */}
-                <div className={`p-3.5 rounded-xl border space-y-2 ${
-                  isDark ? "bg-zinc-950/80 border-zinc-850" : "bg-gray-50 border-gray-200"
-                }`}>
-                  <div className="grid grid-cols-1 gap-1.5">
-                    {digipath.metrics.map((m, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between p-2 rounded-lg text-xs font-mono-code ${
-                          isDark ? "bg-zinc-900/40 text-zinc-300" : "bg-white border border-gray-200 text-gray-700"
-                        }`}
-                      >
-                        <span className={`text-xs ${textMuted}`}>{m.label}</span>
-                        <span className="font-semibold text-emerald-500">{m.value}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-between">
-                    <span className="text-xs font-mono-code text-emerald-500 group-hover:underline font-semibold">
-                      Inspect Architecture &amp; Case Study →
-                    </span>
-
-                    {digipath.github && (
-                      <a
-                        href={digipath.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          soundManager.playClick();
-                        }}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono-code transition-all ${
-                          isDark
-                            ? "bg-zinc-900 hover:bg-emerald-500 hover:text-zinc-950 border-zinc-750 text-zinc-200"
-                            : "bg-gray-900 hover:bg-emerald-600 text-white border-gray-800"
-                        }`}
-                        title="View GitHub Repository"
-                      >
-                        <Github className="w-3.5 h-3.5" />
-                        <span>GitHub</span>
-                      </a>
-                    )}
-                  </div>
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-emerald-400 text-sm">State</div>
+                  <div className={`text-[10px] ${textMuted}`}>Cutoffs Ingested</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-emerald-400 text-sm">Multi-Param</div>
+                  <div className={`text-[10px] ${textMuted}`}>Prediction Match</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-emerald-400 text-sm">Scam Filter</div>
+                  <div className={`text-[10px] ${textMuted}`}>Listing Rules</div>
                 </div>
               </div>
+            </div>
+
+            {/* Bottom Button */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-emerald-400 font-semibold group-hover:underline">
+              <span>Explore Project →</span>
             </div>
           </SpotlightCard>
         </motion.div>
 
-        {/* ========================================================================= */}
-        {/* 2 & 3: RETAIL SALES ANALYSIS (ANALYTICS) & KOSH (MARATHI NLP)             */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Project 2: Retail Sales Analysis & BI Dashboard */}
-          <motion.div variants={itemVariants}>
-            <SpotlightCard
-              spotlightColor={isDark ? "rgba(99, 102, 241, 0.14)" : "rgba(37, 99, 235, 0.08)"}
-              onClick={() => handleOpenModal(retailSales)}
-              onMouseEnter={() => soundManager.playHover()}
-              className={`p-7 shadow-xl cursor-pointer group flex flex-col justify-between h-full space-y-5 text-left ${
-                isDark
-                  ? "border-zinc-800 hover:border-indigo-500/50 bg-gradient-to-br from-zinc-950 via-[#0f111a] to-zinc-950"
-                  : "border-gray-200 hover:border-blue-500/60 bg-white"
-              }`}
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-xl border ${
-                      isDark ? "bg-indigo-950/60 border-indigo-500/30 text-indigo-400" : "bg-blue-50 border-blue-200 text-blue-600"
-                    }`}>
-                      <BarChart3 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className={`text-xs font-mono-code font-bold uppercase tracking-wider block ${
-                        isDark ? "text-indigo-300" : "text-blue-600"
-                      }`}>
-                        DATA ANALYTICS CASE STUDY
-                      </span>
-                      <span className={`text-[11px] font-mono-code ${textMuted}`}>
-                        R · RStudio · Power BI
-                      </span>
-                    </div>
-                  </div>
-
-                  <span className={`text-xs font-mono-code ${textMuted}`}>
-                    Interactive Preview
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-indigo-400 transition-colors flex items-center justify-between ${headingColor}`}>
-                    <span>{retailSales.title}</span>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-indigo-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </h3>
-                  <p className={`text-xs font-mono-code mt-1 ${textMuted}`}>
-                    {retailSales.tagline}
-                  </p>
-                </div>
-
-                <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-                  {retailSales.description}
-                </p>
-
-                {/* Analytical Insight Simulator (R + Power BI) */}
-                <div
-                  className={`p-4 rounded-xl border space-y-3 ${innerCardBg}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex items-center justify-between text-xs font-mono-code">
-                    <span className={`font-bold uppercase tracking-wider text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                      DATA ANALYTICS INSIGHTS (R &amp; POWER BI)
-                    </span>
-                    <span className={`text-[11px] ${isDark ? "text-indigo-400" : "text-blue-600"}`}>Interactive</span>
-                  </div>
-
-                  {/* Tabs */}
-                  <div className={`grid grid-cols-3 gap-1 p-1 rounded-lg text-xs font-mono-code ${
-                    isDark ? "bg-zinc-950/80" : "bg-gray-200/80"
-                  }`}>
-                    <button
-                      onClick={() => {
-                        soundManager.playHover();
-                        setRetailTab("margins");
-                      }}
-                      className={`py-1 px-2 rounded-md transition-all ${
-                        retailTab === "margins"
-                          ? "bg-indigo-600 text-white font-semibold"
-                          : isDark ? "text-zinc-400 hover:text-zinc-200" : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Margins
-                    </button>
-                    <button
-                      onClick={() => {
-                        soundManager.playHover();
-                        setRetailTab("discounts");
-                      }}
-                      className={`py-1 px-2 rounded-md transition-all ${
-                        retailTab === "discounts"
-                          ? "bg-indigo-600 text-white font-semibold"
-                          : isDark ? "text-zinc-400 hover:text-zinc-200" : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Discounting
-                    </button>
-                    <button
-                      onClick={() => {
-                        soundManager.playHover();
-                        setRetailTab("segments");
-                      }}
-                      className={`py-1 px-2 rounded-md transition-all ${
-                        retailTab === "segments"
-                          ? "bg-indigo-600 text-white font-semibold"
-                          : isDark ? "text-zinc-400 hover:text-zinc-200" : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Segments
-                    </button>
-                  </div>
-
-                  {/* Dynamic Tab Body */}
-                  <div className="text-xs font-mono-code space-y-2 pt-1">
-                    {retailTab === "margins" && (
-                      <div className="space-y-1.5">
-                        <div className={`flex justify-between text-xs ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                          <span>West Region</span>
-                          <span className="text-emerald-500 font-bold">+28.4% Net Margin</span>
-                        </div>
-                        <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDark ? "bg-zinc-950" : "bg-gray-200"}`}>
-                          <div className="h-full bg-emerald-400 w-[78%]" />
-                        </div>
-
-                        <div className={`flex justify-between text-xs pt-1 ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                          <span>Central Region</span>
-                          <span className="text-amber-500 font-bold">-3.2% (Over-Discounting)</span>
-                        </div>
-                        <div className={`w-full h-1.5 rounded-full overflow-hidden ${isDark ? "bg-zinc-950" : "bg-gray-200"}`}>
-                          <div className="h-full bg-amber-400 w-[24%]" />
-                        </div>
-                      </div>
-                    )}
-
-                    {retailTab === "discounts" && (
-                      <div className={`p-2.5 rounded-lg border space-y-1 ${subBoxBg}`}>
-                        <div className={`font-bold text-xs ${isDark ? "text-indigo-300" : "text-blue-600"}`}>
-                          Statistical Finding in R:
-                        </div>
-                        <p className={`text-xs leading-relaxed font-sans ${bodyColor}`}>
-                          Promotional discounts &gt; 20% boosted sales volume by 34% but degraded overall transaction margin by 42%.
-                        </p>
-                      </div>
-                    )}
-
-                    {retailTab === "segments" && (
-                      <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                        <div className={`p-2 rounded-lg border ${subBoxBg}`}>
-                          <div className={`text-[11px] ${textMuted}`}>Consumer</div>
-                          <div className={`font-bold text-sm mt-0.5 ${isDark ? "text-indigo-300" : "text-blue-600"}`}>51.9%</div>
-                        </div>
-                        <div className={`p-2 rounded-lg border ${subBoxBg}`}>
-                          <div className={`text-[11px] ${textMuted}`}>Corporate</div>
-                          <div className={`font-bold text-sm mt-0.5 ${isDark ? "text-indigo-300" : "text-blue-600"}`}>30.2%</div>
-                        </div>
-                        <div className={`p-2 rounded-lg border ${subBoxBg}`}>
-                          <div className={`text-[11px] ${textMuted}`}>Home Office</div>
-                          <div className={`font-bold text-sm mt-0.5 ${isDark ? "text-indigo-300" : "text-blue-600"}`}>17.9%</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className={`text-xs font-mono-code ${textMuted}`}>
-                  Note: Analyzed strictly using R/RStudio and Power BI.
-                </div>
-              </div>
-
-              {/* Bottom Footer */}
-              <div className={`pt-3 border-t flex items-center justify-between ${footerBorder}`}>
-                <span className={`text-xs font-mono-code group-hover:underline font-semibold ${isDark ? "text-indigo-400" : "text-blue-600"}`}>
-                  Explore Case Study Walkthrough →
-                </span>
-                <span className={`text-xs font-mono-code ${textMuted}`}>
-                  Exploratory Analytics
-                </span>
-              </div>
-            </SpotlightCard>
-          </motion.div>
-
-          {/* Project 3: Kosh — Marathi Text Rewriting & Style Transformation */}
-          <motion.div variants={itemVariants}>
-            <SpotlightCard
-              spotlightColor={isDark ? "rgba(139, 92, 246, 0.14)" : "rgba(124, 58, 237, 0.08)"}
-              onClick={() => handleOpenModal(kosh)}
-              onMouseEnter={() => soundManager.playHover()}
-              className={`p-7 shadow-xl cursor-pointer group flex flex-col justify-between h-full space-y-5 text-left ${
-                isDark
-                  ? "border-zinc-800 hover:border-purple-500/50 bg-gradient-to-br from-zinc-950 via-[#120e1c] to-zinc-950"
-                  : "border-gray-200 hover:border-purple-500/60 bg-white"
-              }`}
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-xl border ${
-                      isDark ? "bg-purple-950/60 border-purple-500/30 text-purple-400" : "bg-purple-50 border-purple-200 text-purple-600"
-                    }`}>
-                      <BookOpen className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <span className={`text-xs font-mono-code font-bold uppercase tracking-wider block ${
-                        isDark ? "text-purple-300" : "text-purple-600"
-                      }`}>
-                        MARATHI NLP &amp; TRANSFORMATION
-                      </span>
-                      <span className={`text-[11px] font-mono-code ${textMuted}`}>
-                        Python · Devanagari Normalization
-                      </span>
-                    </div>
-                  </div>
-
-                  <span className={`text-xs font-mono-code ${textMuted}`}>
-                    NLP Prototype
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-purple-400 transition-colors flex items-center justify-between ${headingColor}`}>
-                    <span>{kosh.title}</span>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </h3>
-                  <p className={`text-xs font-mono-code mt-1 ${textMuted}`}>
-                    {kosh.tagline}
-                  </p>
-                </div>
-
-                <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-                  {kosh.description}
-                </p>
-
-                {/* Interactive Marathi Linguistic Demonstrator */}
-                <div
-                  className={`p-4 rounded-xl border space-y-3 ${innerCardBg}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex items-center justify-between text-xs font-mono-code">
-                    <span className={`font-bold uppercase tracking-wider text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
-                      MARATHI REWRITE ENGINE PREVIEW
-                    </span>
-                    <span className={`text-[11px] ${isDark ? "text-purple-400" : "text-purple-600"}`}>Live Selector</span>
-                  </div>
-
-                  {/* Input Marathi text */}
-                  <div className={`p-2.5 rounded-lg border text-xs ${subBoxBg}`}>
-                    <span className={`text-[10px] font-mono-code block mb-1 ${textMuted}`}>
-                      INPUT DEVANAGARI SENTENCE:
-                    </span>
-                    <p className={`font-sans font-medium ${isDark ? "text-zinc-200" : "text-gray-800"}`}>
-                      "विद्यार्थ्यांनी परीक्षेची तयारी वेळेवर पूर्ण केली पाहिजे."
-                    </p>
-                  </div>
-
-                  {/* Style Selector Chips */}
-                  <div className="flex items-center gap-1.5">
-                    <span className={`text-xs font-mono-code ${textMuted}`}>Tone:</span>
-                    {(["formal", "concise", "conversational"] as const).map((tone) => (
-                      <button
-                        key={tone}
-                        onClick={() => {
-                          soundManager.playHover();
-                          setKoshTone(tone);
-                        }}
-                        className={`px-2.5 py-1 rounded-md text-xs font-mono-code transition-all ${
-                          koshTone === tone
-                            ? "bg-purple-600 text-white font-bold"
-                            : isDark ? "bg-zinc-950 text-zinc-400 hover:text-zinc-200" : "bg-white border border-gray-200 text-gray-600 hover:text-gray-900"
-                        }`}
-                      >
-                        {tone.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Paraphrased Result Box */}
-                  <div className={`p-3 rounded-lg border space-y-1 ${
-                    isDark ? "bg-purple-950/30 border-purple-500/30" : "bg-purple-50/70 border-purple-200"
-                  }`}>
-                    <div className="flex items-center justify-between text-[11px] font-mono-code">
-                      <span className={`font-semibold ${isDark ? "text-purple-300" : "text-purple-700"}`}>
-                        OUTPUT: {koshVariations[koshTone].style}
-                      </span>
-                      <span className="text-emerald-500">
-                        {koshVariations[koshTone].fidelity}
-                      </span>
-                    </div>
-                    <p className={`font-sans text-xs font-medium pt-0.5 ${isDark ? "text-zinc-100" : "text-gray-900"}`}>
-                      "{koshVariations[koshTone].text}"
-                    </p>
-                    <p className={`text-[11px] font-mono-code pt-0.5 ${textMuted}`}>
-                      {koshVariations[koshTone].note}
-                    </p>
-                  </div>
-                </div>
-
-                <div className={`text-xs font-mono-code ${textMuted}`}>
-                  Note: Formerly developed under internal project code SANGRAH.
-                </div>
-              </div>
-
-              {/* Bottom Footer */}
-              <div className={`pt-3 border-t flex items-center justify-between ${footerBorder}`}>
-                <span className={`text-xs font-mono-code group-hover:underline font-semibold ${isDark ? "text-purple-400" : "text-purple-600"}`}>
-                  Inspect NLP Transformation Pipeline →
-                </span>
-                <span className={`text-xs font-mono-code ${textMuted}`}>
-                  Devanagari Processing
-                </span>
-              </div>
-            </SpotlightCard>
-          </motion.div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* 4. SYSTEMS ENGINEERING DEPTH: FORENSIQ & SHADOWNET                        */}
-        {/* ========================================================================= */}
+        {/* ── CARD 2: Retail Sales Analysis (R + Power BI) ──────────────────── */}
         <motion.div variants={itemVariants}>
           <SpotlightCard
-            spotlightColor={isDark ? "rgba(14, 165, 233, 0.12)" : "rgba(14, 165, 233, 0.08)"}
-            onClick={() => handleOpenModal(systems)}
+            spotlightColor={isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.08)"}
+            onClick={() => handleOpenModal(retailSales)}
             onMouseEnter={() => soundManager.playHover()}
-            className={`p-6 sm:p-7 shadow-xl cursor-pointer group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-left ${
-              isDark
-                ? "border-zinc-800 hover:border-sky-500/40 bg-zinc-950/90"
-                : "border-gray-200 hover:border-sky-500/60 bg-white"
-            }`}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
           >
-            <div className="space-y-2.5 max-w-3xl">
-              <div className="flex items-center gap-2 text-xs font-mono-code">
-                <span className="text-sky-500 font-bold uppercase">
-                  SYSTEMS &amp; DEFENSE DEPTH
+            <div className="space-y-4">
+              {/* Badge */}
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-blue-500/15 border border-blue-500/30 text-blue-400">
+                  DATA ANALYTICS
                 </span>
-                <span className={textMuted}>•</span>
-                <span className={textMuted}>
-                  ForensiQ &amp; ShadowNet
+                <span className={`text-[11px] font-mono-code ${textMuted}`}>
+                  Case Study
                 </span>
               </div>
 
+              {/* Title & Tagline */}
               <div>
-                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-sky-400 transition-colors ${headingColor}`}>
-                  Volatile Memory Forensics &amp; Real-Time Packet Anomaly Triage
+                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-blue-400 transition-colors flex items-center justify-between ${headingColor}`}>
+                  <span>Retail Sales Analysis</span>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </h3>
-                <p className={`text-xs font-mono-code mt-0.5 ${textMuted}`}>
-                  Automated incident response tooling &amp; network inspection pipelines
+                <p className="text-xs font-mono-code text-blue-400 font-medium mt-0.5">
+                  R + Power BI Dashboard
                 </p>
               </div>
 
-              <p className={`text-xs sm:text-sm leading-relaxed font-normal ${bodyColor}`}>
-                {systems.description}
+              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
+                Exploratory analysis and interactive dashboards for retail sales data.
               </p>
 
+              {/* Tags */}
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {systems.technologies.map((tech) => (
+                {["R", "RStudio", "Power BI"].map((tag) => (
                   <span
-                    key={tech}
-                    className={`px-2.5 py-0.5 rounded-lg border text-xs font-mono-code ${chipBg}`}
+                    key={tag}
+                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
                   >
-                    {tech}
+                    {tag}
                   </span>
                 ))}
               </div>
+
+              {/* Interactive Dashboard Chart Preview */}
+              <div
+                className={`rounded-xl border p-3 space-y-2.5 ${innerBoxBg}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between text-xs font-mono-code">
+                  <span className={`font-semibold text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                    Interactive Margin Triage
+                  </span>
+                  <span className="text-[10px] text-blue-400">Live Tabs</span>
+                </div>
+
+                {/* Sub tabs */}
+                <div className="grid grid-cols-3 gap-1 p-1 bg-black/30 dark:bg-black/40 rounded-lg text-xs font-mono-code text-center">
+                  <button
+                    onClick={() => {
+                      soundManager.playHover();
+                      setRetailTab("margins");
+                    }}
+                    className={`py-1 rounded-md transition-all ${
+                      retailTab === "margins"
+                        ? "bg-blue-600 text-white font-bold"
+                        : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    Margins
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundManager.playHover();
+                      setRetailTab("discounts");
+                    }}
+                    className={`py-1 rounded-md transition-all ${
+                      retailTab === "discounts"
+                        ? "bg-blue-600 text-white font-bold"
+                        : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    Discounts
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundManager.playHover();
+                      setRetailTab("segments");
+                    }}
+                    className={`py-1 rounded-md transition-all ${
+                      retailTab === "segments"
+                        ? "bg-blue-600 text-white font-bold"
+                        : "text-zinc-400 hover:text-white"
+                    }`}
+                  >
+                    Segments
+                  </button>
+                </div>
+
+                {/* Tab content */}
+                <div className="text-xs font-mono-code min-h-[64px] flex flex-col justify-center">
+                  {retailTab === "margins" && (
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-[11px]">
+                        <span className={bodyColor}>West Region</span>
+                        <span className="text-emerald-400 font-bold">+28.4% Net Margin</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
+                        <div className="h-full bg-emerald-400 w-[78%]" />
+                      </div>
+                      <div className="flex justify-between text-[11px] pt-0.5">
+                        <span className={bodyColor}>Central Region</span>
+                        <span className="text-amber-400 font-bold">-3.2% (Over-Discounting)</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-400 w-[25%]" />
+                      </div>
+                    </div>
+                  )}
+
+                  {retailTab === "discounts" && (
+                    <p className={`text-[11px] leading-relaxed font-sans ${bodyColor}`}>
+                      Discounts &gt; 20% boosted sales volume by 34% but degraded overall margin by 42%.
+                    </p>
+                  )}
+
+                  {retailTab === "segments" && (
+                    <div className="grid grid-cols-3 gap-1.5 text-center">
+                      <div className="p-1 rounded bg-black/20">
+                        <span className="text-[9px] block text-zinc-400">Consumer</span>
+                        <span className="text-xs font-bold text-blue-400">51.9%</span>
+                      </div>
+                      <div className="p-1 rounded bg-black/20">
+                        <span className="text-[9px] block text-zinc-400">Corporate</span>
+                        <span className="text-xs font-bold text-blue-400">30.2%</span>
+                      </div>
+                      <div className="p-1 rounded bg-black/20">
+                        <span className="text-[9px] block text-zinc-400">Home Office</span>
+                        <span className="text-xs font-bold text-blue-400">17.9%</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-blue-400 text-sm">EDA</div>
+                  <div className={`text-[10px] ${textMuted}`}>R / RStudio</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-blue-400 text-sm">KPIs</div>
+                  <div className={`text-[10px] ${textMuted}`}>Margin Modeling</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-blue-400 text-sm">4 Regions</div>
+                  <div className={`text-[10px] ${textMuted}`}>Power BI Dash</div>
+                </div>
+              </div>
             </div>
 
-            <div className="shrink-0 flex items-center gap-3">
-              <span className="text-xs font-mono-code text-sky-500 group-hover:underline font-semibold">
-                Inspect Tooling →
-              </span>
-              <div className={`p-3 rounded-xl border transition-all ${
-                isDark
-                  ? "bg-zinc-900 border-zinc-800 text-zinc-300 group-hover:text-white group-hover:border-sky-500/50"
-                  : "bg-sky-50 border-sky-200 text-sky-700 group-hover:bg-sky-600 group-hover:text-white"
-              }`}>
-                <ArrowUpRight className="w-4 h-4" />
+            {/* Bottom Button */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-blue-400 font-semibold group-hover:underline">
+              <span>Explore Project →</span>
+            </div>
+          </SpotlightCard>
+        </motion.div>
+
+        {/* ── CARD 3: Kosh (Marathi NLP) ─────────────────────────────────────── */}
+        <motion.div variants={itemVariants}>
+          <SpotlightCard
+            spotlightColor={isDark ? "rgba(168, 85, 247, 0.16)" : "rgba(147, 51, 234, 0.08)"}
+            onClick={() => handleOpenModal(kosh)}
+            onMouseEnter={() => soundManager.playHover()}
+            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
+          >
+            <div className="space-y-4">
+              {/* Badge */}
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-purple-500/15 border border-purple-500/30 text-purple-400">
+                  NLP / LANGUAGE
+                </span>
+                <span className={`text-[11px] font-mono-code ${textMuted}`}>
+                  Devanagari
+                </span>
               </div>
+
+              {/* Title & Tagline */}
+              <div>
+                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-purple-400 transition-colors flex items-center justify-between ${headingColor}`}>
+                  <span>Kosh</span>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </h3>
+                <p className="text-xs font-mono-code text-purple-400 font-medium mt-0.5">
+                  Marathi Text Rewriting System
+                </p>
+              </div>
+
+              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
+                Context-aware Marathi paraphrasing and style transformation.
+              </p>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {["Python", "NLP", "mT5 / MBart"].map((tag) => (
+                  <span
+                    key={tag}
+                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Interactive Devanagari Demonstration Box */}
+              <div
+                className={`rounded-xl border p-3 space-y-2.5 ${innerBoxBg}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between text-xs font-mono-code">
+                  <span className={`font-semibold text-[11px] ${isDark ? "text-zinc-300" : "text-gray-700"}`}>
+                    Marathi Transformation
+                  </span>
+                  <span className="text-[10px] text-purple-400">Style Engine</span>
+                </div>
+
+                {/* Tone chips */}
+                <div className="flex items-center gap-1.5">
+                  {(["formal", "concise", "conversational"] as const).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => {
+                        soundManager.playHover();
+                        setKoshTone(t);
+                      }}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-mono-code transition-all ${
+                        koshTone === t
+                          ? "bg-purple-600 text-white font-bold"
+                          : "bg-black/30 text-zinc-400 hover:text-white"
+                      }`}
+                    >
+                      {t.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Input / Output view */}
+                <div className="space-y-1 text-xs">
+                  <div className="p-1.5 rounded bg-black/30 text-[11px]">
+                    <span className="text-[9px] font-mono-code text-zinc-400 block">Input (मराठी):</span>
+                    <p className={`font-medium ${isDark ? "text-zinc-200" : "text-gray-800"}`}>
+                      "विद्यार्थ्यांनी परीक्षेची तयारी वेळेवर पूर्ण केली पाहिजे."
+                    </p>
+                  </div>
+                  <div className="p-1.5 rounded bg-purple-950/40 border border-purple-500/30 text-[11px]">
+                    <span className="text-[9px] font-mono-code text-purple-300 block">Output ({koshTone}):</span>
+                    <p className="text-zinc-100 font-medium">
+                      "{koshVariations[koshTone].text}"
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-purple-400 text-sm">Devanagari</div>
+                  <div className={`text-[10px] ${textMuted}`}>Preprocessing</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-purple-400 text-sm">Paraphrase</div>
+                  <div className={`text-[10px] ${textMuted}`}>Style Transfer</div>
+                </div>
+                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
+                  <div className="font-bold text-purple-400 text-sm">SANGRAH</div>
+                  <div className={`text-[10px] ${textMuted}`}>Internal Code</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Button */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono-code text-purple-400 font-semibold group-hover:underline">
+              <span>Explore Project →</span>
             </div>
           </SpotlightCard>
         </motion.div>
       </motion.div>
 
-      {/* Project Deep Dive Modal */}
+      {/* ── Systems Engineering Depth Card below (ForensiQ & ShadowNet) ────────── */}
+      <motion.div
+        variants={itemVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-40px" }}
+        className="mt-6"
+      >
+        <SpotlightCard
+          spotlightColor={isDark ? "rgba(14, 165, 233, 0.12)" : "rgba(14, 165, 233, 0.08)"}
+          onClick={() => handleOpenModal(systems)}
+          onMouseEnter={() => soundManager.playHover()}
+          className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 ${cardBorder}`}
+        >
+          <div className="space-y-2 max-w-3xl">
+            <div className="flex items-center gap-2 text-xs font-mono-code">
+              <span className="text-sky-400 font-bold uppercase">
+                SYSTEMS &amp; DEFENSE DEPTH
+              </span>
+              <span className={textMuted}>•</span>
+              <span className={textMuted}>
+                ForensiQ &amp; ShadowNet
+              </span>
+            </div>
+
+            <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-sky-400 transition-colors ${headingColor}`}>
+              Volatile Memory Forensics &amp; Real-Time Packet Anomaly Triage
+            </h3>
+
+            <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
+              {systems.description}
+            </p>
+
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {systems.technologies.map((t) => (
+                <span key={t} className={`px-2.5 py-0.5 rounded-lg border text-xs font-mono-code ${chipBg}`}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-3">
+            <span className="text-xs font-mono-code text-sky-400 group-hover:underline font-semibold">
+              Inspect Tooling →
+            </span>
+            <div className={`p-3 rounded-xl border transition-all ${
+              isDark
+                ? "bg-[#14192b] border-white/10 text-zinc-300 group-hover:text-white group-hover:border-sky-500/50"
+                : "bg-sky-50 border-sky-200 text-sky-700 group-hover:bg-sky-600 group-hover:text-white"
+            }`}>
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+        </SpotlightCard>
+      </motion.div>
+
+      {/* ── Full-Viewport Project Case Study Modal ─────────────────────────────── */}
       <ProjectModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
