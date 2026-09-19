@@ -1,90 +1,142 @@
 import { motion } from "framer-motion";
-import {
-  ArrowUpRight,
-  Database,
-  Layers,
-  Sparkles,
-  Shield,
-  BarChart2,
-  Cpu,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { featuredProjects, ProjectItem } from "../data/portfolioData";
 import { soundManager } from "../utils/audio";
 import { ProjectModal } from "./ProjectModal";
-import { SpotlightCard } from "./SpotlightCard";
-import { DigiPathLiveVisual } from "./project-previews/DigiPathLiveVisual";
-import { RetailSalesLiveVisual } from "./project-previews/RetailSalesLiveVisual";
-import { KoshLiveVisual } from "./project-previews/KoshLiveVisual";
 
 export function ProjectsBento() {
   const { theme } = useTheme();
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
+  const isAnime = theme === "anime";
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
   const digipath = featuredProjects.find((p) => p.id === "digipath") ?? featuredProjects[0];
   const retailSales = featuredProjects.find((p) => p.id === "retail-sales") ?? featuredProjects[1];
   const kosh = featuredProjects.find((p) => p.id === "kosh") ?? featuredProjects[2];
-  const systems = featuredProjects.find((p) => p.id === "systems-depth") ?? featuredProjects[3];
 
   const handleOpenModal = (project: ProjectItem) => {
     soundManager.playClick();
     setSelectedProject(project);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.05,
-      },
-    },
+  // Card themes matching the reference images
+  const getCardStyle = (type: "digipath" | "retail" | "kosh") => {
+    if (isDark) {
+      if (type === "digipath") {
+        return {
+          bg: "bg-[#091815]/85 backdrop-blur-xl",
+          border: "border-emerald-500/30 hover:border-emerald-500/60",
+          shadow: "shadow-2xl shadow-emerald-950/40",
+          badge: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40",
+          title: "text-white",
+          sub: "text-emerald-400 font-mono-code",
+          body: "text-zinc-300",
+          pill: "bg-[#102420] border-emerald-500/20 text-emerald-200",
+          cta: "text-emerald-400 hover:text-emerald-300",
+          boxBg: "bg-[#040e0c]/90 border-emerald-500/20",
+          statVal: "text-emerald-400 font-bold",
+          statLabel: "text-zinc-400",
+        };
+      }
+      if (type === "retail") {
+        return {
+          bg: "bg-[#0b162a]/85 backdrop-blur-xl",
+          border: "border-blue-500/30 hover:border-blue-500/60",
+          shadow: "shadow-2xl shadow-blue-950/40",
+          badge: "bg-blue-500/20 text-blue-400 border border-blue-500/40",
+          title: "text-white",
+          sub: "text-blue-400 font-mono-code",
+          body: "text-zinc-300",
+          pill: "bg-[#11223e] border-blue-500/20 text-blue-200",
+          cta: "text-blue-400 hover:text-blue-300",
+          boxBg: "bg-[#050e1c]/90 border-blue-500/20",
+          statVal: "text-blue-400 font-bold",
+          statLabel: "text-zinc-400",
+        };
+      }
+      return {
+        bg: "bg-[#150e24]/85 backdrop-blur-xl",
+        border: "border-purple-500/30 hover:border-purple-500/60",
+        shadow: "shadow-2xl shadow-purple-950/40",
+        badge: "bg-purple-500/20 text-purple-400 border border-purple-500/40",
+        title: "text-white",
+        sub: "text-purple-400 font-mono-code",
+        body: "text-zinc-300",
+        pill: "bg-[#201538] border-purple-500/20 text-purple-200",
+        cta: "text-purple-400 hover:text-purple-300",
+        boxBg: "bg-[#0d0718]/90 border-purple-500/20",
+        statVal: "text-purple-400 font-bold",
+        statLabel: "text-zinc-400",
+      };
+    }
+
+    // Light Theme / Anime Theme (Pastel Clean Aesthetics matching Reference Image)
+    if (type === "digipath") {
+      return {
+        bg: isAnime ? "bg-[#eaf8f0]/92 backdrop-blur-xl" : "bg-[#edf8f2]/95 backdrop-blur-xl",
+        border: "border-emerald-200/80 hover:border-emerald-400",
+        shadow: "shadow-xl shadow-emerald-900/[0.04]",
+        badge: "bg-emerald-600 text-white font-bold",
+        title: "text-gray-900",
+        sub: "text-emerald-700 font-semibold",
+        body: "text-gray-600",
+        pill: "bg-white/90 border-emerald-200/60 text-emerald-800 font-medium",
+        cta: "text-emerald-700 hover:text-emerald-800 font-bold",
+        boxBg: "bg-white/90 border-emerald-100 shadow-sm",
+        statVal: "text-emerald-800 font-bold",
+        statLabel: "text-gray-500",
+      };
+    }
+    if (type === "retail") {
+      return {
+        bg: isAnime ? "bg-[#eef5fe]/92 backdrop-blur-xl" : "bg-[#f1f6ff]/95 backdrop-blur-xl",
+        border: "border-blue-200/80 hover:border-blue-400",
+        shadow: "shadow-xl shadow-blue-900/[0.04]",
+        badge: "bg-blue-600 text-white font-bold",
+        title: "text-gray-900",
+        sub: "text-blue-700 font-semibold",
+        body: "text-gray-600",
+        pill: "bg-white/90 border-blue-200/60 text-blue-800 font-medium",
+        cta: "text-blue-700 hover:text-blue-800 font-bold",
+        boxBg: "bg-white/90 border-blue-100 shadow-sm",
+        statVal: "text-blue-800 font-bold",
+        statLabel: "text-gray-500",
+      };
+    }
+    return {
+      bg: isAnime ? "bg-[#f8f2fe]/92 backdrop-blur-xl" : "bg-[#faf4ff]/95 backdrop-blur-xl",
+      border: "border-purple-200/80 hover:border-purple-400",
+      shadow: "shadow-xl shadow-purple-900/[0.04]",
+      badge: "bg-purple-600 text-white font-bold",
+      title: "text-gray-900",
+      sub: "text-purple-700 font-semibold",
+      body: "text-gray-600",
+      pill: "bg-white/90 border-purple-200/60 text-purple-800 font-medium",
+      cta: "text-purple-700 hover:text-purple-800 font-bold",
+      boxBg: "bg-white/90 border-purple-100 shadow-sm",
+      statVal: "text-purple-800 font-bold",
+      statLabel: "text-gray-500",
+    };
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" as const },
-    },
-  };
-
-  // Card theme styling matching the reference images
-  const cardBorder =
-    theme === "light"
-      ? "border-gray-200 hover:border-gray-300 bg-white/95 shadow-xl shadow-black/[0.04]"
-      : theme === "anime"
-      ? "border-[#1e3050] hover:border-[#2a4060] bg-[#121f35]/90 shadow-2xl shadow-black/40"
-      : "border-[#1c2236] hover:border-[#283250] bg-[#0c0f1d]/90 shadow-2xl shadow-black/60";
-
-  const headingColor = isDark ? "text-white" : "text-gray-900";
-  const bodyColor = isDark ? "text-zinc-300" : "text-gray-600";
-  const textMuted = isDark ? "text-zinc-400" : "text-gray-500";
-  const innerBoxBg = isDark ? "bg-[#080a14]/80 border-white/10" : "bg-gray-50 border-gray-200";
-  const chipBg = isDark ? "bg-[#14192b] border-white/10 text-zinc-300" : "bg-gray-100 border-gray-200 text-gray-700";
+  const dStyle = getCardStyle("digipath");
+  const rStyle = getCardStyle("retail");
+  const kStyle = getCardStyle("kosh");
 
   return (
-    <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-      {/* ── Section Header matching Reference ─────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
-      >
-        <div className="space-y-1.5">
-          <div className="text-xs font-mono-code font-bold uppercase tracking-wider text-emerald-400">
+    <section id="projects" className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
+      {/* ── Section Heading matching Reference ─────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+        <div className="space-y-1">
+          <div className="text-xs font-mono-code font-bold uppercase tracking-wider text-emerald-500">
             // FEATURED PROJECTS
           </div>
-          <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-serif-display tracking-tight ${headingColor}`}>
+          <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-serif-display tracking-tight ${isDark ? "text-white" : "text-gray-900"}`}>
             Selected Data &amp; AI Systems
           </h2>
-          <p className={`text-xs sm:text-sm font-normal ${textMuted}`}>
+          <p className={`text-xs sm:text-sm ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
             Real projects. Real problems. Real impact.
           </p>
         </div>
@@ -92,310 +144,312 @@ export function ProjectsBento() {
         <button
           onClick={() => handleOpenModal(digipath)}
           onMouseEnter={() => soundManager.playHover()}
-          className={`self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-mono-code transition-all hover:scale-105 ${
+          className={`self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono-code transition-all hover:scale-105 ${
             isDark
               ? "bg-[#14192b] border-white/10 text-zinc-200 hover:text-white"
-              : "bg-gray-100 border-gray-200 text-gray-800 hover:bg-gray-200"
+              : "bg-white/90 border-gray-200 text-gray-700 hover:bg-white shadow-sm"
           }`}
         >
           <span>View All Projects</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
         </button>
-      </motion.div>
+      </div>
 
-      {/* ── 3-Column Project Bento Grid ────────────────────────────────────────── */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-40px" }}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-      >
-        {/* ── CARD 1: DigiPath (Flagship) ────────────────────────────────────── */}
-        <motion.div variants={itemVariants}>
-          <SpotlightCard
-            spotlightColor={isDark ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.08)"}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
-          >
-            <div className="space-y-4">
-              {/* Badge */}
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-                  ★ FLAGSHIP
-                </span>
-                <span className={`text-[11px] font-mono-code ${textMuted}`}>
-                  Verified GitHub
-                </span>
-              </div>
-
-              {/* Title & Tagline */}
-              <div>
-                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-emerald-400 transition-colors flex items-center justify-between ${headingColor}`}>
-                  <span>DigiPath</span>
-                  <button onClick={() => handleOpenModal(digipath)}>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-emerald-400 transition-colors" />
-                  </button>
-                </h3>
-                <p className="text-xs font-mono-code text-emerald-400 font-medium mt-0.5">
-                  Admission Decision Intelligence
-                </p>
-              </div>
-
-              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-                End-to-end college prediction platform for diploma and engineering aspirants.
-              </p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {["Python", "ML", "Data Processing"].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Large Live Interactive Visual Component (Centerpiece) */}
-              <DigiPathLiveVisual isDark={isDark} />
-
-              {/* Verified Key Metrics Grid */}
-              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-emerald-400 text-sm">State Cutoffs</div>
-                  <div className={`text-[10px] ${textMuted}`}>Ingested &amp; Cleaned</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-emerald-400 text-sm">Multi-Param</div>
-                  <div className={`text-[10px] ${textMuted}`}>Eligibility Logic</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-emerald-400 text-sm">Scam Filter</div>
-                  <div className={`text-[10px] ${textMuted}`}>Rule Verification</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Button */}
-            <button
-              onClick={() => handleOpenModal(digipath)}
-              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-emerald-400 font-semibold hover:underline"
-            >
-              <span>View Project →</span>
-            </button>
-          </SpotlightCard>
-        </motion.div>
-
-        {/* ── CARD 2: Retail Sales Analysis (R + Power BI) ──────────────────── */}
-        <motion.div variants={itemVariants}>
-          <SpotlightCard
-            spotlightColor={isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.08)"}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
-          >
-            <div className="space-y-4">
-              {/* Badge */}
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-blue-500/15 border border-blue-500/30 text-blue-400">
-                  DATA ANALYTICS
-                </span>
-                <span className={`text-[11px] font-mono-code ${textMuted}`}>
-                  Case Study
-                </span>
-              </div>
-
-              {/* Title & Tagline */}
-              <div>
-                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-blue-400 transition-colors flex items-center justify-between ${headingColor}`}>
-                  <span>Retail Sales Analysis</span>
-                  <button onClick={() => handleOpenModal(retailSales)}>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-blue-400 transition-colors" />
-                  </button>
-                </h3>
-                <p className="text-xs font-mono-code text-blue-400 font-medium mt-0.5">
-                  R + Power BI Dashboard
-                </p>
-              </div>
-
-              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-                Exploratory analysis and interactive dashboards for retail sales data.
-              </p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {["R", "RStudio", "Power BI"].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Large Live Interactive Visual Component (Centerpiece) */}
-              <RetailSalesLiveVisual isDark={isDark} />
-
-              {/* Verified Key Metrics Grid */}
-              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-blue-400 text-sm">11.6%</div>
-                  <div className={`text-[10px] ${textMuted}`}>Profit Margin</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-blue-400 text-sm">51,290</div>
-                  <div className={`text-[10px] ${textMuted}`}>Rows Analyzed</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-blue-400 text-sm">4 Regions</div>
-                  <div className={`text-[10px] ${textMuted}`}>KPI Modeling</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Button */}
-            <button
-              onClick={() => handleOpenModal(retailSales)}
-              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-blue-400 font-semibold hover:underline"
-            >
-              <span>View Project →</span>
-            </button>
-          </SpotlightCard>
-        </motion.div>
-
-        {/* ── CARD 3: Kosh (Marathi NLP) ─────────────────────────────────────── */}
-        <motion.div variants={itemVariants}>
-          <SpotlightCard
-            spotlightColor={isDark ? "rgba(168, 85, 247, 0.16)" : "rgba(147, 51, 234, 0.08)"}
-            className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 flex flex-col justify-between h-full space-y-5 ${cardBorder}`}
-          >
-            <div className="space-y-4">
-              {/* Badge */}
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold uppercase tracking-wider bg-purple-500/15 border border-purple-500/30 text-purple-400">
-                  NLP / LANGUAGE
-                </span>
-                <span className={`text-[11px] font-mono-code ${textMuted}`}>
-                  Devanagari
-                </span>
-              </div>
-
-              {/* Title & Tagline */}
-              <div>
-                <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-purple-400 transition-colors flex items-center justify-between ${headingColor}`}>
-                  <span>Kosh</span>
-                  <button onClick={() => handleOpenModal(kosh)}>
-                    <ArrowUpRight className="w-4 h-4 text-zinc-500 hover:text-purple-400 transition-colors" />
-                  </button>
-                </h3>
-                <p className="text-xs font-mono-code text-purple-400 font-medium mt-0.5">
-                  Marathi Text Rewriting System
-                </p>
-              </div>
-
-              <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-                Context-aware Marathi paraphrasing and style transformation.
-              </p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {["Python", "NLP", "mT5 / MBart"].map((tag) => (
-                  <span
-                    key={tag}
-                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-mono-code ${chipBg}`}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Large Live Interactive Visual Component (Centerpiece) */}
-              <KoshLiveVisual isDark={isDark} />
-
-              {/* Verified Key Metrics Grid */}
-              <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono-code">
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-purple-400 text-sm">Devanagari</div>
-                  <div className={`text-[10px] ${textMuted}`}>Preprocessing</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-purple-400 text-sm">Style Paraphrase</div>
-                  <div className={`text-[10px] ${textMuted}`}>Multi-Register</div>
-                </div>
-                <div className={`p-2 rounded-xl border ${innerBoxBg}`}>
-                  <div className="font-bold text-purple-400 text-sm">SANGRAH</div>
-                  <div className={`text-[10px] ${textMuted}`}>Internal Code</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Button */}
-            <button
-              onClick={() => handleOpenModal(kosh)}
-              className="pt-3 border-t border-white/10 flex items-center justify-between w-full text-xs font-mono-code text-purple-400 font-semibold hover:underline"
-            >
-              <span>View Project →</span>
-            </button>
-          </SpotlightCard>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Systems Engineering Depth Card below (ForensiQ & ShadowNet) ────────── */}
-      <motion.div
-        variants={itemVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-40px" }}
-        className="mt-6"
-      >
-        <SpotlightCard
-          spotlightColor={isDark ? "rgba(14, 165, 233, 0.12)" : "rgba(14, 165, 233, 0.08)"}
-          onClick={() => handleOpenModal(systems)}
-          onMouseEnter={() => soundManager.playHover()}
-          className={`p-6 sm:p-7 rounded-3xl border transition-all duration-300 cursor-pointer group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 ${cardBorder}`}
+      {/* ── 3-Column Bento Grid Matching Exact Reference Composition ─────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* ── CARD 1: DigiPath ──────────────────────────────────────────────── */}
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => handleOpenModal(digipath)}
+          className={`p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group ${dStyle.bg} ${dStyle.border} ${dStyle.shadow}`}
         >
-          <div className="space-y-2 max-w-3xl">
-            <div className="flex items-center gap-2 text-xs font-mono-code">
-              <span className="text-sky-400 font-bold uppercase">
-                SYSTEMS &amp; DEFENSE DEPTH
-              </span>
-              <span className={textMuted}>•</span>
-              <span className={textMuted}>
-                ForensiQ &amp; ShadowNet
+          <div className="space-y-3">
+            {/* Badge */}
+            <div className="flex items-center justify-between">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code tracking-wider ${dStyle.badge}`}>
+                ★ FLAGSHIP
               </span>
             </div>
 
-            <h3 className={`text-xl sm:text-2xl font-serif-display group-hover:text-sky-400 transition-colors ${headingColor}`}>
-              Volatile Memory Forensics &amp; Real-Time Packet Anomaly Triage
-            </h3>
+            {/* Title & Subtitle */}
+            <div>
+              <h3 className={`text-xl font-serif-display tracking-tight ${dStyle.title}`}>
+                DigiPath
+              </h3>
+              <p className={`text-xs ${dStyle.sub}`}>
+                Admission Decision Intelligence
+              </p>
+            </div>
 
-            <p className={`text-xs sm:text-sm leading-relaxed ${bodyColor}`}>
-              {systems.description}
+            {/* Short Description */}
+            <p className={`text-xs leading-relaxed ${dStyle.body}`}>
+              End-to-end college prediction platform for diploma and engineering aspirants.
             </p>
 
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {systems.technologies.map((t) => (
-                <span key={t} className={`px-2.5 py-0.5 rounded-lg border text-xs font-mono-code ${chipBg}`}>
-                  {t}
+            {/* Tech Stack Pills */}
+            <div className="flex flex-wrap gap-1.5">
+              {["Python", "ML", "Data Processing"].map((tech) => (
+                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${dStyle.pill}`}>
+                  {tech}
                 </span>
               ))}
             </div>
-          </div>
 
-          <div className="shrink-0 flex items-center gap-3">
-            <span className="text-xs font-mono-code text-sky-400 group-hover:underline font-semibold">
-              Inspect Tooling →
-            </span>
-            <div className={`p-3 rounded-xl border transition-all ${
-              isDark
-                ? "bg-[#14192b] border-white/10 text-zinc-300 group-hover:text-white group-hover:border-sky-500/50"
-                : "bg-sky-50 border-sky-200 text-sky-700 group-hover:bg-sky-600 group-hover:text-white"
-            }`}>
-              <ArrowUpRight className="w-4 h-4" />
+            {/* Visual Area: Real UI Interface Mockup */}
+            <div className={`rounded-2xl border overflow-hidden p-1.5 mt-2 ${dStyle.boxBg}`}>
+              <div className="rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src="/projects/digipath.png"
+                  alt="DigiPath Real Application Interface"
+                  className="w-full h-36 sm:h-40 object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                />
+              </div>
+            </div>
+
+            {/* Key Project Information Row */}
+            <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
+              <div>
+                <div className={`text-sm ${dStyle.statVal}`}>500+</div>
+                <div className={`text-[10px] ${dStyle.statLabel}`}>Colleges</div>
+              </div>
+              <div>
+                <div className={`text-xs font-bold ${dStyle.statVal}`}>Multi-Param</div>
+                <div className={`text-[10px] ${dStyle.statLabel}`}>Prediction</div>
+              </div>
+              <div>
+                <div className={`text-xs font-bold ${dStyle.statVal}`}>Scam Filter</div>
+                <div className={`text-[10px] ${dStyle.statLabel}`}>Integrated</div>
+              </div>
             </div>
           </div>
-        </SpotlightCard>
-      </motion.div>
+
+          {/* CTA Link */}
+          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
+            <span className={`text-xs font-mono-code ${dStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
+              <span>View Project</span>
+              <span>→</span>
+            </span>
+          </div>
+        </motion.div>
+
+        {/* ── CARD 2: Retail Sales Analysis ─────────────────────────────────── */}
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => handleOpenModal(retailSales)}
+          className={`p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group ${rStyle.bg} ${rStyle.border} ${rStyle.shadow}`}
+        >
+          <div className="space-y-3">
+            {/* Badge */}
+            <div className="flex items-center justify-between">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code uppercase tracking-wider ${rStyle.badge}`}>
+                DATA ANALYTICS
+              </span>
+            </div>
+
+            {/* Title & Subtitle */}
+            <div>
+              <h3 className={`text-xl font-serif-display tracking-tight ${rStyle.title}`}>
+                Retail Sales Analysis
+              </h3>
+              <p className={`text-xs ${rStyle.sub}`}>
+                R + Power BI Dashboard
+              </p>
+            </div>
+
+            {/* Short Description */}
+            <p className={`text-xs leading-relaxed ${rStyle.body}`}>
+              Exploratory analysis and interactive dashboards for retail sales data.
+            </p>
+
+            {/* Tech Stack Pills */}
+            <div className="flex flex-wrap gap-1.5">
+              {["R", "RStudio", "Power BI"].map((tech) => (
+                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${rStyle.pill}`}>
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {/* Visual Area: Analytics Multi-Chart Dashboard Mockup */}
+            <div className={`rounded-2xl border p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between ${rStyle.boxBg}`}>
+              {/* Top mini trend chart */}
+              <div className="w-full flex items-center justify-between px-1 text-[10px] font-mono-code text-zinc-400">
+                <span>Revenue Trend</span>
+                <span className="text-blue-500 font-bold">51K+ Records</span>
+              </div>
+
+              {/* Mini Charts Grid */}
+              <div className="grid grid-cols-2 gap-2 items-center flex-1 py-1">
+                {/* Mini SVG Line & Bar Chart */}
+                <svg viewBox="0 0 120 55" className="w-full h-full">
+                  <path
+                    d="M 5 45 Q 35 30 65 38 T 115 12"
+                    fill="none"
+                    stroke="#3b82f6"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
+                  <rect x="15" y="25" width="8" height="25" rx="2" fill="#93c5fd" opacity="0.6" />
+                  <rect x="35" y="15" width="8" height="35" rx="2" fill="#60a5fa" opacity="0.8" />
+                  <rect x="55" y="20" width="8" height="30" rx="2" fill="#93c5fd" opacity="0.6" />
+                  <rect x="75" y="10" width="8" height="40" rx="2" fill="#3b82f6" opacity="0.9" />
+                  <rect x="95" y="5" width="8" height="45" rx="2" fill="#2563eb" />
+                </svg>
+
+                {/* Mini Regional Donut & Map Shape */}
+                <div className="flex items-center justify-around h-full">
+                  {/* Donut */}
+                  <div className="relative w-11 h-11 flex items-center justify-center">
+                    <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#bfdbfe"
+                        strokeWidth="5"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#3b82f6"
+                        strokeWidth="5"
+                        strokeDasharray="52, 100"
+                      />
+                    </svg>
+                    <span className="absolute text-[8px] font-bold font-mono-code text-blue-600">52%</span>
+                  </div>
+
+                  {/* Mini Map Silhouette */}
+                  <div className="w-12 h-12 rounded-lg bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-600">
+                    <span className="text-[9px] font-mono-code font-bold">4 Reg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Project Information Row */}
+            <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
+              <div>
+                <div className={`text-sm ${rStyle.statVal}`}>11.6%</div>
+                <div className={`text-[10px] ${rStyle.statLabel}`}>Profit Margin</div>
+              </div>
+              <div>
+                <div className={`text-sm ${rStyle.statVal}`}>51K+</div>
+                <div className={`text-[10px] ${rStyle.statLabel}`}>Transactions</div>
+              </div>
+              <div>
+                <div className={`text-sm ${rStyle.statVal}`}>4</div>
+                <div className={`text-[10px] ${rStyle.statLabel}`}>Regions</div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Link */}
+          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
+            <span className={`text-xs font-mono-code ${rStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
+              <span>View Project</span>
+              <span>→</span>
+            </span>
+          </div>
+        </motion.div>
+
+        {/* ── CARD 3: Kosh (Marathi NLP) ─────────────────────────────────────── */}
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => handleOpenModal(kosh)}
+          className={`relative p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group overflow-hidden ${kStyle.bg} ${kStyle.border} ${kStyle.shadow}`}
+        >
+          {/* Top-Right Soft Watermark Devanagari Character 'अने' */}
+          <div
+            className="absolute right-4 top-2 text-4xl sm:text-5xl font-bold font-serif-display select-none pointer-events-none opacity-15 text-purple-600"
+            aria-hidden="true"
+          >
+            अने
+          </div>
+
+          <div className="space-y-3 relative z-10">
+            {/* Badge */}
+            <div className="flex items-center justify-between">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code uppercase tracking-wider ${kStyle.badge}`}>
+                NLP / LANGUAGE
+              </span>
+            </div>
+
+            {/* Title & Subtitle */}
+            <div>
+              <h3 className={`text-xl font-serif-display tracking-tight ${kStyle.title}`}>
+                Kosh
+              </h3>
+              <p className={`text-xs ${kStyle.sub}`}>
+                Marathi Text Rewriting System
+              </p>
+            </div>
+
+            {/* Short Description */}
+            <p className={`text-xs leading-relaxed ${kStyle.body}`}>
+              Context-aware Marathi paraphrasing and style transformation.
+            </p>
+
+            {/* Tech Stack Pills */}
+            <div className="flex flex-wrap gap-1.5">
+              {["Python", "NLP", "mT5 / MBart"].map((tech) => (
+                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${kStyle.pill}`}>
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {/* Visual Area: Devanagari Transformation Box */}
+            <div className={`rounded-2xl border p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between space-y-1.5 ${kStyle.boxBg}`}>
+              {/* Input section */}
+              <div className="p-1.5 rounded-xl bg-black/5 dark:bg-black/20 text-xs">
+                <span className="text-[9px] font-mono-code text-purple-600 dark:text-purple-400 block font-semibold">
+                  Input (मराठी)
+                </span>
+                <p className="font-sans text-[11px] leading-snug line-clamp-2">
+                  "विद्यार्थ्यांनी परीक्षेची तयारी वेळेवर पूर्ण केली पाहिजे."
+                </p>
+              </div>
+
+              {/* Output section */}
+              <div className="p-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs">
+                <span className="text-[9px] font-mono-code text-purple-600 dark:text-purple-400 block font-semibold">
+                  Output (Formal)
+                </span>
+                <p className="font-sans text-[11px] font-medium text-purple-900 dark:text-purple-200 leading-snug line-clamp-2">
+                  "विद्यार्थ्यांनी परीक्षा पूर्वतयारी वेळेत पूर्ण करणे आवश्यक आहे."
+                </p>
+              </div>
+            </div>
+
+            {/* Key Project Information Row */}
+            <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
+              <div>
+                <div className={`text-xs font-bold ${kStyle.statVal}`}>Devanagari</div>
+                <div className={`text-[10px] ${kStyle.statLabel}`}>UTF-8 Logic</div>
+              </div>
+              <div>
+                <div className={`text-xs font-bold ${kStyle.statVal}`}>Multi-Tone</div>
+                <div className={`text-[10px] ${kStyle.statLabel}`}>Paraphraser</div>
+              </div>
+              <div>
+                <div className={`text-xs font-bold ${kStyle.statVal}`}>SANGRAH</div>
+                <div className={`text-[10px] ${kStyle.statLabel}`}>Architecture</div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Link */}
+          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center relative z-10">
+            <span className={`text-xs font-mono-code ${kStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
+              <span>View Project</span>
+              <span>→</span>
+            </span>
+          </div>
+        </motion.div>
+      </div>
 
       {/* ── Full-Viewport Project Case Study Modal ─────────────────────────────── */}
       <ProjectModal
