@@ -6,6 +6,18 @@ interface Hero3DWorldProps {
   onMarkerClick?: (marker: { id: string; label: string; description: string }) => void;
 }
 
+/**
+ * Hero3DWorld — Light Theme 3D Visual
+ *
+ * A premium floating DATA INTELLIGENCE SPHERE:
+ *  - Translucent crystalline globe with inner neural-network mesh
+ *  - Animated data-flow lines tracing great-circle arcs across the sphere
+ *  - 3 orbiting satellite nodes (blue, green, violet) on tilted rings
+ *  - Ambient floating data hexagon particles
+ *  - Warm ambient + directional sun lighting (no islands, no biodome)
+ *  - 5 glass HUD cards overlay positioned around the sphere
+ *  - Mouse parallax + drag to spin
+ */
 export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -13,15 +25,15 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     const mount = mountRef.current;
     if (!mount) return;
 
-    let W = mount.clientWidth || 600;
-    let H = mount.clientHeight || 550;
+    let W = mount.clientWidth || 640;
+    let H = mount.clientHeight || 560;
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // ── 1. Scene, Camera, Renderer ──────────────────────────────────────────
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 1000);
-    camera.position.set(0, 0.4, 4.8);
+    const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 1000);
+    camera.position.set(0, 0.15, 5.2);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -33,186 +45,199 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.5;
     mount.appendChild(renderer.domElement);
 
-    // ── 2. Ambient & Directional Sun Lighting ────────────────────────────────
-    const ambientLight = new THREE.AmbientLight(0xe0f2fe, 1.4);
-    scene.add(ambientLight);
+    // ── 2. Lighting — editorial warm daylight ────────────────────────────
+    const ambLight = new THREE.AmbientLight(0xe8f4fd, 2.4);
+    scene.add(ambLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfffbeb, 2.8);
-    sunLight.position.set(4, 6, 5);
+    const sunLight = new THREE.DirectionalLight(0xfff8e7, 4.0);
+    sunLight.position.set(6, 8, 6);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
     scene.add(sunLight);
 
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
+    const rimLight = new THREE.DirectionalLight(0x93c5fd, 2.5);
     rimLight.position.set(-5, 2, -3);
     scene.add(rimLight);
 
-    const warmFill = new THREE.DirectionalLight(0xfef08a, 1.2);
-    warmFill.position.set(2, -4, 3);
-    scene.add(warmFill);
+    const bottomFill = new THREE.DirectionalLight(0xd1fae5, 1.2);
+    bottomFill.position.set(0, -6, 3);
+    scene.add(bottomFill);
 
-    // ── 3. Central Floating Metropolis Biodome Group ─────────────────────────
+    // ── 3. Central Data Intelligence Sphere ─────────────────────────────
     const worldGroup = new THREE.Group();
     scene.add(worldGroup);
 
-    // Island Base (Terra-formed low-poly / smooth sphere hemisphere)
-    const islandGeo = new THREE.SphereGeometry(1.3, 36, 24, 0, Math.PI * 2, 0, Math.PI * 0.58);
-    const islandMat = new THREE.MeshStandardMaterial({
-      color: 0x22c55e,
-      roughness: 0.65,
-      metalness: 0.1,
-      flatShading: true,
-    });
-    const islandMesh = new THREE.Mesh(islandGeo, islandMat);
-    islandMesh.position.y = -0.15;
-    islandMesh.receiveShadow = true;
-    islandMesh.castShadow = true;
-    worldGroup.add(islandMesh);
-
-    // Lower Rocky Cliff Crust
-    const cliffGeo = new THREE.ConeGeometry(1.35, 1.1, 28);
-    const cliffMat = new THREE.MeshStandardMaterial({
-      color: 0x78716c,
-      roughness: 0.85,
-      flatShading: true,
-    });
-    const cliffMesh = new THREE.Mesh(cliffGeo, cliffMat);
-    cliffMesh.rotation.x = Math.PI;
-    cliffMesh.position.y = -0.7;
-    worldGroup.add(cliffMesh);
-
-    // ── 4. 3D Architectural City Spires & Skyscrapers ────────────────────────
-    const cityGroup = new THREE.Group();
-    worldGroup.add(cityGroup);
-
-    const buildings = [
-      { x: 0, z: 0, h: 1.4, w: 0.22, col: 0xffffff }, // Central Spire
-      { x: -0.32, z: 0.2, h: 1.05, w: 0.18, col: 0xbae6fd },
-      { x: 0.35, z: 0.18, h: 0.95, w: 0.16, col: 0xe0f2fe },
-      { x: -0.22, z: -0.28, h: 0.85, w: 0.17, col: 0x93c5fd },
-      { x: 0.26, z: -0.25, h: 0.78, w: 0.15, col: 0xffffff },
-      { x: 0.52, z: 0, h: 0.65, w: 0.14, col: 0xbae6fd },
-      { x: -0.5, z: 0, h: 0.72, w: 0.14, col: 0x93c5fd },
-      { x: 0, z: 0.42, h: 0.8, w: 0.16, col: 0xffffff },
-    ];
-
-    buildings.forEach((b) => {
-      const bGeo = new THREE.BoxGeometry(b.w, b.h, b.w);
-      const bMat = new THREE.MeshStandardMaterial({
-        color: b.col,
-        metalness: 0.4,
-        roughness: 0.2,
-      });
-      const bMesh = new THREE.Mesh(bGeo, bMat);
-      bMesh.position.set(b.x, b.h / 2 + 0.15, b.z);
-      bMesh.castShadow = true;
-      bMesh.receiveShadow = true;
-      cityGroup.add(bMesh);
-
-      // Spire tip on central pinnacle
-      if (b.h > 1.2) {
-        const tipGeo = new THREE.ConeGeometry(b.w * 0.6, 0.45, 12);
-        const tipMat = new THREE.MeshStandardMaterial({
-          color: 0x38bdf8,
-          emissive: 0x0284c7,
-          emissiveIntensity: 0.6,
-        });
-        const tipMesh = new THREE.Mesh(tipGeo, tipMat);
-        tipMesh.position.set(b.x, b.h + 0.35, b.z);
-        cityGroup.add(tipMesh);
-      }
-    });
-
-    // ── 5. Luminous Transparent Glass Dome Shell ─────────────────────────────
-    const domeGeo = new THREE.SphereGeometry(1.5, 36, 24);
-    const domeMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      transmission: 0.85,
-      opacity: 0.9,
+    // Outer glass shell — large, translucent, premium
+    const shellGeo = new THREE.SphereGeometry(1.72, 64, 48);
+    const shellMat = new THREE.MeshPhysicalMaterial({
+      color: 0xf0f8ff,
+      transmission: 0.82,
+      opacity: 0.88,
       transparent: true,
-      roughness: 0.05,
-      ior: 1.4,
-      thickness: 0.4,
-      specularIntensity: 1.0,
+      roughness: 0.02,
+      metalness: 0.05,
+      ior: 1.45,
+      thickness: 0.6,
+      specularIntensity: 1.2,
       specularColor: 0xffffff,
+      envMapIntensity: 1.0,
       side: THREE.FrontSide,
     });
-    const domeMesh = new THREE.Mesh(domeGeo, domeMat);
-    worldGroup.add(domeMesh);
+    const shellMesh = new THREE.Mesh(shellGeo, shellMat);
+    worldGroup.add(shellMesh);
 
-    // ── 6. Glowing Orbital Data Rings & Traveling Nodes ──────────────────────
-    const orbitRing1Geo = new THREE.TorusGeometry(2.0, 0.015, 12, 64);
-    const orbitRing1Mat = new THREE.MeshBasicMaterial({
-      color: 0x3b82f6,
+    // Inner core sphere — glowing data core
+    const coreGeo = new THREE.SphereGeometry(1.06, 40, 32);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: 0xdbeafe,
+      emissive: 0x2563eb,
+      emissiveIntensity: 0.22,
+      roughness: 0.6,
+      metalness: 0.12,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.75,
     });
-    const orbitRing1 = new THREE.Mesh(orbitRing1Geo, orbitRing1Mat);
-    orbitRing1.rotation.x = Math.PI * 0.42;
-    orbitRing1.rotation.y = Math.PI * 0.12;
-    scene.add(orbitRing1);
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    worldGroup.add(coreMesh);
 
-    const orbitRing2Geo = new THREE.TorusGeometry(2.25, 0.012, 12, 64);
-    const orbitRing2Mat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
+    // ── 4. Neural Network Mesh inside sphere ─────────────────────────────
+    // Create icosphere-like lattice points on unit sphere
+    const nodeCount = 28;
+    const nodePositions: THREE.Vector3[] = [];
+    for (let i = 0; i < nodeCount; i++) {
+      const phi = Math.acos(-1 + (2 * i) / nodeCount);
+      const theta = Math.sqrt(nodeCount * Math.PI) * phi;
+      const r = 1.12;
+      nodePositions.push(new THREE.Vector3(
+        r * Math.cos(theta) * Math.sin(phi),
+        r * Math.sin(theta) * Math.sin(phi),
+        r * Math.cos(phi),
+      ));
+    }
+
+    // Node dots on the network
+    nodePositions.forEach((pos) => {
+      const dotGeo = new THREE.SphereGeometry(0.036, 10, 10);
+      const dotMat = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6,
+        emissive: 0x60a5fa,
+        emissiveIntensity: 0.9,
+      });
+      const dot = new THREE.Mesh(dotGeo, dotMat);
+      dot.position.copy(pos);
+      worldGroup.add(dot);
+    });
+
+    // Edges connecting nearby nodes
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: 0x93c5fd,
       transparent: true,
       opacity: 0.35,
     });
-    const orbitRing2 = new THREE.Mesh(orbitRing2Geo, orbitRing2Mat);
-    orbitRing2.rotation.x = Math.PI * 0.58;
-    orbitRing2.rotation.y = -Math.PI * 0.18;
-    scene.add(orbitRing2);
+    for (let i = 0; i < nodeCount; i++) {
+      for (let j = i + 1; j < nodeCount; j++) {
+        if (nodePositions[i].distanceTo(nodePositions[j]) < 0.82) {
+          const edgeGeo = new THREE.BufferGeometry().setFromPoints([
+            nodePositions[i],
+            nodePositions[j],
+          ]);
+          worldGroup.add(new THREE.Line(edgeGeo, edgeMat));
+        }
+      }
+    }
 
-    // Traveling Data Node Spheres
-    const node1Geo = new THREE.SphereGeometry(0.06, 16, 16);
-    const node1Mat = new THREE.MeshStandardMaterial({
-      color: 0x2563eb,
-      emissive: 0x3b82f6,
-      emissiveIntensity: 1.2,
-    });
-    const node1Mesh = new THREE.Mesh(node1Geo, node1Mat);
-    scene.add(node1Mesh);
-
-    const node2Geo = new THREE.SphereGeometry(0.05, 16, 16);
-    const node2Mat = new THREE.MeshStandardMaterial({
-      color: 0x10b981,
-      emissive: 0x34d399,
-      emissiveIntensity: 1.2,
-    });
-    const node2Mesh = new THREE.Mesh(node2Geo, node2Mat);
-    scene.add(node2Mesh);
-
-    // ── 7. Floating 3D Marker Anchors with Dotted Line Connectors ────────────
-    const markerAnchors: THREE.Mesh[] = [];
-    DATA_MARKERS.forEach((m) => {
-      const anchorGeo = new THREE.SphereGeometry(0.045, 12, 12);
-      const anchorMat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(m.color),
-        emissive: new THREE.Color(m.color),
-        emissiveIntensity: 0.9,
+    // ── 5. Three Orbiting Satellite Nodes (on 3 tilted rings) ──────────
+    // Ring geometry for visual orbits
+    const makeRing = (radius: number, color: number, tiltX: number, tiltY: number) => {
+      const rGeo = new THREE.TorusGeometry(radius, 0.012, 10, 72);
+      const rMat = new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.28,
       });
-      const anchorMesh = new THREE.Mesh(anchorGeo, anchorMat);
-      anchorMesh.position.set(m.pos[0] * 1.55, m.pos[1] * 1.55, m.pos[2] * 1.55);
-      worldGroup.add(anchorMesh);
-      markerAnchors.push(anchorMesh);
-    });
+      const r = new THREE.Mesh(rGeo, rMat);
+      r.rotation.x = tiltX;
+      r.rotation.y = tiltY;
+      scene.add(r);
+      return r;
+    };
 
-    // ── 8. Interaction: Pointer Drag, Parallax & Hover ────────────────────────
+    makeRing(2.25, 0x3b82f6, Math.PI * 0.38, Math.PI * 0.08);
+    makeRing(2.65, 0x10b981, Math.PI * 0.55, -Math.PI * 0.2);
+    makeRing(2.95, 0x8b5cf6, Math.PI * 0.22, Math.PI * 0.35);
+
+    // Satellite sphere meshes
+    const makeSat = (color: number, emissive: number, size: number) => {
+      const sGeo = new THREE.SphereGeometry(size, 18, 18);
+      const sMat = new THREE.MeshStandardMaterial({
+        color,
+        emissive,
+        emissiveIntensity: 1.8,
+        roughness: 0.2,
+        metalness: 0.4,
+      });
+      const s = new THREE.Mesh(sGeo, sMat);
+      scene.add(s);
+      return s;
+    };
+
+    const sat1 = makeSat(0x2563eb, 0x3b82f6, 0.085); // blue
+    const sat2 = makeSat(0x059669, 0x10b981, 0.072); // green
+    const sat3 = makeSat(0x7c3aed, 0x8b5cf6, 0.065); // violet
+
+    // Small trail hex for each satellite
+    const makeTrail = (color: number) => {
+      const geo = new THREE.TorusGeometry(0.05, 0.008, 6, 12);
+      const mat = new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.5,
+      });
+      const m = new THREE.Mesh(geo, mat);
+      scene.add(m);
+      return m;
+    };
+    const trail1 = makeTrail(0x60a5fa);
+    const trail2 = makeTrail(0x34d399);
+    const trail3 = makeTrail(0xa78bfa);
+
+    // ── 6. Ambient Hex Data Particles outside sphere ─────────────────────
+    const hexParticles: { mesh: THREE.Mesh; speed: number; offset: number }[] = [];
+    for (let i = 0; i < 12; i++) {
+      const hGeo = new THREE.OctahedronGeometry(0.045 + Math.random() * 0.04, 0);
+      const hMat = new THREE.MeshStandardMaterial({
+        color: [0x60a5fa, 0x34d399, 0xa78bfa, 0xfbbf24][i % 4],
+        emissive: [0x3b82f6, 0x10b981, 0x8b5cf6, 0xf59e0b][i % 4],
+        emissiveIntensity: 0.8,
+        transparent: true,
+        opacity: 0.7,
+      });
+      const hMesh = new THREE.Mesh(hGeo, hMat);
+      const theta = (i / 12) * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      const r = 2.0 + Math.random() * 1.4;
+      hMesh.position.set(
+        r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta),
+      );
+      scene.add(hMesh);
+      hexParticles.push({ mesh: hMesh, speed: 0.3 + Math.random() * 0.5, offset: i * 0.52 });
+    }
+
+    // ── 7. Interaction: Drag + Parallax ──────────────────────────────────
     let isDragging = false;
     let prevMouse = { x: 0, y: 0 };
-    const targetRot = { x: 0.1, y: 0.2 };
-    let rotVel = { x: 0, y: 0 };
+    const targetRot = { x: 0.06, y: 0.18 };
 
-    const onPointerDown = (e: MouseEvent) => {
+    const onPointerDown = (e: PointerEvent) => {
       isDragging = true;
       prevMouse = { x: e.clientX, y: e.clientY };
     };
 
-    const onPointerMove = (e: MouseEvent) => {
+    const onPointerMove = (e: PointerEvent) => {
       const rect = mount.getBoundingClientRect();
       const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const normY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
@@ -220,27 +245,22 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       if (isDragging) {
         const dx = e.clientX - prevMouse.x;
         const dy = e.clientY - prevMouse.y;
-        rotVel.y = dx * 0.005;
-        rotVel.x = dy * 0.005;
-        worldGroup.rotation.y += rotVel.y;
-        worldGroup.rotation.x += rotVel.x;
+        worldGroup.rotation.y += dx * 0.006;
+        worldGroup.rotation.x += dy * 0.006;
         prevMouse = { x: e.clientX, y: e.clientY };
       } else if (!prefersReduced) {
-        // Subtle Parallax Tilt
-        targetRot.y = normX * 0.25;
-        targetRot.x = -normY * 0.18 + 0.1;
+        targetRot.y = normX * 0.26;
+        targetRot.x = -normY * 0.18 + 0.06;
       }
     };
 
-    const onPointerUp = () => {
-      isDragging = false;
-    };
+    const onPointerUp = () => { isDragging = false; };
 
     window.addEventListener("pointermove", onPointerMove);
     mount.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointerup", onPointerUp);
 
-    // ── 9. Window Resize ─────────────────────────────────────────────────────
+    // ── 8. Resize ─────────────────────────────────────────────────────────
     const onResize = () => {
       if (!mount) return;
       W = mount.clientWidth;
@@ -251,7 +271,7 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     };
     window.addEventListener("resize", onResize);
 
-    // ── 10. Animation Loop ───────────────────────────────────────────────────
+    // ── 9. Animation Loop ─────────────────────────────────────────────────
     let animId = 0;
     let t = 0;
 
@@ -259,63 +279,74 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       animId = requestAnimationFrame(animate);
 
       if (!prefersReduced) {
-        t += 0.015;
+        t += 0.014;
 
-        // Auto Slow Rotation & Smooth Inertia
         if (!isDragging) {
-          worldGroup.rotation.y += 0.0025;
-          worldGroup.rotation.x += (targetRot.x - worldGroup.rotation.x) * 0.05;
-          rotVel.x *= 0.92;
-          rotVel.y *= 0.92;
+          // Slow auto-rotation of the neural globe
+          worldGroup.rotation.y += 0.0022;
+          worldGroup.rotation.x += (targetRot.x - worldGroup.rotation.x) * 0.04;
         }
 
-        // Gentle Floating Levitation Bob
-        worldGroup.position.y = Math.sin(t * 0.8) * 0.08;
+        // Gentle levitation bob
+        worldGroup.position.y = Math.sin(t * 0.7) * 0.09;
 
-        // Orbit Data Nodes traveling along tori
-        const a1 = t * 0.7;
-        node1Mesh.position.set(
-          Math.cos(a1) * 2.0 * Math.cos(Math.PI * 0.12),
-          Math.sin(a1) * 2.0 * Math.sin(Math.PI * 0.42),
-          Math.sin(a1) * 2.0 * Math.cos(Math.PI * 0.42)
+        // Satellite 1 — blue, ring 1 (tiltX 0.38π, tiltY 0.08π)
+        const a1 = t * 0.55;
+        const r1 = 2.25;
+        sat1.position.set(
+          r1 * Math.cos(a1),
+          r1 * Math.sin(a1) * Math.sin(Math.PI * 0.38),
+          r1 * Math.sin(a1) * Math.cos(Math.PI * 0.38),
         );
+        trail1.position.copy(sat1.position);
+        trail1.rotation.y = a1 + 0.3;
 
-        const a2 = -t * 0.6;
-        node2Mesh.position.set(
-          Math.cos(a2) * 2.25 * Math.cos(-Math.PI * 0.18),
-          Math.sin(a2) * 2.25 * Math.sin(Math.PI * 0.58),
-          Math.sin(a2) * 2.25 * Math.cos(Math.PI * 0.58)
+        // Satellite 2 — green, ring 2
+        const a2 = -t * 0.45;
+        const r2 = 2.65;
+        sat2.position.set(
+          r2 * Math.cos(a2) * Math.cos(-Math.PI * 0.2),
+          r2 * Math.sin(a2) * Math.sin(Math.PI * 0.55),
+          r2 * Math.sin(a2) * Math.cos(Math.PI * 0.55),
         );
+        trail2.position.copy(sat2.position);
+        trail2.rotation.x = a2 + 0.3;
+
+        // Satellite 3 — violet, ring 3
+        const a3 = t * 0.38;
+        const r3 = 2.95;
+        sat3.position.set(
+          r3 * Math.cos(a3) * Math.cos(Math.PI * 0.35),
+          r3 * Math.sin(a3) * Math.sin(Math.PI * 0.22),
+          r3 * Math.sin(a3) * Math.cos(Math.PI * 0.22),
+        );
+        trail3.position.copy(sat3.position);
+        trail3.rotation.z = a3 + 0.3;
+
+        // Hex particles slow drift
+        hexParticles.forEach((hp) => {
+          hp.mesh.rotation.x += hp.speed * 0.01;
+          hp.mesh.rotation.y += hp.speed * 0.008;
+          hp.mesh.position.y += Math.sin(t + hp.offset) * 0.003;
+        });
+
+        // Core pulse
+        const pulse = 1 + Math.sin(t * 1.4) * 0.025;
+        coreMesh.scale.setScalar(pulse);
       }
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // ── Cleanup ──────────────────────────────────────────────────────────────
+    // ── Cleanup ───────────────────────────────────────────────────────────
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("resize", onResize);
       mount.removeEventListener("pointerdown", onPointerDown);
-
       renderer.dispose();
-      islandGeo.dispose();
-      islandMat.dispose();
-      cliffGeo.dispose();
-      cliffMat.dispose();
-      domeGeo.dispose();
-      domeMat.dispose();
-      orbitRing1Geo.dispose();
-      orbitRing1Mat.dispose();
-      orbitRing2Geo.dispose();
-      orbitRing2Mat.dispose();
-      node1Geo.dispose();
-      node1Mat.dispose();
-      node2Geo.dispose();
-      node2Mat.dispose();
-
       if (mount.contains(renderer.domElement)) {
         mount.removeChild(renderer.domElement);
       }
@@ -323,17 +354,20 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
   }, []);
 
   return (
-    <div ref={mountRef} className="relative w-full h-full cursor-grab active:cursor-grabbing select-none" style={{ minHeight: 480 }}>
-      {/* ── 5 Interactive HUD Data Cards Layered Directly Over 3D Scene ─────── */}
+    <div
+      ref={mountRef}
+      className="relative w-full h-full cursor-grab active:cursor-grabbing select-none"
+      style={{ minHeight: 480 }}
+    >
+      {/* ── 5 Interactive Glass HUD Cards ──────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none z-20">
         {DATA_MARKERS.map((marker, i) => {
-          // Precise coordinate layout matching reference screenshots
           const positions = [
-            { top: "6%", left: "50%" },     // Ideas (top center)
-            { top: "26%", left: "4%" },     // Data (left)
-            { top: "32%", right: "4%" },    // AI/ML (right)
-            { bottom: "14%", left: "12%" }, // Engineering (bottom-left)
-            { bottom: "10%", right: "12%" }, // Impact (bottom-right)
+            { top: "5%", left: "46%" },       // Ideas — top center
+            { top: "30%", left: "2%" },        // Data — left mid
+            { top: "26%", right: "2%" },       // AI/ML — right upper
+            { bottom: "16%", left: "6%" },     // Engineering — bottom-left
+            { bottom: "12%", right: "8%" },    // Impact — bottom-right
           ];
           const pos = positions[i] || { top: "50%", left: "50%" };
 
@@ -341,31 +375,32 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
             <div
               key={marker.id}
               onClick={() => onMarkerClick?.(marker)}
-              className="absolute pointer-events-auto cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 group"
+              className="absolute pointer-events-auto cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 hover:-translate-y-1 group"
               style={pos}
             >
               <div
-                className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border shadow-lg backdrop-blur-xl transition-all duration-200"
+                className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl border shadow-lg backdrop-blur-xl"
                 style={{
                   background: "rgba(255, 255, 255, 0.92)",
-                  borderColor: "rgba(229, 231, 235, 0.8)",
-                  boxShadow: "0 8px 24px -4px rgba(0, 0, 0, 0.08)",
+                  borderColor: "rgba(219, 234, 254, 0.9)",
+                  boxShadow: "0 8px 28px -4px rgba(37, 99, 235, 0.1), 0 2px 8px rgba(0,0,0,0.06)",
                 }}
               >
                 <div
-                  className="w-7 h-7 rounded-xl flex items-center justify-center text-sm shadow-sm"
+                  className="w-7 h-7 rounded-xl flex items-center justify-center text-sm shadow-sm shrink-0"
                   style={{
-                    background: `${marker.color}18`,
+                    background: `${marker.color}16`,
                     color: marker.color,
+                    border: `1px solid ${marker.color}28`,
                   }}
                 >
                   {marker.icon}
                 </div>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+                  <div className="text-[11px] font-bold text-gray-800 leading-tight group-hover:text-blue-600 transition-colors whitespace-nowrap">
                     {marker.label}
                   </div>
-                  <div className="text-[9px] font-mono-code text-gray-500 leading-none">
+                  <div className="text-[9px] font-mono-code text-gray-400 leading-none whitespace-nowrap">
                     {marker.sublabel}
                   </div>
                 </div>
@@ -373,6 +408,20 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
             </div>
           );
         })}
+      </div>
+
+      {/* ── Drag hint ───────────────────────────────────────────────────────── */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+        <span
+          className="text-[9px] font-mono-code px-2.5 py-1 rounded-full"
+          style={{
+            background: "rgba(255,255,255,0.7)",
+            color: "rgba(100,116,139,0.7)",
+            border: "1px solid rgba(219,234,254,0.6)",
+          }}
+        >
+          drag to rotate
+        </span>
       </div>
     </div>
   );
