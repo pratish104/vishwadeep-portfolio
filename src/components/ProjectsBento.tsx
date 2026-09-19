@@ -1,16 +1,12 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
-import { useTheme } from "../context/ThemeContext";
 import { featuredProjects, ProjectItem } from "../data/portfolioData";
 import { soundManager } from "../utils/audio";
 import { AllProjectsModal } from "./AllProjectsModal";
 import { ProjectModal } from "./ProjectModal";
 
 export function ProjectsBento() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-  const isAnime = theme === "anime";
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [isAllProjectsOpen, setIsAllProjectsOpen] = useState(false);
 
@@ -23,122 +19,18 @@ export function ProjectsBento() {
     setSelectedProject(project);
   };
 
-  // Card themes matching the reference images
-  const getCardStyle = (type: "digipath" | "retail" | "kosh") => {
-    if (isDark) {
-      if (type === "digipath") {
-        return {
-          bg: "bg-[#091815]/85 backdrop-blur-xl",
-          border: "border-emerald-500/30 hover:border-emerald-500/60",
-          shadow: "shadow-2xl shadow-emerald-950/40",
-          badge: "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40",
-          title: "text-white",
-          sub: "text-emerald-400 font-mono-code",
-          body: "text-zinc-300",
-          pill: "bg-[#102420] border-emerald-500/20 text-emerald-200",
-          cta: "text-emerald-400 hover:text-emerald-300",
-          boxBg: "bg-[#040e0c]/90 border-emerald-500/20",
-          statVal: "text-emerald-400 font-bold",
-          statLabel: "text-zinc-400",
-        };
-      }
-      if (type === "retail") {
-        return {
-          bg: "bg-[#0b162a]/85 backdrop-blur-xl",
-          border: "border-blue-500/30 hover:border-blue-500/60",
-          shadow: "shadow-2xl shadow-blue-950/40",
-          badge: "bg-blue-500/20 text-blue-400 border border-blue-500/40",
-          title: "text-white",
-          sub: "text-blue-400 font-mono-code",
-          body: "text-zinc-300",
-          pill: "bg-[#11223e] border-blue-500/20 text-blue-200",
-          cta: "text-blue-400 hover:text-blue-300",
-          boxBg: "bg-[#050e1c]/90 border-blue-500/20",
-          statVal: "text-blue-400 font-bold",
-          statLabel: "text-zinc-400",
-        };
-      }
-      return {
-        bg: "bg-[#150e24]/85 backdrop-blur-xl",
-        border: "border-purple-500/30 hover:border-purple-500/60",
-        shadow: "shadow-2xl shadow-purple-950/40",
-        badge: "bg-purple-500/20 text-purple-400 border border-purple-500/40",
-        title: "text-white",
-        sub: "text-purple-400 font-mono-code",
-        body: "text-zinc-300",
-        pill: "bg-[#201538] border-purple-500/20 text-purple-200",
-        cta: "text-purple-400 hover:text-purple-300",
-        boxBg: "bg-[#0d0718]/90 border-purple-500/20",
-        statVal: "text-purple-400 font-bold",
-        statLabel: "text-zinc-400",
-      };
-    }
-
-    // Light Theme / Anime Theme (Pastel Clean Aesthetics matching Reference Image)
-    if (type === "digipath") {
-      return {
-        bg: isAnime ? "bg-[#eaf8f0]/92 backdrop-blur-xl" : "bg-[#edf8f2]/95 backdrop-blur-xl",
-        border: "border-emerald-200/80 hover:border-emerald-400",
-        shadow: "shadow-xl shadow-emerald-900/[0.04]",
-        badge: "bg-emerald-600 text-white font-bold",
-        title: "text-gray-900",
-        sub: "text-emerald-700 font-semibold",
-        body: "text-gray-600",
-        pill: "bg-white/90 border-emerald-200/60 text-emerald-800 font-medium",
-        cta: "text-emerald-700 hover:text-emerald-800 font-bold",
-        boxBg: "bg-white/90 border-emerald-100 shadow-sm",
-        statVal: "text-emerald-800 font-bold",
-        statLabel: "text-gray-500",
-      };
-    }
-    if (type === "retail") {
-      return {
-        bg: isAnime ? "bg-[#eef5fe]/92 backdrop-blur-xl" : "bg-[#f1f6ff]/95 backdrop-blur-xl",
-        border: "border-blue-200/80 hover:border-blue-400",
-        shadow: "shadow-xl shadow-blue-900/[0.04]",
-        badge: "bg-blue-600 text-white font-bold",
-        title: "text-gray-900",
-        sub: "text-blue-700 font-semibold",
-        body: "text-gray-600",
-        pill: "bg-white/90 border-blue-200/60 text-blue-800 font-medium",
-        cta: "text-blue-700 hover:text-blue-800 font-bold",
-        boxBg: "bg-white/90 border-blue-100 shadow-sm",
-        statVal: "text-blue-800 font-bold",
-        statLabel: "text-gray-500",
-      };
-    }
-    return {
-      bg: isAnime ? "bg-[#f8f2fe]/92 backdrop-blur-xl" : "bg-[#faf4ff]/95 backdrop-blur-xl",
-      border: "border-purple-200/80 hover:border-purple-400",
-      shadow: "shadow-xl shadow-purple-900/[0.04]",
-      badge: "bg-purple-600 text-white font-bold",
-      title: "text-gray-900",
-      sub: "text-purple-700 font-semibold",
-      body: "text-gray-600",
-      pill: "bg-white/90 border-purple-200/60 text-purple-800 font-medium",
-      cta: "text-purple-700 hover:text-purple-800 font-bold",
-      boxBg: "bg-white/90 border-purple-100 shadow-sm",
-      statVal: "text-purple-800 font-bold",
-      statLabel: "text-gray-500",
-    };
-  };
-
-  const dStyle = getCardStyle("digipath");
-  const rStyle = getCardStyle("retail");
-  const kStyle = getCardStyle("kosh");
-
   return (
     <section id="projects" className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
       {/* ── Section Heading matching Reference ─────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
         <div className="space-y-1">
-          <div className="text-xs font-mono-code font-bold uppercase tracking-wider text-emerald-500">
+          <div className="text-xs font-mono-code font-bold uppercase tracking-wider text-emerald-600">
             // FEATURED PROJECTS
           </div>
-          <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-serif-display tracking-tight ${isDark ? "text-white" : "text-gray-900"}`}>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif-display tracking-tight text-gray-900">
             Selected Data &amp; AI Systems
           </h2>
-          <p className={`text-xs sm:text-sm ${isDark ? "text-zinc-400" : "text-gray-500"}`}>
+          <p className="text-xs sm:text-sm text-gray-600">
             Real projects. Real problems. Real impact.
           </p>
         </div>
@@ -149,11 +41,7 @@ export function ProjectsBento() {
             setIsAllProjectsOpen(true);
           }}
           onMouseEnter={() => soundManager.playHover()}
-          className={`self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono-code transition-all hover:scale-105 ${
-            isDark
-              ? "bg-[#14192b] border-white/10 text-zinc-200 hover:text-white"
-              : "bg-white/90 border-gray-200 text-gray-700 hover:bg-white shadow-sm"
-          }`}
+          className="self-start sm:self-auto flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-300 bg-white/95 text-gray-800 hover:bg-gray-50 shadow-sm text-xs font-mono-code font-semibold transition-all hover:scale-105"
         >
           <span>View All Projects</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
@@ -161,49 +49,52 @@ export function ProjectsBento() {
       </div>
 
       {/* ── 3-Column Bento Grid Matching Exact Reference Composition ─────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* ── CARD 1: DigiPath ──────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ── CARD 1: DigiPath (Mint Green Pastel Glass Card) ──────────────── */}
         <motion.div
           whileHover={{ y: -4 }}
           transition={{ duration: 0.2 }}
           onClick={() => handleOpenModal(digipath)}
-          className={`p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group ${dStyle.bg} ${dStyle.border} ${dStyle.shadow}`}
+          className="p-5 sm:p-6 rounded-3xl border border-emerald-200/90 bg-[#edf8f2]/95 backdrop-blur-xl shadow-xl shadow-emerald-900/[0.04] transition-all duration-300 flex flex-col justify-between cursor-pointer group"
         >
           <div className="space-y-3">
             {/* Badge */}
             <div className="flex items-center justify-between">
-              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code tracking-wider ${dStyle.badge}`}>
+              <span className="px-3 py-1 rounded-full text-[10px] font-mono-code font-bold tracking-wider bg-emerald-600 text-white shadow-sm">
                 ★ FLAGSHIP
               </span>
             </div>
 
             {/* Title & Subtitle */}
             <div>
-              <h3 className={`text-xl font-serif-display tracking-tight ${dStyle.title}`}>
+              <h3 className="text-xl font-serif-display tracking-tight text-gray-900 group-hover:text-emerald-800 transition-colors">
                 DigiPath
               </h3>
-              <p className={`text-xs ${dStyle.sub}`}>
+              <p className="text-xs text-emerald-700 font-semibold font-mono-code">
                 Admission Decision Intelligence
               </p>
             </div>
 
             {/* Short Description */}
-            <p className={`text-xs leading-relaxed ${dStyle.body}`}>
+            <p className="text-xs leading-relaxed text-gray-600">
               End-to-end college prediction platform for diploma and engineering aspirants.
             </p>
 
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-1.5">
               {["Python", "ML", "Data Processing"].map((tech) => (
-                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${dStyle.pill}`}>
+                <span
+                  key={tech}
+                  className="px-2.5 py-0.5 rounded-full text-[11px] font-mono-code font-medium bg-white/90 border border-emerald-200/80 text-emerald-800 shadow-2xs"
+                >
                   {tech}
                 </span>
               ))}
             </div>
 
-            {/* Visual Area: Real UI Interface Mockup */}
-            <div className={`rounded-2xl border overflow-hidden p-1.5 mt-2 ${dStyle.boxBg}`}>
-              <div className="rounded-xl overflow-hidden shadow-sm">
+            {/* Visual Area: Real UI Interface Screenshot */}
+            <div className="rounded-2xl border border-emerald-100 bg-white/90 p-1.5 mt-2 shadow-sm overflow-hidden">
+              <div className="rounded-xl overflow-hidden shadow-2xs">
                 <img
                   src="/projects/digipath.png"
                   alt="DigiPath Real Application Interface"
@@ -215,74 +106,77 @@ export function ProjectsBento() {
             {/* Key Project Information Row */}
             <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
               <div>
-                <div className={`text-sm ${dStyle.statVal}`}>500+</div>
-                <div className={`text-[10px] ${dStyle.statLabel}`}>Colleges</div>
+                <div className="text-sm font-bold text-emerald-800">500+</div>
+                <div className="text-[10px] text-gray-500">Colleges</div>
               </div>
               <div>
-                <div className={`text-xs font-bold ${dStyle.statVal}`}>Multi-Param</div>
-                <div className={`text-[10px] ${dStyle.statLabel}`}>Prediction</div>
+                <div className="text-xs font-bold text-emerald-800">Multi-Param</div>
+                <div className="text-[10px] text-gray-500">Prediction</div>
               </div>
               <div>
-                <div className={`text-xs font-bold ${dStyle.statVal}`}>Scam Filter</div>
-                <div className={`text-[10px] ${dStyle.statLabel}`}>Integrated</div>
+                <div className="text-xs font-bold text-emerald-800">Scam Filter</div>
+                <div className="text-[10px] text-gray-500">Integrated</div>
               </div>
             </div>
           </div>
 
           {/* CTA Link */}
-          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
-            <span className={`text-xs font-mono-code ${dStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>{isDark ? "Explore Project" : "View Project"}</span>
+          <div className="pt-3 mt-2 border-t border-emerald-200/60 text-center">
+            <span className="text-xs font-mono-code font-bold text-emerald-700 hover:text-emerald-800 flex items-center justify-center gap-1 group-hover:underline">
+              <span>View Project</span>
               <span>→</span>
             </span>
           </div>
         </motion.div>
 
-        {/* ── CARD 2: Retail Sales Analysis ─────────────────────────────────── */}
+        {/* ── CARD 2: Retail Sales Analysis (Soft Sky Blue Pastel Glass Card) ── */}
         <motion.div
           whileHover={{ y: -4 }}
           transition={{ duration: 0.2 }}
           onClick={() => handleOpenModal(retailSales)}
-          className={`p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group ${rStyle.bg} ${rStyle.border} ${rStyle.shadow}`}
+          className="p-5 sm:p-6 rounded-3xl border border-blue-200/90 bg-[#f1f6ff]/95 backdrop-blur-xl shadow-xl shadow-blue-900/[0.04] transition-all duration-300 flex flex-col justify-between cursor-pointer group"
         >
           <div className="space-y-3">
             {/* Badge */}
             <div className="flex items-center justify-between">
-              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code uppercase tracking-wider ${rStyle.badge}`}>
+              <span className="px-3 py-1 rounded-full text-[10px] font-mono-code font-bold uppercase tracking-wider bg-blue-600 text-white shadow-sm">
                 DATA ANALYTICS
               </span>
             </div>
 
             {/* Title & Subtitle */}
             <div>
-              <h3 className={`text-xl font-serif-display tracking-tight ${rStyle.title}`}>
+              <h3 className="text-xl font-serif-display tracking-tight text-gray-900 group-hover:text-blue-800 transition-colors">
                 Retail Sales Analysis
               </h3>
-              <p className={`text-xs ${rStyle.sub}`}>
+              <p className="text-xs text-blue-700 font-semibold font-mono-code">
                 R + Power BI Dashboard
               </p>
             </div>
 
             {/* Short Description */}
-            <p className={`text-xs leading-relaxed ${rStyle.body}`}>
+            <p className="text-xs leading-relaxed text-gray-600">
               Exploratory analysis and interactive dashboards for retail sales data.
             </p>
 
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-1.5">
               {["R", "RStudio", "Power BI"].map((tech) => (
-                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${rStyle.pill}`}>
+                <span
+                  key={tech}
+                  className="px-2.5 py-0.5 rounded-full text-[11px] font-mono-code font-medium bg-white/90 border border-blue-200/80 text-blue-800 shadow-2xs"
+                >
                   {tech}
                 </span>
               ))}
             </div>
 
             {/* Visual Area: Analytics Multi-Chart Dashboard Mockup */}
-            <div className={`rounded-2xl border p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between ${rStyle.boxBg}`}>
-              {/* Top mini trend chart */}
-              <div className="w-full flex items-center justify-between px-1 text-[10px] font-mono-code text-zinc-400">
+            <div className="rounded-2xl border border-blue-100 bg-white/90 p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between shadow-sm">
+              {/* Top mini trend header */}
+              <div className="w-full flex items-center justify-between px-1 text-[10px] font-mono-code text-gray-500">
                 <span>Revenue Trend</span>
-                <span className="text-blue-500 font-bold">51K+ Records</span>
+                <span className="text-blue-600 font-bold">51K+ Records</span>
               </div>
 
               {/* Mini Charts Grid */}
@@ -311,22 +205,22 @@ export function ProjectsBento() {
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#bfdbfe"
+                        stroke="#dbeafe"
                         strokeWidth="5"
                       />
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#3b82f6"
+                        stroke="#2563eb"
                         strokeWidth="5"
                         strokeDasharray="52, 100"
                       />
                     </svg>
-                    <span className="absolute text-[8px] font-bold font-mono-code text-blue-600">52%</span>
+                    <span className="absolute text-[8px] font-bold font-mono-code text-blue-700">52%</span>
                   </div>
 
                   {/* Mini Map Silhouette */}
-                  <div className="w-12 h-12 rounded-lg bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-600">
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200/70 flex items-center justify-center text-blue-700">
                     <span className="text-[9px] font-mono-code font-bold">4 Reg</span>
                   </div>
                 </div>
@@ -336,39 +230,39 @@ export function ProjectsBento() {
             {/* Key Project Information Row */}
             <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
               <div>
-                <div className={`text-sm ${rStyle.statVal}`}>11.6%</div>
-                <div className={`text-[10px] ${rStyle.statLabel}`}>Profit Margin</div>
+                <div className="text-sm font-bold text-blue-800">11.6%</div>
+                <div className="text-[10px] text-gray-500">Profit Margin</div>
               </div>
               <div>
-                <div className={`text-sm ${rStyle.statVal}`}>51K+</div>
-                <div className={`text-[10px] ${rStyle.statLabel}`}>Transactions</div>
+                <div className="text-sm font-bold text-blue-800">51K+</div>
+                <div className="text-[10px] text-gray-500">Transactions</div>
               </div>
               <div>
-                <div className={`text-sm ${rStyle.statVal}`}>4</div>
-                <div className={`text-[10px] ${rStyle.statLabel}`}>Regions</div>
+                <div className="text-sm font-bold text-blue-800">4</div>
+                <div className="text-[10px] text-gray-500">Regions</div>
               </div>
             </div>
           </div>
 
           {/* CTA Link */}
-          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
-            <span className={`text-xs font-mono-code ${rStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>{isDark ? "Explore Project" : "View Project"}</span>
+          <div className="pt-3 mt-2 border-t border-blue-200/60 text-center">
+            <span className="text-xs font-mono-code font-bold text-blue-700 hover:text-blue-800 flex items-center justify-center gap-1 group-hover:underline">
+              <span>View Project</span>
               <span>→</span>
             </span>
           </div>
         </motion.div>
 
-        {/* ── CARD 3: Kosh (Marathi NLP) ─────────────────────────────────────── */}
+        {/* ── CARD 3: Kosh (Soft Lavender Pastel Glass Card) ────────────────── */}
         <motion.div
           whileHover={{ y: -4 }}
           transition={{ duration: 0.2 }}
           onClick={() => handleOpenModal(kosh)}
-          className={`relative p-5 sm:p-6 rounded-3xl border transition-all duration-300 flex flex-col justify-between cursor-pointer group overflow-hidden ${kStyle.bg} ${kStyle.border} ${kStyle.shadow}`}
+          className="relative p-5 sm:p-6 rounded-3xl border border-purple-200/90 bg-[#faf4ff]/95 backdrop-blur-xl shadow-xl shadow-purple-900/[0.04] transition-all duration-300 flex flex-col justify-between cursor-pointer group overflow-hidden"
         >
           {/* Top-Right Soft Watermark Devanagari Character 'अने' */}
           <div
-            className="absolute right-4 top-2 text-4xl sm:text-5xl font-bold font-serif-display select-none pointer-events-none opacity-15 text-purple-600"
+            className="absolute right-4 top-2 text-4xl sm:text-5xl font-bold font-serif-display select-none pointer-events-none opacity-15 text-purple-700"
             aria-hidden="true"
           >
             अने
@@ -377,53 +271,56 @@ export function ProjectsBento() {
           <div className="space-y-3 relative z-10">
             {/* Badge */}
             <div className="flex items-center justify-between">
-              <span className={`px-3 py-1 rounded-full text-[10px] font-mono-code uppercase tracking-wider ${kStyle.badge}`}>
+              <span className="px-3 py-1 rounded-full text-[10px] font-mono-code font-bold uppercase tracking-wider bg-purple-600 text-white shadow-sm">
                 NLP / LANGUAGE
               </span>
             </div>
 
             {/* Title & Subtitle */}
             <div>
-              <h3 className={`text-xl font-serif-display tracking-tight ${kStyle.title}`}>
+              <h3 className="text-xl font-serif-display tracking-tight text-gray-900 group-hover:text-purple-800 transition-colors">
                 Kosh
               </h3>
-              <p className={`text-xs ${kStyle.sub}`}>
+              <p className="text-xs text-purple-700 font-semibold font-mono-code">
                 Marathi Text Rewriting System
               </p>
             </div>
 
             {/* Short Description */}
-            <p className={`text-xs leading-relaxed ${kStyle.body}`}>
+            <p className="text-xs leading-relaxed text-gray-600">
               Context-aware Marathi paraphrasing and style transformation.
             </p>
 
             {/* Tech Stack Pills */}
             <div className="flex flex-wrap gap-1.5">
               {["Python", "NLP", "mT5 / MBart"].map((tech) => (
-                <span key={tech} className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono-code border ${kStyle.pill}`}>
+                <span
+                  key={tech}
+                  className="px-2.5 py-0.5 rounded-full text-[11px] font-mono-code font-medium bg-white/90 border border-purple-200/80 text-purple-800 shadow-2xs"
+                >
                   {tech}
                 </span>
               ))}
             </div>
 
             {/* Visual Area: Devanagari Transformation Box */}
-            <div className={`rounded-2xl border p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between space-y-1.5 ${kStyle.boxBg}`}>
+            <div className="rounded-2xl border border-purple-100 bg-white/90 p-2.5 mt-2 h-36 sm:h-40 flex flex-col justify-between space-y-1.5 shadow-sm">
               {/* Input section */}
-              <div className="p-1.5 rounded-xl bg-black/5 dark:bg-black/20 text-xs">
-                <span className="text-[9px] font-mono-code text-purple-600 dark:text-purple-400 block font-semibold">
+              <div className="p-1.5 rounded-xl bg-purple-50/70 border border-purple-100 text-xs">
+                <span className="text-[9px] font-mono-code text-purple-700 block font-bold">
                   Input (मराठी)
                 </span>
-                <p className="font-sans text-[11px] leading-snug line-clamp-2">
+                <p className="font-sans text-[11px] leading-snug text-gray-800 line-clamp-2">
                   "विद्यार्थ्यांनी परीक्षेची तयारी वेळेवर पूर्ण केली पाहिजे."
                 </p>
               </div>
 
               {/* Output section */}
-              <div className="p-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs">
-                <span className="text-[9px] font-mono-code text-purple-600 dark:text-purple-400 block font-semibold">
+              <div className="p-1.5 rounded-xl bg-purple-100/70 border border-purple-200 text-xs">
+                <span className="text-[9px] font-mono-code text-purple-800 block font-bold">
                   Output (Formal)
                 </span>
-                <p className="font-sans text-[11px] font-medium text-purple-900 dark:text-purple-200 leading-snug line-clamp-2">
+                <p className="font-sans text-[11px] font-medium text-purple-950 leading-snug line-clamp-2">
                   "विद्यार्थ्यांनी परीक्षा पूर्वतयारी वेळेत पूर्ण करणे आवश्यक आहे."
                 </p>
               </div>
@@ -432,24 +329,24 @@ export function ProjectsBento() {
             {/* Key Project Information Row */}
             <div className="grid grid-cols-3 gap-2 text-center pt-1 text-xs font-mono-code">
               <div>
-                <div className={`text-xs font-bold ${kStyle.statVal}`}>Devanagari</div>
-                <div className={`text-[10px] ${kStyle.statLabel}`}>UTF-8 Logic</div>
+                <div className="text-xs font-bold text-purple-800">Devanagari</div>
+                <div className="text-[10px] text-gray-500">UTF-8 Logic</div>
               </div>
               <div>
-                <div className={`text-xs font-bold ${kStyle.statVal}`}>Multi-Tone</div>
-                <div className={`text-[10px] ${kStyle.statLabel}`}>Paraphraser</div>
+                <div className="text-xs font-bold text-purple-800">Multi-Tone</div>
+                <div className="text-[10px] text-gray-500">Paraphraser</div>
               </div>
               <div>
-                <div className={`text-xs font-bold ${kStyle.statVal}`}>SANGRAH</div>
-                <div className={`text-[10px] ${kStyle.statLabel}`}>Architecture</div>
+                <div className="text-xs font-bold text-purple-800">SANGRAH</div>
+                <div className="text-[10px] text-gray-500">Architecture</div>
               </div>
             </div>
           </div>
 
           {/* CTA Link */}
-          <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center relative z-10">
-            <span className={`text-xs font-mono-code ${kStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>{isDark ? "Explore Project" : "View Project"}</span>
+          <div className="pt-3 mt-2 border-t border-purple-200/60 text-center relative z-10">
+            <span className="text-xs font-mono-code font-bold text-purple-700 hover:text-purple-800 flex items-center justify-center gap-1 group-hover:underline">
+              <span>View Project</span>
               <span>→</span>
             </span>
           </div>
@@ -462,7 +359,7 @@ export function ProjectsBento() {
         onClose={() => setSelectedProject(null)}
       />
 
-      {/* ── Complete Portfolio Inventory Explorer Modal ────────────────────────── */}
+      {/* ── Complete Portfolio Inventory Explorer Modal (All 5 Projects) ──────── */}
       <AllProjectsModal
         isOpen={isAllProjectsOpen}
         onClose={() => setIsAllProjectsOpen(false)}

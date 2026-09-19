@@ -11,48 +11,29 @@ import { ProjectsBento } from "./components/ProjectsBento";
 import { SkillsBento } from "./components/SkillsBento";
 import { TelemetryPipeline } from "./components/TelemetryPipeline";
 import { VerticalDock } from "./components/VerticalDock";
-import { PanoramicWorldBackground } from "./components/world/PanoramicWorldBackground";
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
-function AppContent() {
+export default function App() {
   useSmoothScroll();
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const { theme } = useTheme();
 
   return (
     <div
-      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900 theme-transition"
+      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900"
       style={{
-        backgroundColor: "var(--bg-base)",
-        color: "var(--text-primary)",
+        backgroundColor: "#f8f7f4",
+        color: "#1a1917",
       }}
     >
-      {/* ── Panoramic Illustrated Environment Background ─────────────────────── */}
-      <PanoramicWorldBackground />
-      {theme === "dark" && (
-        <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-40"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #1e22300f 1px, transparent 1px), linear-gradient(to bottom, #1e22300f 1px, transparent 1px)",
-            backgroundSize: "4rem 4rem",
-            maskImage:
-              "radial-gradient(ellipse 80% 70% at 50% 20%, #000 70%, transparent 100%)",
-          }}
-        />
-      )}
-
-      {theme === "light" && (
-        <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-35"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #e5e3db 1px, transparent 1px), linear-gradient(to bottom, #e5e3db 1px, transparent 1px)",
-            backgroundSize: "6rem 6rem",
-          }}
-        />
-      )}
+      {/* ── Background Subtle Grid Line Layer ────────────────────────────────── */}
+      <div
+        className="fixed inset-0 pointer-events-none -z-10 opacity-30"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, #e5e3db 1px, transparent 1px), linear-gradient(to bottom, #e5e3db 1px, transparent 1px)",
+          backgroundSize: "6rem 6rem",
+        }}
+      />
 
       {/* ── Left Quick-Navigation Vertical Dock (Matching Reference) ─────────── */}
       <VerticalDock />
@@ -85,13 +66,5 @@ function AppContent() {
         onClose={() => setIsTerminalOpen(false)}
       />
     </div>
-  );
-}
-
-export default function App() {
-  return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
   );
 }

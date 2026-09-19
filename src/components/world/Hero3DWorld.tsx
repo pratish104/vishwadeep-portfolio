@@ -1,23 +1,53 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { DATA_MARKERS } from "./EarthScene3D";
+
+export const DATA_MARKERS = [
+  {
+    id: "ideas",
+    label: "Ideas",
+    sublabel: "Start here",
+    description: "Every data product begins with identifying high-value problems and unstandardized domain records.",
+    color: "#f59e0b", // amber
+    icon: "💡",
+  },
+  {
+    id: "data",
+    label: "Data",
+    sublabel: "Raw to structured",
+    description: "Ingesting, normalizing, and cleaning complex tabular data and multi-year cutoff records.",
+    color: "#2563eb", // blue
+    icon: "📊",
+  },
+  {
+    id: "aiml",
+    label: "AI/ML",
+    sublabel: "Models & insights",
+    description: "Machine learning prediction algorithms, Marathi NLP transformation, and statistical modeling.",
+    color: "#7c3aed", // violet
+    icon: "❄️",
+  },
+  {
+    id: "engineering",
+    label: "Engineering",
+    sublabel: "Build & deploy",
+    description: "Full-stack APIs, forensic pipeline tooling, and robust production-ready systems.",
+    color: "#3b82f6", // blue
+    icon: "⚙️",
+  },
+  {
+    id: "impact",
+    label: "Impact",
+    sublabel: "Real world value",
+    description: "Empowering students with admission intelligence and businesses with profitability insights.",
+    color: "#16a34a", // green
+    icon: "🌱",
+  },
+];
 
 interface Hero3DWorldProps {
   onMarkerClick?: (marker: { id: string; label: string; description: string }) => void;
 }
 
-/**
- * Hero3DWorld — Light Theme 3D Visual
- *
- * A premium floating DATA INTELLIGENCE SPHERE:
- *  - Translucent crystalline globe with inner neural-network mesh
- *  - Animated data-flow lines tracing great-circle arcs across the sphere
- *  - 3 orbiting satellite nodes (blue, green, violet) on tilted rings
- *  - Ambient floating data hexagon particles
- *  - Warm ambient + directional sun lighting (no islands, no biodome)
- *  - 5 glass HUD cards overlay positioned around the sphere
- *  - Mouse parallax + drag to spin
- */
 export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
   const mountRef = useRef<HTMLDivElement>(null);
 
@@ -103,21 +133,21 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     worldGroup.add(coreMesh);
 
     // ── 4. Neural Network Mesh inside sphere ─────────────────────────────
-    // Create icosphere-like lattice points on unit sphere
     const nodeCount = 28;
     const nodePositions: THREE.Vector3[] = [];
     for (let i = 0; i < nodeCount; i++) {
       const phi = Math.acos(-1 + (2 * i) / nodeCount);
       const theta = Math.sqrt(nodeCount * Math.PI) * phi;
       const r = 1.12;
-      nodePositions.push(new THREE.Vector3(
-        r * Math.cos(theta) * Math.sin(phi),
-        r * Math.sin(theta) * Math.sin(phi),
-        r * Math.cos(phi),
-      ));
+      nodePositions.push(
+        new THREE.Vector3(
+          r * Math.cos(theta) * Math.sin(phi),
+          r * Math.sin(theta) * Math.sin(phi),
+          r * Math.cos(phi)
+        )
+      );
     }
 
-    // Node dots on the network
     nodePositions.forEach((pos) => {
       const dotGeo = new THREE.SphereGeometry(0.036, 10, 10);
       const dotMat = new THREE.MeshStandardMaterial({
@@ -130,7 +160,6 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       worldGroup.add(dot);
     });
 
-    // Edges connecting nearby nodes
     const edgeMat = new THREE.LineBasicMaterial({
       color: 0x93c5fd,
       transparent: true,
@@ -149,7 +178,6 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     }
 
     // ── 5. Three Orbiting Satellite Nodes (on 3 tilted rings) ──────────
-    // Ring geometry for visual orbits
     const makeRing = (radius: number, color: number, tiltX: number, tiltY: number) => {
       const rGeo = new THREE.TorusGeometry(radius, 0.012, 10, 72);
       const rMat = new THREE.MeshBasicMaterial({
@@ -168,7 +196,6 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     makeRing(2.65, 0x10b981, Math.PI * 0.55, -Math.PI * 0.2);
     makeRing(2.95, 0x8b5cf6, Math.PI * 0.22, Math.PI * 0.35);
 
-    // Satellite sphere meshes
     const makeSat = (color: number, emissive: number, size: number) => {
       const sGeo = new THREE.SphereGeometry(size, 18, 18);
       const sMat = new THREE.MeshStandardMaterial({
@@ -183,11 +210,10 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       return s;
     };
 
-    const sat1 = makeSat(0x2563eb, 0x3b82f6, 0.085); // blue
-    const sat2 = makeSat(0x059669, 0x10b981, 0.072); // green
-    const sat3 = makeSat(0x7c3aed, 0x8b5cf6, 0.065); // violet
+    const sat1 = makeSat(0x2563eb, 0x3b82f6, 0.085);
+    const sat2 = makeSat(0x059669, 0x10b981, 0.072);
+    const sat3 = makeSat(0x7c3aed, 0x8b5cf6, 0.065);
 
-    // Small trail hex for each satellite
     const makeTrail = (color: number) => {
       const geo = new THREE.TorusGeometry(0.05, 0.008, 6, 12);
       const mat = new THREE.MeshBasicMaterial({
@@ -203,7 +229,7 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
     const trail2 = makeTrail(0x34d399);
     const trail3 = makeTrail(0xa78bfa);
 
-    // ── 6. Ambient Hex Data Particles outside sphere ─────────────────────
+    // ── 6. Ambient Hex Data Particles ──────────────────────────────────
     const hexParticles: { mesh: THREE.Mesh; speed: number; offset: number }[] = [];
     for (let i = 0; i < 12; i++) {
       const hGeo = new THREE.OctahedronGeometry(0.045 + Math.random() * 0.04, 0);
@@ -221,7 +247,7 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       hMesh.position.set(
         r * Math.sin(phi) * Math.cos(theta),
         r * Math.cos(phi),
-        r * Math.sin(phi) * Math.sin(theta),
+        r * Math.sin(phi) * Math.sin(theta)
       );
       scene.add(hMesh);
       hexParticles.push({ mesh: hMesh, speed: 0.3 + Math.random() * 0.5, offset: i * 0.52 });
@@ -254,7 +280,9 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       }
     };
 
-    const onPointerUp = () => { isDragging = false; };
+    const onPointerUp = () => {
+      isDragging = false;
+    };
 
     window.addEventListener("pointermove", onPointerMove);
     mount.addEventListener("pointerdown", onPointerDown);
@@ -282,55 +310,48 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
         t += 0.014;
 
         if (!isDragging) {
-          // Slow auto-rotation of the neural globe
           worldGroup.rotation.y += 0.0022;
           worldGroup.rotation.x += (targetRot.x - worldGroup.rotation.x) * 0.04;
         }
 
-        // Gentle levitation bob
         worldGroup.position.y = Math.sin(t * 0.7) * 0.09;
 
-        // Satellite 1 — blue, ring 1 (tiltX 0.38π, tiltY 0.08π)
         const a1 = t * 0.55;
         const r1 = 2.25;
         sat1.position.set(
           r1 * Math.cos(a1),
           r1 * Math.sin(a1) * Math.sin(Math.PI * 0.38),
-          r1 * Math.sin(a1) * Math.cos(Math.PI * 0.38),
+          r1 * Math.sin(a1) * Math.cos(Math.PI * 0.38)
         );
         trail1.position.copy(sat1.position);
         trail1.rotation.y = a1 + 0.3;
 
-        // Satellite 2 — green, ring 2
         const a2 = -t * 0.45;
         const r2 = 2.65;
         sat2.position.set(
           r2 * Math.cos(a2) * Math.cos(-Math.PI * 0.2),
           r2 * Math.sin(a2) * Math.sin(Math.PI * 0.55),
-          r2 * Math.sin(a2) * Math.cos(Math.PI * 0.55),
+          r2 * Math.sin(a2) * Math.cos(Math.PI * 0.55)
         );
         trail2.position.copy(sat2.position);
         trail2.rotation.x = a2 + 0.3;
 
-        // Satellite 3 — violet, ring 3
         const a3 = t * 0.38;
         const r3 = 2.95;
         sat3.position.set(
           r3 * Math.cos(a3) * Math.cos(Math.PI * 0.35),
           r3 * Math.sin(a3) * Math.sin(Math.PI * 0.22),
-          r3 * Math.sin(a3) * Math.cos(Math.PI * 0.22),
+          r3 * Math.sin(a3) * Math.cos(Math.PI * 0.22)
         );
         trail3.position.copy(sat3.position);
         trail3.rotation.z = a3 + 0.3;
 
-        // Hex particles slow drift
         hexParticles.forEach((hp) => {
           hp.mesh.rotation.x += hp.speed * 0.01;
           hp.mesh.rotation.y += hp.speed * 0.008;
           hp.mesh.position.y += Math.sin(t + hp.offset) * 0.003;
         });
 
-        // Core pulse
         const pulse = 1 + Math.sin(t * 1.4) * 0.025;
         coreMesh.scale.setScalar(pulse);
       }
@@ -379,10 +400,8 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
               style={pos}
             >
               <div
-                className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl border shadow-lg backdrop-blur-xl"
+                className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl border shadow-lg backdrop-blur-xl bg-white/95 border-gray-200"
                 style={{
-                  background: "rgba(255, 255, 255, 0.92)",
-                  borderColor: "rgba(219, 234, 254, 0.9)",
                   boxShadow: "0 8px 28px -4px rgba(37, 99, 235, 0.1), 0 2px 8px rgba(0,0,0,0.06)",
                 }}
               >
@@ -413,12 +432,7 @@ export function Hero3DWorld({ onMarkerClick }: Hero3DWorldProps) {
       {/* ── Drag hint ───────────────────────────────────────────────────────── */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
         <span
-          className="text-[9px] font-mono-code px-2.5 py-1 rounded-full"
-          style={{
-            background: "rgba(255,255,255,0.7)",
-            color: "rgba(100,116,139,0.7)",
-            border: "1px solid rgba(219,234,254,0.6)",
-          }}
+          className="text-[9px] font-mono-code px-2.5 py-1 rounded-full bg-white/80 text-gray-500 border border-gray-200/80 shadow-2xs"
         >
           drag to rotate
         </span>
