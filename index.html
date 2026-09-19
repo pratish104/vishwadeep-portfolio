@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="light scroll-smooth" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +11,7 @@
       content="Vishwadeep Pratap (Pratish) — Computer Engineering student specializing in Data Analytics, Machine Learning, and Systems Engineering. Creator of DigiPath, Retail Analytics, and Kosh."
     />
 
-    <meta name="theme-color" content="#090a0f" />
+    <meta name="theme-color" content="#f8f7f4" />
 
     <meta
       property="og:title"
@@ -34,12 +34,12 @@
       rel="stylesheet"
     />
 
-    <!-- Theme initialization script (prevents flash of wrong theme) -->
+    <!-- Theme initialization script (defaults to light theme matching reference) -->
     <script>
       (function () {
         try {
           var saved = localStorage.getItem('portfolio_theme');
-          var theme = (saved && ['dark', 'light', 'anime'].indexOf(saved) !== -1) ? saved : 'dark';
+          var theme = (saved && ['dark', 'light', 'anime'].indexOf(saved) !== -1) ? saved : 'light';
           document.documentElement.setAttribute('data-theme', theme);
           if (theme === 'light') {
             document.documentElement.classList.remove('dark');
@@ -53,7 +53,7 @@
     </script>
   </head>
 
-  <body class="bg-[#090a0f] text-zinc-100 antialiased selection:bg-indigo-500/25 selection:text-indigo-200 m-0 p-0">
+  <body class="antialiased selection:bg-blue-500/20 selection:text-blue-900 m-0 p-0 overflow-x-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

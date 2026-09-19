@@ -11,6 +11,7 @@ import { ProjectsBento } from "./components/ProjectsBento";
 import { SkillsBento } from "./components/SkillsBento";
 import { TelemetryPipeline } from "./components/TelemetryPipeline";
 import { VerticalDock } from "./components/VerticalDock";
+import { PanoramicWorldBackground } from "./components/world/PanoramicWorldBackground";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
@@ -21,13 +22,14 @@ function AppContent() {
 
   return (
     <div
-      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-indigo-500/25 selection:text-indigo-200 theme-transition"
+      className="min-h-screen antialiased relative overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-900 theme-transition"
       style={{
         backgroundColor: "var(--bg-base)",
         color: "var(--text-primary)",
       }}
     >
-      {/* ── Background Grid Overlays ────────────────────────────────────────── */}
+      {/* ── Panoramic Illustrated Environment Background ─────────────────────── */}
+      <PanoramicWorldBackground />
       {theme === "dark" && (
         <div
           className="fixed inset-0 pointer-events-none -z-10 opacity-40"

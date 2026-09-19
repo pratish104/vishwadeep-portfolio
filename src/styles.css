@@ -6,24 +6,6 @@
    ========================================================================= */
 
 :root,
-[data-theme="dark"] {
-  --bg-base: #090a0f;
-  --bg-surface: #0d0f17;
-  --bg-elevated: #111320;
-  --border-subtle: #1e2230;
-  --border-mid: #2d3348;
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #52525b;
-  --accent-primary: #6366f1;   /* indigo */
-  --accent-secondary: #10b981; /* emerald */
-  --accent-tertiary: #8b5cf6;  /* violet */
-  --glow-color: rgba(99, 102, 241, 0.15);
-  --scrollbar-bg: #090a0f;
-  --scrollbar-thumb: #1e2230;
-  --scrollbar-thumb-hover: #2d3348;
-}
-
 [data-theme="light"] {
   --bg-base: #f8f7f4;
   --bg-surface: #ffffff;
@@ -40,6 +22,24 @@
   --scrollbar-bg: #f8f7f4;
   --scrollbar-thumb: #d4d0c8;
   --scrollbar-thumb-hover: #b8b4ac;
+}
+
+[data-theme="dark"] {
+  --bg-base: #090a0f;
+  --bg-surface: #0d0f17;
+  --bg-elevated: #111320;
+  --border-subtle: #1e2230;
+  --border-mid: #2d3348;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent-primary: #6366f1;   /* indigo */
+  --accent-secondary: #10b981; /* emerald */
+  --accent-tertiary: #8b5cf6;  /* violet */
+  --glow-color: rgba(99, 102, 241, 0.15);
+  --scrollbar-bg: #090a0f;
+  --scrollbar-thumb: #1e2230;
+  --scrollbar-thumb-hover: #2d3348;
 }
 
 [data-theme="anime"] {
