@@ -12,13 +12,11 @@ import { SkillsBento } from "./components/SkillsBento";
 import { TelemetryPipeline } from "./components/TelemetryPipeline";
 import { ThemeAtmosphere } from "./components/ThemeAtmosphere";
 import { VerticalDock } from "./components/VerticalDock";
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
 function AppContent() {
   useSmoothScroll();
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const { theme } = useTheme();
 
   return (
     <div
@@ -31,39 +29,6 @@ function AppContent() {
       {/* ── Dynamic Atmospheric Canvas Background (Zero Screenshot Artifacts) ─ */}
       <ThemeAtmosphere />
 
-      {/* ── Background Grid Pattern ────────────────────────────────────────── */}
-      {theme === "light" && (
-        <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-25"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #e5e3db 1px, transparent 1px), linear-gradient(to bottom, #e5e3db 1px, transparent 1px)",
-            backgroundSize: "6rem 6rem",
-          }}
-        />
-      )}
-
-      {theme === "dark" && (
-        <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-30"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #1e2a4a 1px, transparent 1px), linear-gradient(to bottom, #1e2a4a 1px, transparent 1px)",
-            backgroundSize: "4rem 4rem",
-          }}
-        />
-      )}
-
-      {theme === "anime" && (
-        <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-20"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #f3d2e0 1px, transparent 1px), linear-gradient(to bottom, #f3d2e0 1px, transparent 1px)",
-            backgroundSize: "5rem 5rem",
-          }}
-        />
-      )}
 
       {/* ── Left Quick-Navigation Vertical Dock ───────────────────────────────── */}
       <VerticalDock />
@@ -100,9 +65,5 @@ function AppContent() {
 }
 
 export default function App() {
-  return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
-  );
+  return <AppContent />;
 }

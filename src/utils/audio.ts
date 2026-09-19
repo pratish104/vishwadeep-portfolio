@@ -278,6 +278,12 @@ class AudioEngine {
     this.initCtx();
     if (!this.ctx || !this.masterGain) return;
 
+    // Auto-unmute on explicit play action
+    this.isMuted = false;
+    try {
+      localStorage.setItem("portfolio_audio_muted", "false");
+    } catch {}
+
     if (trackIndex !== undefined && trackIndex >= 0 && trackIndex < TRACKS.length) {
       this.currentTrackIndex = trackIndex;
     }
@@ -286,7 +292,7 @@ class AudioEngine {
     this.currentTheme = currentTrack.theme;
 
     this.stopAmbient();
-    this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.5, this.ctx.currentTime);
+    this.masterGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
 
     if (currentTrack.id === "lofi-nature") {
       this.playAnimeTrack(this.ctx);
