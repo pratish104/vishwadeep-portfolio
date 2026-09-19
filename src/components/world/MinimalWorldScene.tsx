@@ -1,6 +1,11 @@
 import { useEffect, useRef } from "react";
+import { DATA_MARKERS } from "./EarthScene3D";
 
-export function MinimalWorldScene() {
+interface MinimalWorldSceneProps {
+  onMarkerClick?: (marker: { id: string; label: string; description: string }) => void;
+}
+
+export function MinimalWorldScene({ onMarkerClick }: MinimalWorldSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
 
@@ -31,101 +36,149 @@ export function MinimalWorldScene() {
       const cy = H / 2;
       const R = Math.min(W, H) * 0.38;
 
-      // Subtle off-white background glow
-      const bgGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.5);
-      bgGlow.addColorStop(0, "rgba(235, 240, 250, 0.3)");
-      bgGlow.addColorStop(1, "rgba(235, 240, 250, 0)");
-      ctx.fillStyle = bgGlow;
+      // 1. Soft atmospheric light gradient
+      const skyGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.6);
+      skyGrad.addColorStop(0, "rgba(224, 242, 254, 0.45)");
+      skyGrad.addColorStop(0.6, "rgba(240, 249, 255, 0.25)");
+      skyGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, W, H);
 
-      // Latitude lines (horizontal arcs)
-      const latitudes = 9;
-      for (let i = 0; i <= latitudes; i++) {
-        const lat = ((i / latitudes) - 0.5) * Math.PI;
-        const ry = Math.cos(lat) * R;
-        const y = cy + Math.sin(lat) * R;
-        if (ry < 2) continue;
-
-        const progress = !prefersReduced ? (t * 0.4 + i * 0.2) : 0;
-        const pulse = 0.12 + Math.sin(progress) * 0.05;
-
-        ctx.beginPath();
-        ctx.ellipse(cx, y, ry, ry * 0.05, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(37, 99, 235, ${pulse})`;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-      }
-
-      // Longitude lines (vertical arcs)
-      const longitudes = 12;
-      for (let i = 0; i < longitudes; i++) {
-        const angle = (i / longitudes) * Math.PI;
-        const progress = !prefersReduced ? (t * 0.3 + i * 0.15) : 0;
-        const pulse = 0.1 + Math.sin(progress) * 0.04;
-
-        ctx.beginPath();
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(angle + (!prefersReduced ? t * 0.05 : 0));
-        ctx.ellipse(0, 0, 0.05 * R, R, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(37, 99, 235, ${pulse})`;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-        ctx.restore();
-      }
-
-      // Outer orbit ring
+      // 2. Futuristic Floating City Sphere Silhouette & Biodome
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(cx, cy, R * 1.15, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(37, 99, 235, 0.08)";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 8]);
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Biodome sky
+      const domeGrad = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
+      domeGrad.addColorStop(0, "#bae6fd");
+      domeGrad.addColorStop(0.5, "#e0f2fe");
+      domeGrad.addColorStop(1, "#f0fdf4");
+      ctx.fillStyle = domeGrad;
+      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+
+      // Mountain / Island Base
+      ctx.beginPath();
+      ctx.moveTo(cx - R, cy + R * 0.4);
+      ctx.bezierCurveTo(cx - R * 0.5, cy + R * 0.1, cx - R * 0.2, cy + R * 0.25, cx, cy + R * 0.2);
+      ctx.bezierCurveTo(cx + R * 0.3, cy + R * 0.15, cx + R * 0.7, cy + R * 0.35, cx + R, cy + R * 0.4);
+      ctx.lineTo(cx + R, cy + R);
+      ctx.lineTo(cx - R, cy + R);
+      ctx.closePath();
+      ctx.fillStyle = "#86efac";
+      ctx.fill();
+
+      // City Tower Silhouettes in background
+      const towers = [
+        { x: -0.6, w: 0.1, h: 0.35 },
+        { x: -0.45, w: 0.12, h: 0.5 },
+        { x: -0.28, w: 0.14, h: 0.65 },
+        { x: -0.1, w: 0.18, h: 0.78 }, // central spire
+        { x: 0.12, w: 0.15, h: 0.68 },
+        { x: 0.32, w: 0.12, h: 0.52 },
+        { x: 0.48, w: 0.1, h: 0.38 },
+      ];
+
+      towers.forEach((tw) => {
+        const tx = cx + tw.x * R;
+        const twid = tw.w * R;
+        const th = tw.h * R;
+        const ty = cy + R * 0.3 - th;
+
+        // Building gradient
+        const bGrad = ctx.createLinearGradient(tx, ty, tx, ty + th);
+        bGrad.addColorStop(0, "#ffffff");
+        bGrad.addColorStop(0.5, "#e0f2fe");
+        bGrad.addColorStop(1, "#93c5fd");
+        ctx.fillStyle = bGrad;
+
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(tx, ty, twid, th, [4, 4, 0, 0]) : ctx.rect(tx, ty, twid, th);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(147, 197, 253, 0.6)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Spire pinnacle
+        if (tw.h > 0.6) {
+          ctx.beginPath();
+          ctx.moveTo(tx + twid / 2, ty);
+          ctx.lineTo(tx + twid / 2, ty - 15);
+          ctx.strokeStyle = "#38bdf8";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      });
+
+      // Fluffy clouds inside biodome
+      const cloudP = !prefersReduced ? (t * 0.08) % 1 : 0;
+      for (let c = 0; c < 3; c++) {
+        const clX = cx - R * 0.8 + ((c * 0.6 + cloudP) % 1.6) * R;
+        const clY = cy - R * 0.1 + c * 25;
+        ctx.beginPath();
+        ctx.arc(clX, clY, 20, 0, Math.PI * 2);
+        ctx.arc(clX + 15, clY - 8, 25, 0, Math.PI * 2);
+        ctx.arc(clX + 35, clY, 18, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      // 3. Orbital Data Rings with Glowing Particle
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, R * 1.15, R * 0.35, -0.2, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(59, 130, 246, 0.25)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 8]);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Traveling data node on orbit
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, R * 1.25, R * 0.42, 0.15, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(16, 185, 129, 0.2)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Traveling Node on orbit
       if (!prefersReduced) {
-        const nodeAngle = t * 0.6;
-        const nx = cx + Math.cos(nodeAngle) * R * 1.15;
-        const ny = cy + Math.sin(nodeAngle) * R * 1.15;
+        const angle = t * 0.8;
+        const ox = cx + Math.cos(angle) * (R * 1.15) * Math.cos(-0.2) - Math.sin(angle) * (R * 0.35) * Math.sin(-0.2);
+        const oy = cy + Math.cos(angle) * (R * 1.15) * Math.sin(-0.2) + Math.sin(angle) * (R * 0.35) * Math.cos(-0.2);
         ctx.beginPath();
-        ctx.arc(nx, ny, 4, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(37, 99, 235, 0.7)";
+        ctx.arc(ox, oy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#2563eb";
+        ctx.shadowColor = "#3b82f6";
+        ctx.shadowBlur = 10;
         ctx.fill();
-        // Trail
-        for (let trail = 1; trail <= 8; trail++) {
-          const ta = t * 0.6 - trail * 0.08;
-          const tx2 = cx + Math.cos(ta) * R * 1.15;
-          const ty2 = cy + Math.sin(ta) * R * 1.15;
-          ctx.beginPath();
-          ctx.arc(tx2, ty2, 2 * (1 - trail / 8), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(37, 99, 235, ${0.5 * (1 - trail / 8)})`;
-          ctx.fill();
-        }
+        ctx.shadowBlur = 0;
       }
 
-      // Globe outer circle
+      // 4. Glass Sphere Outer Ring & Highlight
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(37, 99, 235, 0.15)";
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.lineWidth = 2.5;
       ctx.stroke();
 
-      // Subtle center glow
-      const centerGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.5);
-      centerGlow.addColorStop(0, "rgba(37, 99, 235, 0.04)");
-      centerGlow.addColorStop(1, "rgba(37, 99, 235, 0)");
-      ctx.fillStyle = centerGlow;
+      // Subtle Glass Crescent Reflection
       ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.arc(cx, cy, R - 2, -Math.PI * 0.7, -Math.PI * 0.2);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 4;
+      ctx.stroke();
 
-      t += 0.012;
+      t += 0.015;
     };
 
     let visible = true;
     const observer = new IntersectionObserver(
-      ([entry]) => { visible = entry.isIntersecting; },
+      ([entry]) => {
+        visible = entry.isIntersecting;
+      },
       { threshold: 0.1 }
     );
     observer.observe(canvas);
@@ -145,11 +198,64 @@ export function MinimalWorldScene() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      style={{ display: "block", minHeight: 400 }}
-      aria-label="Wireframe globe data visualization"
-    />
+    <div className="relative w-full h-full" style={{ minHeight: 480 }}>
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ display: "block", minHeight: 480 }}
+        aria-label="Futuristic floating biodome city"
+      />
+
+      {/* ── 5 Interactive HUD Data Cards Over Floating Sphere ─────────── */}
+      <div className="absolute inset-0 pointer-events-none z-20">
+        {DATA_MARKERS.map((marker, i) => {
+          // Precise screen coordinates matching the reference image layout
+          const positions = [
+            { top: "8%", left: "55%" },   // Ideas (top center-right)
+            { top: "28%", left: "10%" },  // Data (left)
+            { top: "35%", right: "8%" },  // AI/ML (right)
+            { bottom: "16%", left: "18%" }, // Engineering (bottom-left)
+            { bottom: "12%", right: "16%" }, // Impact (bottom-right)
+          ];
+          const pos = positions[i] || { top: "50%", left: "50%" };
+
+          return (
+            <div
+              key={marker.id}
+              onClick={() => onMarkerClick?.(marker)}
+              className="absolute pointer-events-auto cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 group"
+              style={pos}
+            >
+              <div
+                className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border shadow-lg backdrop-blur-xl transition-all"
+                style={{
+                  background: "rgba(255, 255, 255, 0.92)",
+                  borderColor: "rgba(229, 231, 235, 0.8)",
+                  boxShadow: "0 8px 24px -4px rgba(0, 0, 0, 0.08)",
+                }}
+              >
+                <div
+                  className="w-7 h-7 rounded-xl flex items-center justify-center text-sm shadow-sm"
+                  style={{
+                    background: `${marker.color}18`,
+                    color: marker.color,
+                  }}
+                >
+                  {marker.icon}
+                </div>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+                    {marker.label}
+                  </div>
+                  <div className="text-[9px] font-mono-code text-gray-500 leading-none">
+                    {marker.sublabel}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

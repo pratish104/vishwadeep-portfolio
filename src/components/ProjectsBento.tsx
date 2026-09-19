@@ -227,7 +227,7 @@ export function ProjectsBento() {
           {/* CTA Link */}
           <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
             <span className={`text-xs font-mono-code ${dStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>View Project</span>
+              <span>{isDark ? "Explore Project" : "View Project"}</span>
               <span>→</span>
             </span>
           </div>
@@ -348,7 +348,7 @@ export function ProjectsBento() {
           {/* CTA Link */}
           <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center">
             <span className={`text-xs font-mono-code ${rStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>View Project</span>
+              <span>{isDark ? "Explore Project" : "View Project"}</span>
               <span>→</span>
             </span>
           </div>
@@ -444,7 +444,7 @@ export function ProjectsBento() {
           {/* CTA Link */}
           <div className="pt-3 mt-2 border-t border-black/5 dark:border-white/10 text-center relative z-10">
             <span className={`text-xs font-mono-code ${kStyle.cta} flex items-center justify-center gap-1 group-hover:underline`}>
-              <span>View Project</span>
+              <span>{isDark ? "Explore Project" : "View Project"}</span>
               <span>→</span>
             </span>
           </div>
