@@ -10,6 +10,7 @@ import { Navbar } from "./components/Navbar";
 import { ProjectsBento } from "./components/ProjectsBento";
 import { SkillsBento } from "./components/SkillsBento";
 import { TelemetryPipeline } from "./components/TelemetryPipeline";
+import { ThemeAtmosphere } from "./components/ThemeAtmosphere";
 import { VerticalDock } from "./components/VerticalDock";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
@@ -27,6 +28,9 @@ function AppContent() {
         color: "var(--text-primary)",
       }}
     >
+      {/* ── Dynamic Atmospheric Canvas Background (Zero Screenshot Artifacts) ─ */}
+      <ThemeAtmosphere />
+
       {/* ── Background Grid Pattern ────────────────────────────────────────── */}
       {theme === "light" && (
         <div
@@ -61,13 +65,13 @@ function AppContent() {
         />
       )}
 
-      {/* ── Left Quick-Navigation Vertical Dock (Matching Reference) ─────────── */}
+      {/* ── Left Quick-Navigation Vertical Dock ───────────────────────────────── */}
       <VerticalDock />
 
       {/* ── Top Floating Navigation Bar with Theme Switcher & LoFi Music ─────── */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} />
 
-      {/* ── Main Content Flow ─────────────────────────────────────────────────── */}
+      {/* ── Main Content Flow (Single DOM Hierarchy — No Ghosting) ───────────── */}
       <main className="relative z-10 pl-0 md:pl-16 lg:pl-20 transition-all duration-300">
         <Hero onOpenTerminal={() => setIsTerminalOpen(true)} />
         <ProjectsBento />
@@ -77,7 +81,7 @@ function AppContent() {
         <Contact />
       </main>
 
-      {/* ── Bottom Telemetry Pipeline Bar (Matching Reference) ───────────────── */}
+      {/* ── Bottom Telemetry Pipeline Bar ────────────────────────────────────── */}
       <TelemetryPipeline />
 
       {/* ── Footer ────────────────────────────────────────────────────────────── */}
