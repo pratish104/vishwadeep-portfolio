@@ -146,7 +146,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     soundManager.playClick();
     await soundManager.selectTrack(idx);
     setCurrentTrack(soundManager.getCurrentTrack());
-    setIsPlaying(true);
+    setIsPlaying(soundManager.getIsPlaying());
     setMusicDropdown(false);
   };
 

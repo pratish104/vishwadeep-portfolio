@@ -56,17 +56,47 @@ class AudioController {
     if (this.audioElement || typeof window === "undefined") return;
 
     const track = GLOBAL_PLAYLIST[this.currentTrackIndex];
-    this.audioElement = new Audio(track.url);
+    // Keep one real, attached media element for the lifetime of the app.  An
+    // attached element is easier for browsers to route to the active audio
+    // device and gives DevTools a concrete element to inspect.
+    this.audioElement = document.createElement("audio");
+    this.audioElement.id = "portfolio-background-audio";
+    this.audioElement.preload = "auto";
+    this.audioElement.muted = false;
+    this.audioElement.defaultMuted = false;
     this.audioElement.volume = this.volume;
-    this.audioElement.preload = "metadata";
+    this.audioElement.src = track.url;
+    this.audioElement.setAttribute("aria-hidden", "true");
+    this.audioElement.style.display = "none";
+    document.body.appendChild(this.audioElement);
+    this.audioElement.load();
+
+    this.audioElement.addEventListener("playing", () => {
+      this.isPlaying = true;
+      this.notifyStateChange();
+    });
+
+    this.audioElement.addEventListener("pause", () => {
+      if (!this.audioElement?.ended) {
+        this.isPlaying = false;
+        this.notifyStateChange();
+      }
+    });
 
     // Auto-advance track on end
     this.audioElement.addEventListener("ended", () => {
-      this.nextTrack();
+      void this.nextTrack();
     });
 
     this.audioElement.addEventListener("error", () => {
-      console.warn(`Audio track failed to load: ${track.url}`);
+      const mediaError = this.audioElement?.error;
+      console.error("Background audio failed to load", {
+        src: this.audioElement?.currentSrc || this.audioElement?.src,
+        code: mediaError?.code,
+        message: mediaError?.message,
+      });
+      this.isPlaying = false;
+      this.notifyStateChange();
     });
   }
 
@@ -108,11 +138,15 @@ class AudioController {
       if (trackIndex !== this.currentTrackIndex || this.audioElement.src === "") {
         this.currentTrackIndex = trackIndex;
         const track = GLOBAL_PLAYLIST[this.currentTrackIndex];
+        this.audioElement.pause();
         this.audioElement.src = track.url;
+        this.audioElement.load();
       }
     }
 
     try {
+      this.audioElement.muted = false;
+      this.audioElement.defaultMuted = false;
       this.audioElement.volume = this.volume;
       await this.audioElement.play();
       this.isPlaying = true;
@@ -173,6 +207,8 @@ class AudioController {
     this.volume = clamped;
     if (this.audioElement) {
       this.audioElement.volume = clamped;
+      this.audioElement.muted = false;
+      this.audioElement.defaultMuted = false;
     }
     try {
       localStorage.setItem("portfolio_audio_volume", String(clamped));
