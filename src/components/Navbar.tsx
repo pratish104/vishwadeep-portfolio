@@ -21,7 +21,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useTheme, type Theme } from "../context/ThemeContext";
 import { profileData } from "../data/portfolioData";
-import { soundManager, TRACKS, type Track } from "../utils/audio";
+import { soundManager, type Track } from "../utils/audio";
 
 interface NavbarProps {
   onOpenTerminal?: () => void;
@@ -59,6 +59,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
   const [musicDropdown, setMusicDropdown] = useState(false);
   const [isPlaying, setIsPlaying] = useState(soundManager.getIsPlaying());
   const [isMuted, setIsMuted] = useState(soundManager.getIsMuted());
+  const [volume, setVolume] = useState(soundManager.getVolume());
   const [currentTrack, setCurrentTrack] = useState<Track>(soundManager.getCurrentTrack());
   const [activeSection, setActiveSection] = useState("about");
 
@@ -84,17 +85,14 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
   }, []);
 
   useEffect(() => {
-    soundManager.setTrackChangeCallback((t) => {
+    const unsub = soundManager.subscribeTrackChange((t, playing) => {
       setCurrentTrack(t);
-      setIsPlaying(soundManager.getIsPlaying());
+      setIsPlaying(playing);
     });
+    return () => {
+      unsub();
+    };
   }, []);
-
-  // Update audio track to match theme preference
-  useEffect(() => {
-    soundManager.setTheme(theme);
-    setCurrentTrack(soundManager.getCurrentTrack());
-  }, [theme]);
 
   // Global Ctrl+K / Cmd+K listener for Command Palette
   useEffect(() => {
@@ -123,30 +121,31 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     return () => document.removeEventListener("click", handler);
   }, []);
 
-  const handlePlayToggle = () => {
-    const nowPlaying = soundManager.toggle();
-    setIsPlaying(nowPlaying);
+  const handlePlayToggle = async () => {
+    soundManager.playClick();
+    const playing = await soundManager.toggle();
+    setIsPlaying(playing);
     setCurrentTrack(soundManager.getCurrentTrack());
   };
 
-  const handleNextTrack = () => {
+  const handleNextTrack = async () => {
     soundManager.playClick();
-    const t = soundManager.nextTrack();
-    setCurrentTrack(t);
+    await soundManager.nextTrack();
+    setCurrentTrack(soundManager.getCurrentTrack());
     setIsPlaying(soundManager.getIsPlaying());
   };
 
-  const handlePrevTrack = () => {
+  const handlePrevTrack = async () => {
     soundManager.playClick();
-    const t = soundManager.prevTrack();
-    setCurrentTrack(t);
+    await soundManager.prevTrack();
+    setCurrentTrack(soundManager.getCurrentTrack());
     setIsPlaying(soundManager.getIsPlaying());
   };
 
-  const handleSelectTrack = (idx: number) => {
+  const handleSelectTrack = async (idx: number) => {
     soundManager.playClick();
-    const t = soundManager.selectTrack(idx);
-    setCurrentTrack(t);
+    await soundManager.selectTrack(idx);
+    setCurrentTrack(soundManager.getCurrentTrack());
     setIsPlaying(true);
     setMusicDropdown(false);
   };
@@ -155,6 +154,13 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
     soundManager.playClick();
     const muted = soundManager.toggleMute();
     setIsMuted(muted);
+    setVolume(soundManager.getVolume());
+  };
+
+  const handleVolumeChange = (value: number) => {
+    soundManager.setVolume(value);
+    setVolume(value);
+    setIsMuted(value === 0);
   };
 
   const handleThemeChange = (newTheme: Theme) => {
@@ -367,13 +373,27 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                       {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                     </button>
                   </div>
-                  <div className="py-1 space-y-0.5">
-                    {TRACKS.map((t, idx) => (
+                  <label className="flex items-center gap-2 px-2.5 py-2 border-b border-black/5 dark:border-white/10 text-[10px] font-mono-code opacity-80">
+                    <Volume2 className="w-3.5 h-3.5 shrink-0" />
+                    <input
+                      aria-label="Music volume"
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={volume}
+                      onChange={(event) => handleVolumeChange(Number(event.target.value))}
+                      className="w-full accent-current"
+                    />
+                    <span className="w-7 text-right">{Math.round(volume * 100)}%</span>
+                  </label>
+                  <div className="py-1 space-y-0.5 max-h-60 overflow-y-auto">
+                    {soundManager.getPlaylist().map((t, idx) => (
                       <button
-                        key={t.name}
+                        key={t.id}
                         onClick={() => handleSelectTrack(idx)}
                         className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-left text-xs transition-colors ${
-                          currentTrack.name === t.name
+                          currentTrack.id === t.id
                             ? theme === "dark"
                               ? "bg-cyan-500/20 text-cyan-400 font-bold"
                               : theme === "anime"
@@ -386,7 +406,7 @@ export function Navbar({ onOpenTerminal }: NavbarProps) {
                           <div className="font-medium leading-tight">{t.name}</div>
                           <div className="text-[10px] opacity-60 leading-none">{t.artist}</div>
                         </div>
-                        {currentTrack.name === t.name && isPlaying && (
+                        {currentTrack.id === t.id && isPlaying && (
                           <span
                             className={`w-2 h-2 rounded-full animate-pulse ${
                               theme === "dark" ? "bg-cyan-400" : theme === "anime" ? "bg-pink-500" : "bg-blue-500"
