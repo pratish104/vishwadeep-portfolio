@@ -4,7 +4,7 @@ import { profileData } from "../data/portfolioData";
 
 export function Footer() {
   const { theme } = useTheme();
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

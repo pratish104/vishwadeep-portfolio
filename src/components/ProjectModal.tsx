@@ -47,7 +47,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, [project, onClose]);
 
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
   const bg = isDark ? "bg-[var(--bg-surface)]" : "bg-white";
   const headerBg = isDark ? "bg-[var(--bg-elevated)]/80" : "bg-gray-50/90";
   const borderColor = isDark ? "border-[var(--border-subtle)]" : "border-gray-200";
@@ -257,6 +257,18 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 Status: {project.statusLabel}
               </span>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                {project.liveDemo && (
+                  <a
+                    href={project.liveDemo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => soundManager.playClick()}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-xs transition-all shadow-md hover:scale-[1.02] active:scale-95 ${isDark ? "bg-zinc-100 hover:bg-white text-zinc-950" : "bg-gray-900 hover:bg-gray-800 text-white"}`}
+                  >
+                    <span>Live Demo</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+                  </a>
+                )}
                 {project.github ? (
                   <a
                     href={project.github}

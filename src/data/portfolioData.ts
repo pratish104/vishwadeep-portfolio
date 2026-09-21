@@ -72,6 +72,7 @@ export const featuredProjects: ProjectItem[] = [
     ],
     technologies: ["Python", "SQL", "Data Preprocessing", "Data Validation", "Algorithm Design", "FastAPI / Flask"],
     github: "https://github.com/pratish104/DigiPath-College-Predictor",
+    liveDemo: "https://digipath-college-predictor.onrender.com",
     statusLabel: "Active Project · Verified GitHub",
     statusType: "verified-repo",
     accentColor: "#10b981", // Emerald

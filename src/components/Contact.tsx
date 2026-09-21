@@ -8,7 +8,7 @@ import { soundManager } from "../utils/audio";
 export function Contact() {
   const { theme } = useTheme();
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
 
   const handleCopyEmail = () => {
     soundManager.playSuccess();

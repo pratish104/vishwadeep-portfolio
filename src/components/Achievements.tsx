@@ -6,7 +6,7 @@ import { soundManager } from "../utils/audio";
 
 export function Achievements() {
   const { theme } = useTheme();
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
 
   const cardBg = isDark
     ? "bg-[var(--bg-surface)]/80 border-[var(--border-subtle)] hover:border-[var(--accent-tertiary)]/40"

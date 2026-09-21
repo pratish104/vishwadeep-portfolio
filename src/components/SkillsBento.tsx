@@ -6,7 +6,7 @@ import { soundManager } from "../utils/audio";
 
 export function SkillsBento() {
   const { theme } = useTheme();
-  const isDark = theme !== "light";
+  const isDark = theme === "dark";
 
   const headingColor = isDark ? "text-white" : "text-gray-900";
   const bodyColor = isDark ? "text-zinc-400" : "text-gray-500";
